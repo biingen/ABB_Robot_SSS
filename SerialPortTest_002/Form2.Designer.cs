@@ -1,0 +1,215 @@
+﻿namespace SerialPortTest_002
+{
+    partial class Form2
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.ComboBox_BaudRate = new System.Windows.Forms.ComboBox();
+            this.ComboBox_ParrityBit = new System.Windows.Forms.ComboBox();
+            this.ComboBox_ByteCount = new System.Windows.Forms.ComboBox();
+            this.ComboBox_StopBit = new System.Windows.Forms.ComboBox();
+            this.BTN_Connect = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label1.Location = new System.Drawing.Point(7, 21);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(72, 16);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Port Num:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label2.Location = new System.Drawing.Point(7, 59);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(77, 16);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Baud Rate:";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label3.Location = new System.Drawing.Point(7, 89);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(75, 16);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Parrity Bit:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label4.Location = new System.Drawing.Point(7, 122);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(83, 16);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Byte Count:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label5.Location = new System.Drawing.Point(7, 155);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(62, 16);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Stop Bit:";
+            // 
+            // imageList1
+            // 
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(89, 18);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(93, 24);
+            this.comboBox1.TabIndex = 5;
+            // 
+            // ComboBox_BaudRate
+            // 
+            this.ComboBox_BaudRate.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ComboBox_BaudRate.FormattingEnabled = true;
+            this.ComboBox_BaudRate.Items.AddRange(new object[] {
+            "4800",
+            "9600",
+            "19200",
+            "38400",
+            "76800",
+            "115200"});
+            this.ComboBox_BaudRate.Location = new System.Drawing.Point(89, 56);
+            this.ComboBox_BaudRate.Name = "ComboBox_BaudRate";
+            this.ComboBox_BaudRate.Size = new System.Drawing.Size(93, 24);
+            this.ComboBox_BaudRate.TabIndex = 6;
+            // 
+            // ComboBox_ParrityBit
+            // 
+            this.ComboBox_ParrityBit.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ComboBox_ParrityBit.FormattingEnabled = true;
+            this.ComboBox_ParrityBit.Items.AddRange(new object[] {
+            "None",
+            "Odd",
+            "Even"});
+            this.ComboBox_ParrityBit.Location = new System.Drawing.Point(89, 89);
+            this.ComboBox_ParrityBit.Name = "ComboBox_ParrityBit";
+            this.ComboBox_ParrityBit.Size = new System.Drawing.Size(93, 24);
+            this.ComboBox_ParrityBit.TabIndex = 7;
+            // 
+            // ComboBox_ByteCount
+            // 
+            this.ComboBox_ByteCount.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ComboBox_ByteCount.FormattingEnabled = true;
+            this.ComboBox_ByteCount.Items.AddRange(new object[] {
+            "7",
+            "8"});
+            this.ComboBox_ByteCount.Location = new System.Drawing.Point(89, 119);
+            this.ComboBox_ByteCount.Name = "ComboBox_ByteCount";
+            this.ComboBox_ByteCount.Size = new System.Drawing.Size(93, 24);
+            this.ComboBox_ByteCount.TabIndex = 8;
+            // 
+            // ComboBox_StopBit
+            // 
+            this.ComboBox_StopBit.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ComboBox_StopBit.FormattingEnabled = true;
+            this.ComboBox_StopBit.Items.AddRange(new object[] {
+            "1",
+            "2"});
+            this.ComboBox_StopBit.Location = new System.Drawing.Point(89, 155);
+            this.ComboBox_StopBit.Name = "ComboBox_StopBit";
+            this.ComboBox_StopBit.Size = new System.Drawing.Size(93, 24);
+            this.ComboBox_StopBit.TabIndex = 9;
+            // 
+            // BTN_Connect
+            // 
+            this.BTN_Connect.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.BTN_Connect.Location = new System.Drawing.Point(42, 207);
+            this.BTN_Connect.Name = "BTN_Connect";
+            this.BTN_Connect.Size = new System.Drawing.Size(107, 41);
+            this.BTN_Connect.TabIndex = 10;
+            this.BTN_Connect.Text = "Connect";
+            this.BTN_Connect.UseVisualStyleBackColor = true;
+            this.BTN_Connect.Click += new System.EventHandler(this.BTN_Connect_Click);
+            // 
+            // Form2
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(194, 311);
+            this.Controls.Add(this.BTN_Connect);
+            this.Controls.Add(this.ComboBox_StopBit);
+            this.Controls.Add(this.ComboBox_ByteCount);
+            this.Controls.Add(this.ComboBox_ParrityBit);
+            this.Controls.Add(this.ComboBox_BaudRate);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "Form2";
+            this.Text = "ComPort Setting";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox ComboBox_BaudRate;
+        private System.Windows.Forms.ComboBox ComboBox_ParrityBit;
+        private System.Windows.Forms.ComboBox ComboBox_ByteCount;
+        private System.Windows.Forms.ComboBox ComboBox_StopBit;
+        private System.Windows.Forms.Button BTN_Connect;
+    }
+}
