@@ -96,7 +96,7 @@ namespace SerialPortTest_002
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Ver:003";
+            this.VerLabel.Text = "Ver:004";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -262,6 +262,7 @@ namespace SerialPortTest_002
                 }
 
             }
+            rFile.Close();
             UpdataUIDataGrid.Invoke(0, -3, "");//Flush datagrid
         }
         //-------------------------------------------------------------------------------------------------//
@@ -271,7 +272,7 @@ namespace SerialPortTest_002
 
             dialog.Filter = "csv files (*.*) |*.csv";
             dialog.Title = "Select Souce File";
-            dialog.InitialDirectory = "C:\\";
+            dialog.InitialDirectory = "D:\\";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 TargetFilePath = dialog.FileName;
@@ -435,7 +436,7 @@ namespace SerialPortTest_002
                             {
                                 //Cmd line
                                 CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
-                                CmdString = CmdLine.Split(' ');
+                                CmdString = CmdLine.PadLeft(2, '0').Split(' ');
                                 Cmdbuf[0] = (byte)((ProStr.ASCIIToByte((byte)(CmdString[0][0])) * 16) + (ProStr.ASCIIToByte((byte)(CmdString[0][1]))));
                                 //Get Camera count
                                 int camera_Counter = _CameraChoice.Devices.Count;
@@ -832,9 +833,45 @@ namespace SerialPortTest_002
             }
         }
 
-        private void VerLabel_Click(object sender, EventArgs e)
+        private void toolStripButton3_Click(object sender, EventArgs e)
         {
+            string delimiter = ",";
 
+            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            sfd.Filter = "CSV files (*.csv)|*.csv";
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(sfd.FileName, false))
+                {
+                    //output header data
+                    /*
+                    string strHeader = "";
+                    for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                    {
+                        strHeader += dataGridView1.Columns[i].HeaderText + delimiter;
+                    }
+                    sw.WriteLine(strHeader.Replace("\r\n", "~"));
+                    */
+                    //output rows data
+                    for (int j = 0; j < dataGridView1.Rows.Count - 1; j++)
+                    {
+                        string strRowValue = "";
+
+                        for (int k = 0; k < dataGridView1.Columns.Count; k++)
+                        {
+                            string scheduleOutput = dataGridView1.Rows[j].Cells[k].Value + "";
+                            if (scheduleOutput.Contains(","))
+                            {
+                                scheduleOutput = String.Format("\"{0}\"", scheduleOutput);
+                            }
+                            strRowValue += scheduleOutput + delimiter;
+                        }
+                        sw.WriteLine(strRowValue);
+                    }
+                    sw.Close();
+                }
+            }
         }
     }
 }
+

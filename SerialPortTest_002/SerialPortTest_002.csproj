@@ -140,5 +140,8 @@
   <ItemGroup>
     <None Include="Resources\pause.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Image\save-file.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
