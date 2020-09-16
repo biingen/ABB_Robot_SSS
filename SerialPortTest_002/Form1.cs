@@ -379,7 +379,7 @@ namespace SerialPortTest_002
                 }
                
 
-                while (loopCounter > 0)
+                while (loopCounter > 0 && FlagStop == 0)
                 {
                     if (this.checkBox1.Checked == true)
                     {
