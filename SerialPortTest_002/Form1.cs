@@ -14,9 +14,8 @@ using DQATestCoreFun;
 using Rs232Drv;
 using Camera_NET;
 using DirectShowLib;
-
-
-
+using Driver_Layer;
+using System.Net.Sockets;
 
 namespace SerialPortTest_002
 {
@@ -30,6 +29,7 @@ namespace SerialPortTest_002
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
         ComPortFun ComPortHandle;
+        Drv_TCPSocket_Client NetworkHandle;
         Thread ExecuteCmdThreadHandle;
         //------------------------------------------------------------------------------------------------//
         public DataGridView tempDataGrid;
@@ -88,6 +88,17 @@ namespace SerialPortTest_002
             else
             {
                 this.PIC_ComPortStatus.Image = ImageResource.BlackLED;
+            }
+        }
+        public void Form1UPDateNetworkLedStatus(int status)
+        {
+            if (status == 1)
+            {
+                this.PIC_NetworkStatus.Image = ImageResource.GleenLed;
+            }
+            else
+            {
+                this.PIC_NetworkStatus.Image = ImageResource.BlackLED;
             }
         }
         //------------------------------------------------------------------------------------------------//
@@ -288,11 +299,14 @@ namespace SerialPortTest_002
 
             Form2 form2 = new Form2();
             UpdateUI UILED = new UpdateUI(Form1UPDateComportLedStatus);
+            UpdateUI UINetworkLED = new UpdateUI(Form1UPDateNetworkLedStatus);
             string PortNumber;
             int BautRate;
             int ParryBit;
             int StopBit;
             int DataLen;
+            string IP;
+            int NetworkPort;
             //---------------- display RS232 setting panel ------------------//
             //form2.Owner = this;
             form2.ShowDialog(this);
@@ -301,11 +315,14 @@ namespace SerialPortTest_002
             if (form2.DialogResult == System.Windows.Forms.DialogResult.OK)
             {
                 ComPortHandle = new ComPortFun();
+                NetworkHandle = new Drv_TCPSocket_Client();
                 PortNumber = form2.getComPortSetting();
                 BautRate = Convert.ToInt32(form2.getComPortBaudRate());
                 ParryBit = form2.getComPortParrityBit();
                 StopBit = form2.getComPortStopBit();
                 DataLen = form2.getComPortByteCount();
+                IP = form2.getNetworkIP();
+                NetworkPort = int.Parse(form2.getNetworkPort());
                 if (ComPortHandle.OpenPort(PortNumber, BautRate, ParryBit, DataLen, StopBit) >= 1)
                 {
                     UILED.Invoke(1);
@@ -314,6 +331,17 @@ namespace SerialPortTest_002
                 {
                     UILED.Invoke(0);
                     MessageBox.Show("Open Port fail");
+                }
+                if (IP != "" && NetworkPort > 0 && NetworkPort < 65536)
+                {
+                    UINetworkLED.Invoke(1);
+                    NetworkHandle.SetIpAddr(IP);
+                    NetworkHandle.SetPortNumber(NetworkPort);
+                }
+                else
+                {
+                    UINetworkLED.Invoke(0);
+                    MessageBox.Show("Open Socket fail");
                 }
 
                 //ComPortHandle.OpenPort();
@@ -453,8 +481,16 @@ namespace SerialPortTest_002
                                             g = Graphics.FromImage(bitmap);
                                             g.DrawString(DateTime.Now.ToString("yyyyMMdd_HHmmss"), new Font("Tahoma", 12), Brushes.Yellow, 0, 0);
                                             g.Flush();
-                                            Thread.Sleep(100);
-
+                                            //Delay Time
+                                            if (this.dataGridView1.Rows[ExeIndex].Cells[4].Value != null)
+                                            {
+                                                DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value);
+                                            }
+                                            else
+                                            {
+                                                DelayTime = 100;
+                                            }
+                                            Thread.Sleep(DelayTime);
                                             bitmap.Save(Image_CurrentPath + "\\" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
                                             cameraControl.CloseCamera();
                                         }
@@ -717,6 +753,10 @@ namespace SerialPortTest_002
 
                             Invoke(UpdataUIDataGrid, 0, -3, " ");//reflush data gride
                             Thread.Sleep(DelayTime);
+                        }
+                        else if((CmdType == "ROBOT") || (CmdType == "robot"))
+                        {
+
                         }
 
                         //Invoke(UpdataUIDataGrid, ExeIndex, -3, "");//Flush datagrid

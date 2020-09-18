@@ -41,12 +41,16 @@
             this.ComboBox_ByteCount = new System.Windows.Forms.ComboBox();
             this.ComboBox_StopBit = new System.Windows.Forms.ComboBox();
             this.BTN_Connect = new System.Windows.Forms.Button();
+            this.textBox_PortNum = new System.Windows.Forms.TextBox();
+            this.label_Port = new System.Windows.Forms.Label();
+            this.textBox_IPAddr = new System.Windows.Forms.TextBox();
+            this.label_IPAddr = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label1.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label1.Location = new System.Drawing.Point(7, 21);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(72, 16);
@@ -56,7 +60,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label2.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label2.Location = new System.Drawing.Point(7, 59);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 16);
@@ -66,7 +70,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label3.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label3.Location = new System.Drawing.Point(7, 89);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 16);
@@ -76,7 +80,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label4.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label4.Location = new System.Drawing.Point(7, 122);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(83, 16);
@@ -86,7 +90,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label5.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label5.Location = new System.Drawing.Point(7, 155);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(62, 16);
@@ -101,7 +105,7 @@
             // 
             // comboBox1
             // 
-            this.comboBox1.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.comboBox1.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(89, 18);
             this.comboBox1.Name = "comboBox1";
@@ -110,7 +114,7 @@
             // 
             // ComboBox_BaudRate
             // 
-            this.ComboBox_BaudRate.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ComboBox_BaudRate.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.ComboBox_BaudRate.FormattingEnabled = true;
             this.ComboBox_BaudRate.Items.AddRange(new object[] {
             "4800",
@@ -126,7 +130,7 @@
             // 
             // ComboBox_ParrityBit
             // 
-            this.ComboBox_ParrityBit.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ComboBox_ParrityBit.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.ComboBox_ParrityBit.FormattingEnabled = true;
             this.ComboBox_ParrityBit.Items.AddRange(new object[] {
             "None",
@@ -139,7 +143,7 @@
             // 
             // ComboBox_ByteCount
             // 
-            this.ComboBox_ByteCount.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ComboBox_ByteCount.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.ComboBox_ByteCount.FormattingEnabled = true;
             this.ComboBox_ByteCount.Items.AddRange(new object[] {
             "7",
@@ -151,7 +155,7 @@
             // 
             // ComboBox_StopBit
             // 
-            this.ComboBox_StopBit.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ComboBox_StopBit.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.ComboBox_StopBit.FormattingEnabled = true;
             this.ComboBox_StopBit.Items.AddRange(new object[] {
             "1",
@@ -163,8 +167,8 @@
             // 
             // BTN_Connect
             // 
-            this.BTN_Connect.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.BTN_Connect.Location = new System.Drawing.Point(42, 207);
+            this.BTN_Connect.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.BTN_Connect.Location = new System.Drawing.Point(357, 138);
             this.BTN_Connect.Name = "BTN_Connect";
             this.BTN_Connect.Size = new System.Drawing.Size(107, 41);
             this.BTN_Connect.TabIndex = 10;
@@ -172,11 +176,58 @@
             this.BTN_Connect.UseVisualStyleBackColor = true;
             this.BTN_Connect.Click += new System.EventHandler(this.BTN_Connect_Click);
             // 
+            // textBox_PortNum
+            // 
+            this.textBox_PortNum.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_PortNum.Location = new System.Drawing.Point(325, 56);
+            this.textBox_PortNum.MaxLength = 5;
+            this.textBox_PortNum.Name = "textBox_PortNum";
+            this.textBox_PortNum.Size = new System.Drawing.Size(139, 31);
+            this.textBox_PortNum.TabIndex = 19;
+            this.textBox_PortNum.Text = "1025";
+            // 
+            // label_Port
+            // 
+            this.label_Port.AutoSize = true;
+            this.label_Port.BackColor = System.Drawing.Color.Black;
+            this.label_Port.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Port.ForeColor = System.Drawing.Color.White;
+            this.label_Port.Location = new System.Drawing.Point(204, 59);
+            this.label_Port.Name = "label_Port";
+            this.label_Port.Size = new System.Drawing.Size(113, 23);
+            this.label_Port.TabIndex = 18;
+            this.label_Port.Text = "Port Number";
+            // 
+            // textBox_IPAddr
+            // 
+            this.textBox_IPAddr.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_IPAddr.Location = new System.Drawing.Point(291, 18);
+            this.textBox_IPAddr.MaxLength = 15;
+            this.textBox_IPAddr.Name = "textBox_IPAddr";
+            this.textBox_IPAddr.Size = new System.Drawing.Size(173, 31);
+            this.textBox_IPAddr.TabIndex = 17;
+            // 
+            // label_IPAddr
+            // 
+            this.label_IPAddr.AutoSize = true;
+            this.label_IPAddr.BackColor = System.Drawing.Color.Black;
+            this.label_IPAddr.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_IPAddr.ForeColor = System.Drawing.Color.White;
+            this.label_IPAddr.Location = new System.Drawing.Point(204, 21);
+            this.label_IPAddr.Name = "label_IPAddr";
+            this.label_IPAddr.Size = new System.Drawing.Size(81, 23);
+            this.label_IPAddr.TabIndex = 16;
+            this.label_IPAddr.Text = "Server IP";
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(194, 311);
+            this.ClientSize = new System.Drawing.Size(473, 192);
+            this.Controls.Add(this.textBox_PortNum);
+            this.Controls.Add(this.label_Port);
+            this.Controls.Add(this.textBox_IPAddr);
+            this.Controls.Add(this.label_IPAddr);
             this.Controls.Add(this.BTN_Connect);
             this.Controls.Add(this.ComboBox_StopBit);
             this.Controls.Add(this.ComboBox_ByteCount);
@@ -211,5 +262,9 @@
         private System.Windows.Forms.ComboBox ComboBox_ByteCount;
         private System.Windows.Forms.ComboBox ComboBox_StopBit;
         private System.Windows.Forms.Button BTN_Connect;
+        private System.Windows.Forms.TextBox textBox_PortNum;
+        private System.Windows.Forms.Label label_Port;
+        private System.Windows.Forms.TextBox textBox_IPAddr;
+        private System.Windows.Forms.Label label_IPAddr;
     }
 }

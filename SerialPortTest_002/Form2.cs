@@ -33,6 +33,14 @@ namespace SerialPortTest_002
         {
             return (Convert.ToInt32((string)this.ComboBox_StopBit.SelectedItem));
         }
+        public string getNetworkIP()
+        {
+            return ((string)this.textBox_IPAddr.Text);
+        }
+        public string getNetworkPort()
+        {
+            return ((string)this.textBox_PortNum.Text);
+        }
 
         public Form2()
         {

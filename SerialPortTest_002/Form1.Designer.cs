@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -50,13 +53,13 @@
             this.BTN_Stop = new System.Windows.Forms.Button();
             this.BTN_Pause = new System.Windows.Forms.Button();
             this.BTN_StartTest = new System.Windows.Forms.Button();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.label2 = new System.Windows.Forms.Label();
+            this.PIC_NetworkStatus = new System.Windows.Forms.PictureBox();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStyatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_ComPortStatus)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PIC_NetworkStatus)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -70,6 +73,33 @@
             this.toolStrip1.Size = new System.Drawing.Size(1219, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.Image = global::SerialPortTest_002.ImageResource.open_file;
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(81, 22);
+            this.toolStripButton1.Text = "Open File";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.Image = global::SerialPortTest_002.ImageResource.tools;
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(67, 22);
+            this.toolStripButton2.Text = "Setting";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            // 
+            // toolStripButton3
+            // 
+            this.toolStripButton3.Image = global::SerialPortTest_002.ImageResource.save_file;
+            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton3.Name = "toolStripButton3";
+            this.toolStripButton3.Size = new System.Drawing.Size(76, 22);
+            this.toolStripButton3.Text = "Save File";
+            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
             // 
             // dataGridView1
             // 
@@ -170,7 +200,7 @@
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.checkBox1.Location = new System.Drawing.Point(154, 615);
+            this.checkBox1.Location = new System.Drawing.Point(286, 618);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(67, 25);
             this.checkBox1.TabIndex = 9;
@@ -182,7 +212,7 @@
             // 
             this.Txt_LoopCount.Enabled = false;
             this.Txt_LoopCount.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.Txt_LoopCount.Location = new System.Drawing.Point(154, 642);
+            this.Txt_LoopCount.Location = new System.Drawing.Point(286, 645);
             this.Txt_LoopCount.Name = "Txt_LoopCount";
             this.Txt_LoopCount.Size = new System.Drawing.Size(90, 29);
             this.Txt_LoopCount.TabIndex = 10;
@@ -199,7 +229,7 @@
             // 
             // Picbox_CurrentStyatus
             // 
-            this.Picbox_CurrentStyatus.Location = new System.Drawing.Point(346, 618);
+            this.Picbox_CurrentStyatus.Location = new System.Drawing.Point(434, 618);
             this.Picbox_CurrentStyatus.Name = "Picbox_CurrentStyatus";
             this.Picbox_CurrentStyatus.Size = new System.Drawing.Size(160, 60);
             this.Picbox_CurrentStyatus.TabIndex = 8;
@@ -247,38 +277,33 @@
             this.BTN_StartTest.UseVisualStyleBackColor = true;
             this.BTN_StartTest.Click += new System.EventHandler(this.BTN_StartTest_Click);
             // 
-            // toolStripButton1
+            // label2
             // 
-            this.toolStripButton1.Image = global::SerialPortTest_002.ImageResource.open_file;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(81, 22);
-            this.toolStripButton1.Text = "Open File";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label2.Location = new System.Drawing.Point(144, 618);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(128, 21);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Network Status";
             // 
-            // toolStripButton2
+            // PIC_NetworkStatus
             // 
-            this.toolStripButton2.Image = global::SerialPortTest_002.ImageResource.tools;
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(67, 22);
-            this.toolStripButton2.Text = "Setting";
-            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
-            // 
-            // toolStripButton3
-            // 
-            this.toolStripButton3.Image = global::SerialPortTest_002.ImageResource.save_file;
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(76, 22);
-            this.toolStripButton3.Text = "Save File";
-            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
+            this.PIC_NetworkStatus.Image = global::SerialPortTest_002.ImageResource.BlackLED;
+            this.PIC_NetworkStatus.InitialImage = global::SerialPortTest_002.ImageResource.BlackLED;
+            this.PIC_NetworkStatus.Location = new System.Drawing.Point(163, 643);
+            this.PIC_NetworkStatus.Name = "PIC_NetworkStatus";
+            this.PIC_NetworkStatus.Size = new System.Drawing.Size(33, 35);
+            this.PIC_NetworkStatus.TabIndex = 13;
+            this.PIC_NetworkStatus.TabStop = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1219, 729);
+            this.Controls.Add(this.PIC_NetworkStatus);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.Label_LoopCounter);
             this.Controls.Add(this.Txt_LoopCount);
             this.Controls.Add(this.checkBox1);
@@ -299,6 +324,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStyatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_ComPortStatus)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PIC_NetworkStatus)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -331,6 +357,8 @@
         private System.Windows.Forms.TextBox Txt_LoopCount;
         private System.Windows.Forms.Label Label_LoopCounter;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.PictureBox PIC_NetworkStatus;
     }
 }
 
