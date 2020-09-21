@@ -337,6 +337,10 @@ namespace SerialPortTest_002
                     UINetworkLED.Invoke(1);
                     NetworkHandle.SetIpAddr(IP);
                     NetworkHandle.SetPortNumber(NetworkPort);
+                    NetworkHandle._updateTBRecvCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
+                    NetworkHandle._updateTBSendCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
+                    if (!NetworkHandle.IsConnected())
+                        NetworkHandle.Start();
                 }
                 else
                 {
@@ -756,7 +760,18 @@ namespace SerialPortTest_002
                         }
                         else if((CmdType == "ROBOT") || (CmdType == "robot"))
                         {
-
+                            CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
+                            NetworkHandle.Send(CmdLine);
+                            //Delay Time
+                            if (this.dataGridView1.Rows[ExeIndex].Cells[4].Value != null)
+                            {
+                                DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value);
+                            }
+                            else
+                            {
+                                DelayTime = 100;
+                            }
+                            Thread.Sleep(DelayTime);
                         }
 
                         //Invoke(UpdataUIDataGrid, ExeIndex, -3, "");//Flush datagrid
@@ -824,6 +839,26 @@ namespace SerialPortTest_002
 
 
         }
+
+        public void ShowMessageOnTBRecv(string msg)
+        {
+            if (InvokeRequired)
+            {
+                Drv_TCPSocket_Client.UpdateTBRecvCallback updateTBCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
+                Invoke(updateTBCallback, new object[] { msg });
+            }
+        }
+
+        public void ShowMessageOnTBSend(string msg)
+        {
+            if (InvokeRequired)
+            {
+                Drv_TCPSocket_Client.UpdateTBSendCallback updateTBCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
+                Invoke(updateTBCallback, new object[] { msg });
+            }
+
+        }
+
         private void BTN_StartTest_Click(object sender, EventArgs e)
         {
             this.BTN_StartTest.Enabled = false;

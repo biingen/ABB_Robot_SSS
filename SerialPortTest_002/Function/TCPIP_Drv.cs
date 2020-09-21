@@ -210,6 +210,7 @@ namespace Driver_Layer
         private string remote_ipAddress;
         private int remote_portNumber;
         private byte[] _receiveBuffer = new byte[1024];
+        private static string sendData;
 
         //private static AsyncCallback _dataTransferCallback;
 
@@ -230,9 +231,9 @@ namespace Driver_Layer
             ConnectThread();
         }
 
-        public void Send()
+        public void Send(string message)
         {
-            SendThread();
+            SendThread(message);
         }
 
         public void Close()
@@ -291,10 +292,11 @@ namespace Driver_Layer
             }
         }
 
-        private void SendThread()
+        private void SendThread(string message)
         {
             try
             {
+                sendData = message;
                 clientSendThread = new Thread(new ThreadStart(SendMessage));
                 clientSendThread.IsBackground = true;
                 _updateTBSendCallback("Client is ready to send message!");
@@ -312,7 +314,7 @@ namespace Driver_Layer
         {
             try
             {
-                string clientMessage = "Robot just go go go...";
+                string clientMessage = sendData;
                 byte[] clientMessageAsByte = Encoding.ASCII.GetBytes(clientMessage);
                 //_socket.BeginSend(clientMessageAsByte, 0, clientMessageAsByte.Length, SocketFlags.None, _dataTransferCallback, null);
                 _socket.Send(clientMessageAsByte, SocketFlags.None);
