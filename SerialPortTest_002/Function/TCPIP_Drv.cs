@@ -211,6 +211,7 @@ namespace Driver_Layer
         private int remote_portNumber;
         private byte[] _receiveBuffer = new byte[1024];
         private static string sendData;
+        private static string receiveData;
 
         //private static AsyncCallback _dataTransferCallback;
 
@@ -234,6 +235,11 @@ namespace Driver_Layer
         public void Send(string message)
         {
             SendThread(message);
+        }
+
+        public string Receive()
+        {
+            return receiveData;
         }
 
         public void Close()
@@ -281,6 +287,7 @@ namespace Driver_Layer
                 {
                     int byteRecv = _socket.Receive(_receiveBuffer);
                     string msgRecv = Encoding.ASCII.GetString(_receiveBuffer, 0, byteRecv);
+                    receiveData = msgRecv;
                     _updateTBRecvCallback("\r\n" + msgRecv);
                 }
             }

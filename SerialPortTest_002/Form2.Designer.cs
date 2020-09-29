@@ -45,6 +45,8 @@
             this.label_Port = new System.Windows.Forms.Label();
             this.textBox_IPAddr = new System.Windows.Forms.TextBox();
             this.label_IPAddr = new System.Windows.Forms.Label();
+            this.textBox_MailAddress = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -206,6 +208,7 @@
             this.textBox_IPAddr.Name = "textBox_IPAddr";
             this.textBox_IPAddr.Size = new System.Drawing.Size(173, 31);
             this.textBox_IPAddr.TabIndex = 17;
+            this.textBox_IPAddr.Text = "127.0.0.1";
             // 
             // label_IPAddr
             // 
@@ -219,11 +222,33 @@
             this.label_IPAddr.TabIndex = 16;
             this.label_IPAddr.Text = "Server IP";
             // 
+            // textBox_MailAddress
+            // 
+            this.textBox_MailAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_MailAddress.Location = new System.Drawing.Point(256, 93);
+            this.textBox_MailAddress.Name = "textBox_MailAddress";
+            this.textBox_MailAddress.Size = new System.Drawing.Size(208, 29);
+            this.textBox_MailAddress.TabIndex = 21;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.BackColor = System.Drawing.Color.Black;
+            this.label6.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.ForeColor = System.Drawing.Color.White;
+            this.label6.Location = new System.Drawing.Point(204, 97);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(46, 23);
+            this.label6.TabIndex = 22;
+            this.label6.Text = "Mail";
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(473, 192);
+            this.ClientSize = new System.Drawing.Size(473, 189);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.textBox_MailAddress);
             this.Controls.Add(this.textBox_PortNum);
             this.Controls.Add(this.label_Port);
             this.Controls.Add(this.textBox_IPAddr);
@@ -266,5 +291,7 @@
         private System.Windows.Forms.Label label_Port;
         private System.Windows.Forms.TextBox textBox_IPAddr;
         private System.Windows.Forms.Label label_IPAddr;
+        internal System.Windows.Forms.TextBox textBox_MailAddress;
+        private System.Windows.Forms.Label label6;
     }
 }

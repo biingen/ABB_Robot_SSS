@@ -41,6 +41,10 @@ namespace SerialPortTest_002
         {
             return ((string)this.textBox_PortNum.Text);
         }
+        public string getMailAddress()
+        {
+            return ((string)this.textBox_MailAddress.Text);
+        }
 
         public Form2()
         {

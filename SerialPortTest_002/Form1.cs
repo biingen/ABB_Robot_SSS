@@ -16,6 +16,7 @@ using Camera_NET;
 using DirectShowLib;
 using Driver_Layer;
 using System.Net.Sockets;
+using System.Timers;
 
 namespace SerialPortTest_002
 {
@@ -307,6 +308,7 @@ namespace SerialPortTest_002
             int DataLen;
             string IP;
             int NetworkPort;
+            string MailAddress;
             //---------------- display RS232 setting panel ------------------//
             //form2.Owner = this;
             form2.ShowDialog(this);
@@ -323,6 +325,7 @@ namespace SerialPortTest_002
                 DataLen = form2.getComPortByteCount();
                 IP = form2.getNetworkIP();
                 NetworkPort = int.Parse(form2.getNetworkPort());
+                MailAddress = form2.getMailAddress();
                 if (ComPortHandle.OpenPort(PortNumber, BautRate, ParryBit, DataLen, StopBit) >= 1)
                 {
                     UILED.Invoke(1);
@@ -762,16 +765,7 @@ namespace SerialPortTest_002
                         {
                             CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
                             NetworkHandle.Send(CmdLine);
-                            //Delay Time
-                            if (this.dataGridView1.Rows[ExeIndex].Cells[4].Value != null)
-                            {
-                                DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value);
-                            }
-                            else
-                            {
-                                DelayTime = 100;
-                            }
-                            Thread.Sleep(DelayTime);
+                            Counter_Delay(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value));
                         }
 
                         //Invoke(UpdataUIDataGrid, ExeIndex, -3, "");//Flush datagrid
@@ -945,6 +939,45 @@ namespace SerialPortTest_002
                     }
                     sw.Close();
                 }
+            }
+        }
+
+        // 這個Counter專用的delay的內部資料與function
+        static bool Counter_Delay_TimeOutIndicator = false;
+        static UInt64 Counter_Count = 0;
+        private void Counter_Delay_UsbOnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            Counter_Count++;
+            Counter_Delay_TimeOutIndicator = true;
+        }
+
+        private void Counter_Delay(int delay_ms)
+        {
+            if (delay_ms <= 0) return;
+            bool network_receive = false;
+            network_receive = true;
+            System.Timers.Timer Counter_Timer = new System.Timers.Timer(delay_ms);
+            Counter_Timer.Interval = delay_ms;
+            Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_UsbOnTimedEvent);
+            Counter_Timer.Enabled = true;
+            Counter_Timer.Start();
+            Counter_Timer.AutoReset = true;
+
+            while (Counter_Delay_TimeOutIndicator == false && network_receive == true)
+            {
+                Application.DoEvents();
+                System.Threading.Thread.Sleep(1);//釋放CPU//
+                if (NetworkHandle.Receive() == "Finish")
+                {
+                    Counter_Timer.Stop();
+                    Counter_Timer.Dispose();
+                    network_receive = false;
+                }
+            }
+
+            while (Counter_Delay_TimeOutIndicator == true && network_receive == true)
+            {
+
             }
         }
     }
