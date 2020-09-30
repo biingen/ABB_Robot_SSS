@@ -47,6 +47,10 @@
             this.label_IPAddr = new System.Windows.Forms.Label();
             this.textBox_MailAddress = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cboCameraTypeList = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.cboResolutionList = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
@@ -93,7 +97,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label5.Location = new System.Drawing.Point(7, 155);
+            this.label5.Location = new System.Drawing.Point(7, 152);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(62, 16);
             this.label5.TabIndex = 4;
@@ -162,7 +166,7 @@
             this.ComboBox_StopBit.Items.AddRange(new object[] {
             "1",
             "2"});
-            this.ComboBox_StopBit.Location = new System.Drawing.Point(89, 155);
+            this.ComboBox_StopBit.Location = new System.Drawing.Point(89, 152);
             this.ComboBox_StopBit.Name = "ComboBox_StopBit";
             this.ComboBox_StopBit.Size = new System.Drawing.Size(93, 24);
             this.ComboBox_StopBit.TabIndex = 9;
@@ -170,7 +174,7 @@
             // BTN_Connect
             // 
             this.BTN_Connect.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.BTN_Connect.Location = new System.Drawing.Point(357, 138);
+            this.BTN_Connect.Location = new System.Drawing.Point(355, 189);
             this.BTN_Connect.Name = "BTN_Connect";
             this.BTN_Connect.Size = new System.Drawing.Size(107, 41);
             this.BTN_Connect.TabIndex = 10;
@@ -181,7 +185,7 @@
             // textBox_PortNum
             // 
             this.textBox_PortNum.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_PortNum.Location = new System.Drawing.Point(325, 56);
+            this.textBox_PortNum.Location = new System.Drawing.Point(325, 48);
             this.textBox_PortNum.MaxLength = 5;
             this.textBox_PortNum.Name = "textBox_PortNum";
             this.textBox_PortNum.Size = new System.Drawing.Size(139, 31);
@@ -194,7 +198,7 @@
             this.label_Port.BackColor = System.Drawing.Color.Black;
             this.label_Port.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label_Port.ForeColor = System.Drawing.Color.White;
-            this.label_Port.Location = new System.Drawing.Point(204, 59);
+            this.label_Port.Location = new System.Drawing.Point(204, 51);
             this.label_Port.Name = "label_Port";
             this.label_Port.Size = new System.Drawing.Size(113, 23);
             this.label_Port.TabIndex = 18;
@@ -203,7 +207,7 @@
             // textBox_IPAddr
             // 
             this.textBox_IPAddr.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_IPAddr.Location = new System.Drawing.Point(291, 18);
+            this.textBox_IPAddr.Location = new System.Drawing.Point(291, 13);
             this.textBox_IPAddr.MaxLength = 15;
             this.textBox_IPAddr.Name = "textBox_IPAddr";
             this.textBox_IPAddr.Size = new System.Drawing.Size(173, 31);
@@ -216,7 +220,7 @@
             this.label_IPAddr.BackColor = System.Drawing.Color.Black;
             this.label_IPAddr.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label_IPAddr.ForeColor = System.Drawing.Color.White;
-            this.label_IPAddr.Location = new System.Drawing.Point(204, 21);
+            this.label_IPAddr.Location = new System.Drawing.Point(204, 16);
             this.label_IPAddr.Name = "label_IPAddr";
             this.label_IPAddr.Size = new System.Drawing.Size(81, 23);
             this.label_IPAddr.TabIndex = 16;
@@ -225,7 +229,7 @@
             // textBox_MailAddress
             // 
             this.textBox_MailAddress.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_MailAddress.Location = new System.Drawing.Point(256, 93);
+            this.textBox_MailAddress.Location = new System.Drawing.Point(256, 83);
             this.textBox_MailAddress.Name = "textBox_MailAddress";
             this.textBox_MailAddress.Size = new System.Drawing.Size(208, 31);
             this.textBox_MailAddress.TabIndex = 21;
@@ -237,17 +241,71 @@
             this.label6.BackColor = System.Drawing.Color.Black;
             this.label6.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(204, 97);
+            this.label6.Location = new System.Drawing.Point(204, 87);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(46, 23);
             this.label6.TabIndex = 22;
             this.label6.Text = "Mail";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.BackColor = System.Drawing.Color.Black;
+            this.label7.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.ForeColor = System.Drawing.Color.White;
+            this.label7.Location = new System.Drawing.Point(204, 121);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(64, 23);
+            this.label7.TabIndex = 23;
+            this.label7.Text = "Device";
+            // 
+            // cboCameraTypeList
+            // 
+            this.cboCameraTypeList.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboCameraTypeList.FormattingEnabled = true;
+            this.cboCameraTypeList.Items.AddRange(new object[] {
+            "1",
+            "2"});
+            this.cboCameraTypeList.Location = new System.Drawing.Point(274, 121);
+            this.cboCameraTypeList.Name = "cboCameraTypeList";
+            this.cboCameraTypeList.Size = new System.Drawing.Size(190, 24);
+            this.cboCameraTypeList.TabIndex = 24;
+            this.cboCameraTypeList.SelectedIndexChanged += new System.EventHandler(this.cboCameraTypeList_SelectedIndexChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.BackColor = System.Drawing.Color.Black;
+            this.label8.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.ForeColor = System.Drawing.Color.White;
+            this.label8.Location = new System.Drawing.Point(204, 152);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(95, 23);
+            this.label8.TabIndex = 25;
+            this.label8.Text = "Resolution";
+            // 
+            // cboResolutionList
+            // 
+            this.cboResolutionList.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboResolutionList.FormattingEnabled = true;
+            this.cboResolutionList.Items.AddRange(new object[] {
+            "1",
+            "2"});
+            this.cboResolutionList.Location = new System.Drawing.Point(305, 152);
+            this.cboResolutionList.Name = "cboResolutionList";
+            this.cboResolutionList.Size = new System.Drawing.Size(159, 24);
+            this.cboResolutionList.TabIndex = 26;
+            this.cboResolutionList.SelectedIndexChanged += new System.EventHandler(this.cboResolutionList_SelectedIndexChanged);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(473, 189);
+            this.ClientSize = new System.Drawing.Size(473, 240);
+            this.Controls.Add(this.cboResolutionList);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.cboCameraTypeList);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.textBox_MailAddress);
             this.Controls.Add(this.textBox_PortNum);
@@ -269,6 +327,7 @@
             this.MinimizeBox = false;
             this.Name = "Form2";
             this.Text = "ComPort Setting";
+            this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -294,5 +353,9 @@
         private System.Windows.Forms.Label label_IPAddr;
         internal System.Windows.Forms.TextBox textBox_MailAddress;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox cboCameraTypeList;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox cboResolutionList;
     }
 }

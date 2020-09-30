@@ -8,11 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
+using Camera_NET;
+using DirectShowLib;
 
 namespace SerialPortTest_002
 {
     public partial class Form2 : Form
     {
+        //创建摄像头操作对象
+        private CameraChoice cameraChoice = new CameraChoice();
+        private CameraControl cameraControl = new CameraControl();
+
         public string getComPortSetting()
         {
             return ((string)this.comboBox1.SelectedItem);
@@ -92,6 +98,85 @@ namespace SerialPortTest_002
 
         }
 
+        //找到当前计算机上可用的摄像头
+        private void FillCameraList()
+        {
+            cboCameraTypeList.Items.Clear();//首先清空下拉列表
+            cameraChoice.UpdateDeviceList();//更新设备列表
+            //循环把设备列表添加到下拉框
+            foreach (var device in cameraChoice.Devices)
+            {
+                cboCameraTypeList.Items.Add(device.Name);
+            }
+        }
+        //填充可用分辨率的下拉框
+        private void FillResolutionList()
+        {
+            cboResolutionList.Items.Clear();//清空下拉框
+            if (!this.cameraControl.CameraCreated) return; //如果没有摄像头则退出
+            //获取可用分辨率列表
+            ResolutionList resolutions = Camera.GetResolutionList(cameraControl.Moniker);
+            if (resolutions == null) return;
+            int selectedIndex = -1;
+            for (int i = 0; i < resolutions.Count; i++)
+            {
+                cboResolutionList.Items.Add(resolutions[i].ToString());
+                //如果当前的可用分辨率和摄像头分辨率一样，则默认选择最佳分辨率
+                if (resolutions[i].CompareTo(cameraControl.Resolution) == 0)
+                {
+                    selectedIndex = i;
+                }
+            }
+            //设置当前默认的分辨率
+            if (selectedIndex >= 0)
+            {
+                cboResolutionList.SelectedIndex = selectedIndex;
+            }
+        }
 
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            //填充摄像头下拉框和设置默认摄像头
+            FillCameraList();
+            if (cboCameraTypeList.Items.Count > 0)
+            {
+                cboCameraTypeList.SelectedIndex = 0;
+            }
+        }
+
+        private void cboCameraTypeList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboCameraTypeList.SelectedIndex < 0)
+            {
+                cameraControl.CloseCamera();
+            }
+            else
+            {
+                // Set camera
+                cameraControl.SetCamera(cameraChoice.Devices[cboCameraTypeList.SelectedIndex].Mon, null);
+                //SetCamera(_CameraChoice.Devices[ comboBoxCameraList.SelectedIndex ].Mon, null);
+            }
+            FillResolutionList();//显示可用的分辨率
+        }
+
+        //分辨率变化，同时摄像头要重新设置
+        private void cboResolutionList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!cameraControl.CameraCreated)
+                return;
+            int comboBoxResolutionIndex = cboResolutionList.SelectedIndex;
+            if (comboBoxResolutionIndex < 0) return;
+            ResolutionList resolutions = Camera.GetResolutionList(cameraControl.Moniker);
+            if (resolutions == null) return;
+            if (comboBoxResolutionIndex >= resolutions.Count) return;
+            if (0 == resolutions[comboBoxResolutionIndex].CompareTo(cameraControl.Resolution))
+            {
+                // this resolution is already selected
+                return;
+            }
+            // Recreate camera
+            //SetCamera(_Camera.Moniker, resolutions[comboBoxResolutionIndex]);
+            cameraControl.SetCamera(cameraControl.Moniker, resolutions[comboBoxResolutionIndex]);
+        }
     }
 }
