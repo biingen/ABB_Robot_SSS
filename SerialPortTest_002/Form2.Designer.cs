@@ -224,11 +224,12 @@
             // 
             // textBox_MailAddress
             // 
-            this.textBox_MailAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_MailAddress.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox_MailAddress.Location = new System.Drawing.Point(256, 93);
             this.textBox_MailAddress.Name = "textBox_MailAddress";
-            this.textBox_MailAddress.Size = new System.Drawing.Size(208, 29);
+            this.textBox_MailAddress.Size = new System.Drawing.Size(208, 31);
             this.textBox_MailAddress.TabIndex = 21;
+            this.textBox_MailAddress.Text = "tpdqatest@gmail.com";
             // 
             // label6
             // 

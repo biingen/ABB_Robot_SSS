@@ -17,6 +17,8 @@ using DirectShowLib;
 using Driver_Layer;
 using System.Net.Sockets;
 using System.Timers;
+using System.Net.Mail;
+using System.Net.Mime;
 
 namespace SerialPortTest_002
 {
@@ -26,6 +28,7 @@ namespace SerialPortTest_002
         public int FlagComPortStauts;
         int FlagPause;
         int FlagStop;
+        string Cmdreceive;
         //------------------------------------------------------------------------------------------------//
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
@@ -308,7 +311,7 @@ namespace SerialPortTest_002
             int DataLen;
             string IP;
             int NetworkPort;
-            string MailAddress;
+
             //---------------- display RS232 setting panel ------------------//
             //form2.Owner = this;
             form2.ShowDialog(this);
@@ -325,7 +328,7 @@ namespace SerialPortTest_002
                 DataLen = form2.getComPortByteCount();
                 IP = form2.getNetworkIP();
                 NetworkPort = int.Parse(form2.getNetworkPort());
-                MailAddress = form2.getMailAddress();
+
                 if (ComPortHandle.OpenPort(PortNumber, BautRate, ParryBit, DataLen, StopBit) >= 1)
                 {
                     UILED.Invoke(1);
@@ -763,8 +766,8 @@ namespace SerialPortTest_002
                         }
                         else if((CmdType == "ROBOT") || (CmdType == "robot"))
                         {
-                            CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
-                            NetworkHandle.Send(CmdLine);
+                            Cmdreceive = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
+                            NetworkHandle.Send(Cmdreceive);
                             Counter_Delay(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value));
                         }
 
@@ -967,7 +970,7 @@ namespace SerialPortTest_002
             {
                 Application.DoEvents();
                 System.Threading.Thread.Sleep(1);//釋放CPU//
-                if (NetworkHandle.Receive() == "Finish")
+                if (NetworkHandle.Receive() == Cmdreceive + "_Finish")
                 {
                     Counter_Timer.Stop();
                     Counter_Timer.Dispose();
@@ -977,7 +980,75 @@ namespace SerialPortTest_002
 
             while (Counter_Delay_TimeOutIndicator == true && network_receive == true)
             {
+                Form2 form2 = new Form2();
+                sendMail(form2.getMailAddress());
+                Counter_Timer.Stop();
+                Counter_Timer.Dispose();
+                network_receive = false;
+            }
+        }
 
+        public void sendMail(string mailTo)
+        {
+            string To = mailTo + ",";
+            int z = 0;
+            string[] to = To.Split(new char[] { ',' });
+            List<string> MailList = new List<string> { };
+
+            while (to[z] != "")
+            {
+                MailList.Add(to[z]);
+                z++;
+            }
+
+            string Subject = "Robot client receive timeout !!!";
+
+            string Body =
+                                    "<br>" + "<br>" +
+
+                                    "Robot client received message timeout !!! " + "<br>" + "<br>" +
+
+                                    "Please note this E-mail is sent by Google mail system automatically, do not reply. If you have any questions please contact system administrator.";
+
+            SendMail(MailList, Subject, Body);
+        }
+
+        public void SendMail(List<string> MailList, string Subject, string Body)
+        {
+            MailMessage msg = new MailMessage();
+
+            msg.To.Add(string.Join(",", MailList.ToArray()));       //收件者，以逗號分隔不同收件者
+            msg.From = new MailAddress("tpdqatest@gmail.com", "TP_DQA_Test", System.Text.Encoding.UTF8);
+            msg.Subject = Subject;      //郵件標題 
+            msg.SubjectEncoding = System.Text.Encoding.UTF8;        //郵件標題編碼  
+            msg.Body = Body;        //郵件內容
+
+            msg.IsBodyHtml = true;
+            msg.BodyEncoding = System.Text.Encoding.UTF8;       //郵件內容編碼 
+            msg.Priority = MailPriority.High;     //郵件優先級 
+
+            //建立 SmtpClient 物件 並設定 Gmail的smtp主機及Port 
+
+            #region 其它 Host
+            /*
+            ~~~~~~~~~~~~~~~~~       outlook.com smtp.live.com port:25
+            ~~~~~~~~~~~~~~~~~       yahoo smtp.mail.yahoo.com.tw port:465
+            ~~~~~~~~~~~~~~~~~       smtp.gmail.com port:587
+            ~~~~~~~~~~~~~~~~~       tpmx.tpvaoc.com port: 25        //公司內部的SMTP
+            ~~~~~~~~~~~~~~~~~       msa.hinet.net port: 25
+            */
+            #endregion
+
+            try
+            {
+                SmtpClient MySmtp = new SmtpClient("smtp.gmail.com", 587);
+                MySmtp.Credentials = new System.Net.NetworkCredential("tpdqatest@gmail.com", "Auoasc2019");     //設定你的帳號密碼
+                MySmtp.EnableSsl = true;      //Gmail 的 smtp 需打開 SSL
+                MySmtp.Send(msg);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Connect the google smtp server error and mail setting value is disabled. Please check the network connect status.", "Mail send error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
