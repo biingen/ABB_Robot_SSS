@@ -51,6 +51,14 @@ namespace SerialPortTest_002
         {
             return ((string)this.textBox_MailAddress.Text);
         }
+        public int getCameraDevice()
+        {
+            return (this.cboCameraTypeList.SelectedIndex);
+        }
+        public int getCameraResolution()
+        {
+            return (this.cboResolutionList.SelectedIndex);
+        }
 
         public Form2()
         {
@@ -136,12 +144,14 @@ namespace SerialPortTest_002
 
         private void Form2_Load(object sender, EventArgs e)
         {
+            /*
             //填充摄像头下拉框和设置默认摄像头
             FillCameraList();
             if (cboCameraTypeList.Items.Count > 0)
             {
                 cboCameraTypeList.SelectedIndex = 0;
             }
+            */
         }
 
         private void cboCameraTypeList_SelectedIndexChanged(object sender, EventArgs e)

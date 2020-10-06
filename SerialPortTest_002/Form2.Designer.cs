@@ -258,6 +258,7 @@
             this.label7.Size = new System.Drawing.Size(64, 23);
             this.label7.TabIndex = 23;
             this.label7.Text = "Device";
+            this.label7.Visible = false;
             // 
             // cboCameraTypeList
             // 
@@ -270,6 +271,7 @@
             this.cboCameraTypeList.Name = "cboCameraTypeList";
             this.cboCameraTypeList.Size = new System.Drawing.Size(190, 24);
             this.cboCameraTypeList.TabIndex = 24;
+            this.cboCameraTypeList.Visible = false;
             this.cboCameraTypeList.SelectedIndexChanged += new System.EventHandler(this.cboCameraTypeList_SelectedIndexChanged);
             // 
             // label8
@@ -283,6 +285,7 @@
             this.label8.Size = new System.Drawing.Size(95, 23);
             this.label8.TabIndex = 25;
             this.label8.Text = "Resolution";
+            this.label8.Visible = false;
             // 
             // cboResolutionList
             // 
@@ -295,6 +298,7 @@
             this.cboResolutionList.Name = "cboResolutionList";
             this.cboResolutionList.Size = new System.Drawing.Size(159, 24);
             this.cboResolutionList.TabIndex = 26;
+            this.cboResolutionList.Visible = false;
             this.cboResolutionList.SelectedIndexChanged += new System.EventHandler(this.cboResolutionList_SelectedIndexChanged);
             // 
             // Form2

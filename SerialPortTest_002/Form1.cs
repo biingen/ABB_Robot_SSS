@@ -29,6 +29,7 @@ namespace SerialPortTest_002
         int FlagPause;
         int FlagStop;
         string Cmdreceive;
+        int Device, Resolution;
         //------------------------------------------------------------------------------------------------//
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
@@ -328,6 +329,8 @@ namespace SerialPortTest_002
                 DataLen = form2.getComPortByteCount();
                 IP = form2.getNetworkIP();
                 NetworkPort = int.Parse(form2.getNetworkPort());
+                Device = form2.getCameraDevice();
+                Resolution = form2.getCameraResolution();
 
                 if (ComPortHandle.OpenPort(PortNumber, BautRate, ParryBit, DataLen, StopBit) >= 1)
                 {
@@ -374,7 +377,7 @@ namespace SerialPortTest_002
             CameraChoice _CameraChoice = new CameraChoice();
             CameraControl cameraControl = new CameraControl();
             ProcessString ProStr = new ProcessString();
-            
+            Form2 form2 = new Form2();
             string CmdLine = "";
             string ResultLine = "";
             string CmdType;
@@ -472,6 +475,29 @@ namespace SerialPortTest_002
                             RectangleF rectf = new RectangleF(70, 90, 90, 50);
                             if (_CameraChoice.Devices.Count >= 1)
                             {
+                                /*
+                                var moniker = form2.cameraChoice.Devices[Device].Mon;
+                                ResolutionList resolutions = Camera.GetResolutionList(form2.cameraChoice.Devices[Device].Mon);
+                                form2.cameraControl.SetCamera(form2.cameraChoice.Devices[Device].Mon, resolutions[Resolution] - 1);
+
+                                bitmap = form2.cameraControl.SnapshotSourceImage();
+                                g = Graphics.FromImage(bitmap);
+                                g.DrawString(DateTime.Now.ToString("yyyyMMdd_HHmmss"), new Font("Tahoma", 12), Brushes.Yellow, 0, 0);
+                                g.Flush();
+                                //Delay Time
+                                if (this.dataGridView1.Rows[ExeIndex].Cells[4].Value != null)
+                                {
+                                    DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value);
+                                }
+                                else
+                                {
+                                    DelayTime = 100;
+                                }
+                                Thread.Sleep(DelayTime);
+                                bitmap.Save(Image_CurrentPath + "\\" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                                form2.cameraControl.CloseCamera();
+                                */
+
                                 //Cmd line
                                 CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
                                 CmdString = CmdLine.PadLeft(2, '0').Split(' ');
@@ -485,7 +511,9 @@ namespace SerialPortTest_002
                                     {
                                         if (((Cmdbuf[0] < 0x99) && (i == Cmdbuf[0])) || (Cmdbuf[0] == 0x99))
                                         {
-                                            cameraControl.SetCamera(_CameraChoice.Devices[i].Mon, null);
+                                            var moniker = _CameraChoice.Devices[i].Mon;
+                                            ResolutionList resolutions = Camera.GetResolutionList(moniker);
+                                            cameraControl.SetCamera(moniker, resolutions[resolutions.Count-1]);
 
                                             bitmap = cameraControl.SnapshotSourceImage();
                                             g = Graphics.FromImage(bitmap);
