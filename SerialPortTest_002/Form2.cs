@@ -47,6 +47,10 @@ namespace SerialPortTest_002
         {
             return ((string)this.textBox_PortNum.Text);
         }
+        public int getNetworkTimeOut()
+        {
+            return (Convert.ToInt32((string)this.textBox_Timeout.Text));
+        }
         public string getMailAddress()
         {
             return ((string)this.textBox_MailAddress.Text);

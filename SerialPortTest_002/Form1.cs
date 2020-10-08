@@ -29,7 +29,7 @@ namespace SerialPortTest_002
         int FlagPause;
         int FlagStop;
         string Cmdreceive;
-        int Device, Resolution;
+        int Device, Resolution, Timeout;
         //------------------------------------------------------------------------------------------------//
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
@@ -329,6 +329,7 @@ namespace SerialPortTest_002
                 DataLen = form2.getComPortByteCount();
                 IP = form2.getNetworkIP();
                 NetworkPort = int.Parse(form2.getNetworkPort());
+                Timeout = form2.getNetworkTimeOut();
                 Device = form2.getCameraDevice();
                 Resolution = form2.getCameraResolution();
 
@@ -984,11 +985,11 @@ namespace SerialPortTest_002
 
         private void Counter_Delay(int delay_ms)
         {
-            if (delay_ms <= 0) return;
+            if (Timeout <= 0) return;
             bool network_receive = false;
             network_receive = true;
-            System.Timers.Timer Counter_Timer = new System.Timers.Timer(delay_ms);
-            Counter_Timer.Interval = delay_ms;
+            System.Timers.Timer Counter_Timer = new System.Timers.Timer(Timeout);
+            Counter_Timer.Interval = Timeout;
             Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_UsbOnTimedEvent);
             Counter_Timer.Enabled = true;
             Counter_Timer.Start();
@@ -1003,6 +1004,7 @@ namespace SerialPortTest_002
                     Counter_Timer.Stop();
                     Counter_Timer.Dispose();
                     network_receive = false;
+                    Thread.Sleep(delay_ms);
                 }
             }
 
