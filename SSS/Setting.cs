@@ -13,7 +13,7 @@ using DirectShowLib;
 
 namespace SerialPortTest_002
 {
-    public partial class Form2 : Form
+    public partial class Setting : Form
     {
         //创建摄像头操作对象
         private CameraChoice cameraChoice = new CameraChoice();
@@ -64,7 +64,7 @@ namespace SerialPortTest_002
             return (this.cboResolutionList.SelectedIndex);
         }
 
-        public Form2()
+        public Setting()
         {
             //
             string[] SerialPortName;

@@ -22,7 +22,7 @@ using System.Net.Mime;
 
 namespace SerialPortTest_002
 {
-    public partial class Form1 : Form
+    public partial class SSS : Form
     {
         string TargetFilePath;
         public int FlagComPortStauts;
@@ -107,7 +107,7 @@ namespace SerialPortTest_002
             }
         }
         //------------------------------------------------------------------------------------------------//
-        public Form1()
+        public SSS()
         {
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
@@ -302,7 +302,7 @@ namespace SerialPortTest_002
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
 
-            Form2 form2 = new Form2();
+            Setting form2 = new Setting();
             UpdateUI UILED = new UpdateUI(Form1UPDateComportLedStatus);
             UpdateUI UINetworkLED = new UpdateUI(Form1UPDateNetworkLedStatus);
             string PortNumber;
@@ -378,7 +378,7 @@ namespace SerialPortTest_002
             CameraChoice _CameraChoice = new CameraChoice();
             CameraControl cameraControl = new CameraControl();
             ProcessString ProStr = new ProcessString();
-            Form2 form2 = new Form2();
+            Setting form2 = new Setting();
             string CmdLine = "";
             string ResultLine = "";
             string CmdType;
@@ -1010,7 +1010,7 @@ namespace SerialPortTest_002
 
             while (Counter_Delay_TimeOutIndicator == true && network_receive == true)
             {
-                Form2 form2 = new Form2();
+                Setting form2 = new Setting();
                 sendMail(form2.getMailAddress());
                 Counter_Timer.Stop();
                 Counter_Timer.Dispose();
