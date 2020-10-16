@@ -1,6 +1,6 @@
 ﻿namespace SerialPortTest_002
 {
-    partial class SSS
+    partial class Main
     {
         /// <summary>
         /// 設計工具所需的變數。

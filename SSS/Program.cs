@@ -16,7 +16,7 @@ namespace SerialPortTest_002
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new SSS());
+            Application.Run(new Main());
         }
     }
 }

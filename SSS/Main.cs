@@ -22,7 +22,7 @@ using System.Net.Mime;
 
 namespace SerialPortTest_002
 {
-    public partial class SSS : Form
+    public partial class Main : Form
     {
         string TargetFilePath;
         public int FlagComPortStauts;
@@ -107,7 +107,7 @@ namespace SerialPortTest_002
             }
         }
         //------------------------------------------------------------------------------------------------//
-        public SSS()
+        public Main()
         {
             InitializeComponent();
             tempDataGrid = this.dataGridView1;

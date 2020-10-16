@@ -56,11 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SSS.cs">
+    <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SSS.Designer.cs">
-      <DependentUpon>SSS.cs</DependentUpon>
+    <Compile Include="Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="Setting.cs">
       <SubType>Form</SubType>
@@ -78,8 +78,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ImageResource.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="SSS.resx">
-      <DependentUpon>SSS.cs</DependentUpon>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Setting.resx">
       <DependentUpon>Setting.cs</DependentUpon>
