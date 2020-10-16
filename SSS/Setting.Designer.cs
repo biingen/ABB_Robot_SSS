@@ -1,4 +1,4 @@
-﻿namespace SerialPortTest_002
+﻿namespace SSS
 {
     partial class Setting
     {

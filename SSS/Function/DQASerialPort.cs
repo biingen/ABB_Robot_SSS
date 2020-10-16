@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SerialPortTest_002;
-
+using SSS;
 
 namespace DQASerailPortFunction
 {
@@ -162,17 +161,8 @@ namespace DQATestCoreFun
 
             //    }
             //}
-
-
-
-
-
-
-
-
         }
     }
-
 }
 
 

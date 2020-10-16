@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6E1409CE-EE5C-477C-BD62-633DC94192BA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>SerialPortTest_002</RootNamespace>
-    <AssemblyName>SerialPortTest_002</AssemblyName>
+    <RootNamespace>SSS</RootNamespace>
+    <AssemblyName>SSS</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

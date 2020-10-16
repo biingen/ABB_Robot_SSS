@@ -11,7 +11,7 @@ using System.IO.Ports;
 using Camera_NET;
 using DirectShowLib;
 
-namespace SerialPortTest_002
+namespace SSS
 {
     public partial class Setting : Form
     {

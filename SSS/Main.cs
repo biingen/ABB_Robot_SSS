@@ -20,7 +20,7 @@ using System.Timers;
 using System.Net.Mail;
 using System.Net.Mime;
 
-namespace SerialPortTest_002
+namespace SSS
 {
     public partial class Main : Form
     {

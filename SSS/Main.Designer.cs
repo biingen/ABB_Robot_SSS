@@ -1,4 +1,4 @@
-﻿namespace SerialPortTest_002
+﻿namespace SSS
 {
     partial class Main
     {
@@ -77,7 +77,7 @@
             // 
             // toolStripButton1
             // 
-            this.toolStripButton1.Image = global::SerialPortTest_002.ImageResource.open_file;
+            this.toolStripButton1.Image = global::SSS.ImageResource.open_file;
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(99, 24);
@@ -86,7 +86,7 @@
             // 
             // toolStripButton2
             // 
-            this.toolStripButton2.Image = global::SerialPortTest_002.ImageResource.tools;
+            this.toolStripButton2.Image = global::SSS.ImageResource.tools;
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(83, 24);
@@ -95,7 +95,7 @@
             // 
             // toolStripButton3
             // 
-            this.toolStripButton3.Image = global::SerialPortTest_002.ImageResource.save_file;
+            this.toolStripButton3.Image = global::SSS.ImageResource.save_file;
             this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton3.Name = "toolStripButton3";
             this.toolStripButton3.Size = new System.Drawing.Size(94, 24);
@@ -245,8 +245,8 @@
             // 
             // PIC_ComPortStatus
             // 
-            this.PIC_ComPortStatus.Image = global::SerialPortTest_002.ImageResource.BlackLED;
-            this.PIC_ComPortStatus.InitialImage = global::SerialPortTest_002.ImageResource.BlackLED;
+            this.PIC_ComPortStatus.Image = global::SSS.ImageResource.BlackLED;
+            this.PIC_ComPortStatus.InitialImage = global::SSS.ImageResource.BlackLED;
             this.PIC_ComPortStatus.Location = new System.Drawing.Point(41, 802);
             this.PIC_ComPortStatus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.PIC_ComPortStatus.Name = "PIC_ComPortStatus";
@@ -257,7 +257,7 @@
             // BTN_Stop
             // 
             this.BTN_Stop.Enabled = false;
-            this.BTN_Stop.Image = global::SerialPortTest_002.ImageResource.stop;
+            this.BTN_Stop.Image = global::SSS.ImageResource.stop;
             this.BTN_Stop.Location = new System.Drawing.Point(1115, 786);
             this.BTN_Stop.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BTN_Stop.Name = "BTN_Stop";
@@ -269,7 +269,7 @@
             // BTN_Pause
             // 
             this.BTN_Pause.Enabled = false;
-            this.BTN_Pause.Image = global::SerialPortTest_002.ImageResource.pause_button;
+            this.BTN_Pause.Image = global::SSS.ImageResource.pause_button;
             this.BTN_Pause.Location = new System.Drawing.Point(980, 786);
             this.BTN_Pause.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BTN_Pause.Name = "BTN_Pause";
@@ -280,7 +280,7 @@
             // 
             // BTN_StartTest
             // 
-            this.BTN_StartTest.Image = global::SerialPortTest_002.ImageResource.play_button;
+            this.BTN_StartTest.Image = global::SSS.ImageResource.play_button;
             this.BTN_StartTest.Location = new System.Drawing.Point(845, 786);
             this.BTN_StartTest.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BTN_StartTest.Name = "BTN_StartTest";
@@ -302,8 +302,8 @@
             // 
             // PIC_NetworkStatus
             // 
-            this.PIC_NetworkStatus.Image = global::SerialPortTest_002.ImageResource.BlackLED;
-            this.PIC_NetworkStatus.InitialImage = global::SerialPortTest_002.ImageResource.BlackLED;
+            this.PIC_NetworkStatus.Image = global::SSS.ImageResource.BlackLED;
+            this.PIC_NetworkStatus.InitialImage = global::SSS.ImageResource.BlackLED;
             this.PIC_NetworkStatus.Location = new System.Drawing.Point(217, 804);
             this.PIC_NetworkStatus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.PIC_NetworkStatus.Name = "PIC_NetworkStatus";
