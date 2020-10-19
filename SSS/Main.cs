@@ -342,6 +342,7 @@ namespace SSS
                     UILED.Invoke(0);
                     MessageBox.Show("Open Port fail");
                 }
+
                 if (IP != "" && NetworkPort > 0 && NetworkPort < 65536)
                 {
                     UINetworkLED.Invoke(1);
@@ -965,7 +966,8 @@ namespace SSS
                             {
                                 scheduleOutput = String.Format("\"{0}\"", scheduleOutput);
                             }
-                            strRowValue += scheduleOutput + delimiter;
+                            if (k != 3)
+                                strRowValue += scheduleOutput + delimiter;
                         }
                         sw.WriteLine(strRowValue);
                     }
@@ -999,7 +1001,7 @@ namespace SSS
             {
                 Application.DoEvents();
                 System.Threading.Thread.Sleep(1);//釋放CPU//
-                if (NetworkHandle.Receive() == Cmdreceive + "_Finish")
+                if (NetworkHandle.Receive() == Cmdreceive + "_Finished")
                 {
                     Counter_Timer.Stop();
                     Counter_Timer.Dispose();
