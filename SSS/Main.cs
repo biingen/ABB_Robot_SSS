@@ -332,7 +332,8 @@ namespace SSS
                 Timeout = form2.getNetworkTimeOut();
                 Device = form2.getCameraDevice();
                 Resolution = form2.getCameraResolution();
-
+				//remarked for current design//
+                /*
                 if (ComPortHandle.OpenPort(PortNumber, BautRate, ParryBit, DataLen, StopBit) >= 1)
                 {
                     UILED.Invoke(1);
@@ -342,7 +343,7 @@ namespace SSS
                     UILED.Invoke(0);
                     MessageBox.Show("Open Port fail");
                 }
-
+                */
                 if (IP != "" && NetworkPort > 0 && NetworkPort < 65536)
                 {
                     UINetworkLED.Invoke(1);
@@ -487,9 +488,9 @@ namespace SSS
                                 g.DrawString(DateTime.Now.ToString("yyyyMMdd_HHmmss"), new Font("Tahoma", 12), Brushes.Yellow, 0, 0);
                                 g.Flush();
                                 //Delay Time
-                                if (this.dataGridView1.Rows[ExeIndex].Cells[4].Value != null)
+                                if (this.dataGridView1.Rows[ExeIndex].Cells[3].Value != null)
                                 {
-                                    DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value);
+                                    DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value);
                                 }
                                 else
                                 {
@@ -522,9 +523,9 @@ namespace SSS
                                             g.DrawString(DateTime.Now.ToString("yyyyMMdd_HHmmss"), new Font("Tahoma", 12), Brushes.Yellow, 0, 0);
                                             g.Flush();
                                             //Delay Time
-                                            if (this.dataGridView1.Rows[ExeIndex].Cells[4].Value != null)
+                                            if (this.dataGridView1.Rows[ExeIndex].Cells[3].Value != null)
                                             {
-                                                DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value);
+                                                DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value);
                                             }
                                             else
                                             {
@@ -617,14 +618,14 @@ namespace SSS
                                 j++;
                             }
                             //caluate CRC filed
-                            CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[3].Value;
+                            CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[4].Value;
                             CmdString = CmdLine.Split(' ');
                             Cmdbuf[j++] = (byte)((ProStr.ASCIIToByte((byte)(CmdString[0][0])) * 16) + (ProStr.ASCIIToByte((byte)(CmdString[0][1]))));
                             Cmdbuf[j++] = (byte)((ProStr.ASCIIToByte((byte)(CmdString[1][0])) * 16) + (ProStr.ASCIIToByte((byte)(CmdString[1][1]))));
                             //Delay Time
-                            if (this.dataGridView1.Rows[ExeIndex].Cells[4].Value != null)
+                            if (this.dataGridView1.Rows[ExeIndex].Cells[3].Value != null)
                             {
-                                DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value);
+                                DelayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value);
                             }
                             else
                             {
@@ -798,7 +799,7 @@ namespace SSS
                         {
                             Cmdreceive = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
                             NetworkHandle.Send(Cmdreceive);
-                            Counter_Delay(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[4].Value));
+                            Counter_Delay(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value));
                         }
 
                         //Invoke(UpdataUIDataGrid, ExeIndex, -3, "");//Flush datagrid
@@ -825,7 +826,7 @@ namespace SSS
                     //--------------------- Save test result ----------------//
                     DateStr = Directory.GetCurrentDirectory() + "\\" + "TestResult_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
                     System.IO.StreamWriter wFile = new System.IO.StreamWriter(DateStr);
-                    ResultLine = "CMD,Out String,CRC Field,Delay(ms),Reply String,Result_1,Result_2,Judge,Judge Criterion";
+                    ResultLine = "CMD,Out String,Delay(ms),CRC Field,Reply String,Result_1,Result_2,Judge,Judge Criterion";
                     wFile.WriteLine(ResultLine);
                     for (ExeIndex = 0; ExeIndex < RowCount; ExeIndex++)
                     {
@@ -966,8 +967,7 @@ namespace SSS
                             {
                                 scheduleOutput = String.Format("\"{0}\"", scheduleOutput);
                             }
-                            if (k != 3)
-                                strRowValue += scheduleOutput + delimiter;
+                            strRowValue += scheduleOutput + delimiter;
                         }
                         sw.WriteLine(strRowValue);
                     }
@@ -1001,7 +1001,7 @@ namespace SSS
             {
                 Application.DoEvents();
                 System.Threading.Thread.Sleep(1);//釋放CPU//
-                if (NetworkHandle.Receive() == Cmdreceive + "_Finished")
+                if (NetworkHandle.Receive() == Cmdreceive + "_Finish")
                 {
                     Counter_Timer.Stop();
                     Counter_Timer.Dispose();

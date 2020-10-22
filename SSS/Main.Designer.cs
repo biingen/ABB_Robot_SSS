@@ -33,16 +33,6 @@
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label1 = new System.Windows.Forms.Label();
             this.VerLabel = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -55,6 +45,16 @@
             this.BTN_StartTest = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.PIC_NetworkStatus = new System.Windows.Forms.PictureBox();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStyatus)).BeginInit();
@@ -109,74 +109,19 @@
             this.Column1,
             this.Column10,
             this.Column2,
-            this.Column3,
             this.Column4,
+            this.Column3,
             this.Column5,
             this.Column6,
             this.Column9,
             this.Column7,
             this.Column8});
             this.dataGridView1.Location = new System.Drawing.Point(16, 35);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
             this.dataGridView1.Size = new System.Drawing.Size(1596, 712);
             this.dataGridView1.TabIndex = 1;
-            // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "CMD";
-            this.Column1.Name = "Column1";
-            this.Column1.Width = 50;
-            // 
-            // Column10
-            // 
-            this.Column10.HeaderText = "CMD Description";
-            this.Column10.Name = "Column10";
-            this.Column10.Width = 200;
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "Out String";
-            this.Column2.Name = "Column2";
-            this.Column2.Width = 200;
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "CRC Field";
-            this.Column3.Name = "Column3";
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "Delay(ms)";
-            this.Column4.Name = "Column4";
-            // 
-            // Column5
-            // 
-            this.Column5.HeaderText = "Reply String";
-            this.Column5.Name = "Column5";
-            this.Column5.Width = 200;
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "Result_1";
-            this.Column6.Name = "Column6";
-            // 
-            // Column9
-            // 
-            this.Column9.HeaderText = "Result_2";
-            this.Column9.Name = "Column9";
-            // 
-            // Column7
-            // 
-            this.Column7.HeaderText = "Judge ";
-            this.Column7.Name = "Column7";
-            this.Column7.Width = 150;
-            // 
-            // Column8
-            // 
-            this.Column8.HeaderText = "Judge Criterion";
-            this.Column8.Name = "Column8";
             // 
             // label1
             // 
@@ -205,7 +150,7 @@
             this.checkBox1.AutoSize = true;
             this.checkBox1.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.checkBox1.Location = new System.Drawing.Point(381, 772);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBox1.Margin = new System.Windows.Forms.Padding(4);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(83, 29);
             this.checkBox1.TabIndex = 9;
@@ -218,11 +163,11 @@
             this.Txt_LoopCount.Enabled = false;
             this.Txt_LoopCount.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Txt_LoopCount.Location = new System.Drawing.Point(381, 806);
-            this.Txt_LoopCount.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Txt_LoopCount.Margin = new System.Windows.Forms.Padding(4);
             this.Txt_LoopCount.Name = "Txt_LoopCount";
             this.Txt_LoopCount.Size = new System.Drawing.Size(119, 34);
             this.Txt_LoopCount.TabIndex = 10;
-            this.Txt_LoopCount.Text = "0";
+            this.Txt_LoopCount.Text = "1";
             // 
             // Label_LoopCounter
             // 
@@ -237,7 +182,7 @@
             // Picbox_CurrentStyatus
             // 
             this.Picbox_CurrentStyatus.Location = new System.Drawing.Point(579, 772);
-            this.Picbox_CurrentStyatus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Picbox_CurrentStyatus.Margin = new System.Windows.Forms.Padding(4);
             this.Picbox_CurrentStyatus.Name = "Picbox_CurrentStyatus";
             this.Picbox_CurrentStyatus.Size = new System.Drawing.Size(213, 75);
             this.Picbox_CurrentStyatus.TabIndex = 8;
@@ -246,9 +191,8 @@
             // PIC_ComPortStatus
             // 
             this.PIC_ComPortStatus.Image = global::SSS.ImageResource.BlackLED;
-            this.PIC_ComPortStatus.InitialImage = global::SSS.ImageResource.BlackLED;
             this.PIC_ComPortStatus.Location = new System.Drawing.Point(41, 802);
-            this.PIC_ComPortStatus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.PIC_ComPortStatus.Margin = new System.Windows.Forms.Padding(4);
             this.PIC_ComPortStatus.Name = "PIC_ComPortStatus";
             this.PIC_ComPortStatus.Size = new System.Drawing.Size(44, 44);
             this.PIC_ComPortStatus.TabIndex = 5;
@@ -259,7 +203,7 @@
             this.BTN_Stop.Enabled = false;
             this.BTN_Stop.Image = global::SSS.ImageResource.stop;
             this.BTN_Stop.Location = new System.Drawing.Point(1115, 786);
-            this.BTN_Stop.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BTN_Stop.Margin = new System.Windows.Forms.Padding(4);
             this.BTN_Stop.Name = "BTN_Stop";
             this.BTN_Stop.Size = new System.Drawing.Size(127, 50);
             this.BTN_Stop.TabIndex = 4;
@@ -271,7 +215,7 @@
             this.BTN_Pause.Enabled = false;
             this.BTN_Pause.Image = global::SSS.ImageResource.pause_button;
             this.BTN_Pause.Location = new System.Drawing.Point(980, 786);
-            this.BTN_Pause.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BTN_Pause.Margin = new System.Windows.Forms.Padding(4);
             this.BTN_Pause.Name = "BTN_Pause";
             this.BTN_Pause.Size = new System.Drawing.Size(127, 50);
             this.BTN_Pause.TabIndex = 3;
@@ -282,7 +226,7 @@
             // 
             this.BTN_StartTest.Image = global::SSS.ImageResource.play_button;
             this.BTN_StartTest.Location = new System.Drawing.Point(845, 786);
-            this.BTN_StartTest.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BTN_StartTest.Margin = new System.Windows.Forms.Padding(4);
             this.BTN_StartTest.Name = "BTN_StartTest";
             this.BTN_StartTest.Size = new System.Drawing.Size(127, 50);
             this.BTN_StartTest.TabIndex = 2;
@@ -303,15 +247,69 @@
             // PIC_NetworkStatus
             // 
             this.PIC_NetworkStatus.Image = global::SSS.ImageResource.BlackLED;
-            this.PIC_NetworkStatus.InitialImage = global::SSS.ImageResource.BlackLED;
             this.PIC_NetworkStatus.Location = new System.Drawing.Point(217, 804);
-            this.PIC_NetworkStatus.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.PIC_NetworkStatus.Margin = new System.Windows.Forms.Padding(4);
             this.PIC_NetworkStatus.Name = "PIC_NetworkStatus";
             this.PIC_NetworkStatus.Size = new System.Drawing.Size(44, 44);
             this.PIC_NetworkStatus.TabIndex = 13;
             this.PIC_NetworkStatus.TabStop = false;
             // 
-            // Form1
+            // Column1
+            // 
+            this.Column1.HeaderText = "CMD";
+            this.Column1.Name = "Column1";
+            this.Column1.Width = 50;
+            // 
+            // Column10
+            // 
+            this.Column10.HeaderText = "CMD Description";
+            this.Column10.Name = "Column10";
+            this.Column10.Width = 200;
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "Out String";
+            this.Column2.Name = "Column2";
+            this.Column2.Width = 200;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "Delay(ms)";
+            this.Column4.Name = "Column4";
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "CRC Field";
+            this.Column3.Name = "Column3";
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "Reply String";
+            this.Column5.Name = "Column5";
+            this.Column5.Width = 200;
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "Result_1";
+            this.Column6.Name = "Column6";
+            // 
+            // Column9
+            // 
+            this.Column9.HeaderText = "Result_2";
+            this.Column9.Name = "Column9";
+            // 
+            // Column7
+            // 
+            this.Column7.HeaderText = "Judge ";
+            this.Column7.Name = "Column7";
+            this.Column7.Width = 150;
+            // 
+            // Column8
+            // 
+            this.Column8.HeaderText = "Judge Criterion";
+            this.Column8.Name = "Column8";
+            // 
+            // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -330,9 +328,9 @@
             this.Controls.Add(this.BTN_StartTest);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.toolStrip1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
-            this.Name = "Form1";
+            this.Name = "Main";
             this.Text = "SSS";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
@@ -358,22 +356,22 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label VerLabel;
         private System.Windows.Forms.PictureBox Picbox_CurrentStyatus;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.TextBox Txt_LoopCount;
         private System.Windows.Forms.Label Label_LoopCounter;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox PIC_NetworkStatus;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
     }
 }
 

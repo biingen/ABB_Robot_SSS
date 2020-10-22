@@ -91,7 +91,8 @@ namespace SSS
         }
 
         private void BTN_Connect_Click(object sender, EventArgs e)
-        {
+        {	//remarked for current design//
+            /*
             SerialPort PortHandle = new SerialPort();
             //string tempStr;
             PortHandle.PortName = (string)this.comboBox1.SelectedItem;
@@ -107,7 +108,7 @@ namespace SSS
                 
                 MessageBox.Show((string)this.comboBox1.SelectedItem + " is opened by other app.");
             }
-
+            */
         }
 
         //找到当前计算机上可用的摄像头
