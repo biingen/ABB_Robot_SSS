@@ -30,6 +30,9 @@ namespace SSS
         int FlagStop;
         string Cmdreceive;
         int Device, Resolution, Timeout;
+        //创建摄像头操作对象
+        private CameraChoice cameraChoice = new CameraChoice();
+        private CameraControl cameraControl = new CameraControl();
         //------------------------------------------------------------------------------------------------//
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
@@ -1087,6 +1090,42 @@ namespace SSS
             catch (Exception)
             {
                 MessageBox.Show("Connect the google smtp server error and mail setting value is disabled. Please check the network connect status.", "Mail send error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+            //填充摄像头下拉框和设置默认摄像头
+            FillCameraList();
+            if (cboCameraTypeList.Items.Count > 0)
+            {
+                cboCameraTypeList.SelectedIndex = 0;
+            }
+        }
+
+        //找到当前计算机上可用的摄像头
+        private void FillCameraList()
+        {
+            cboCameraTypeList.Items.Clear();//首先清空下拉列表
+            cameraChoice.UpdateDeviceList();//更新设备列表
+            //循环把设备列表添加到下拉框
+            foreach (var device in cameraChoice.Devices)
+            {
+                cboCameraTypeList.Items.Add(device.Name);
+            }
+        }
+
+        private void cboCameraTypeList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboCameraTypeList.SelectedIndex < 0)
+            {
+                cameraControl.CloseCamera();
+            }
+            else
+            {
+                // Set camera
+                cameraControl.SetCamera(cameraChoice.Devices[cboCameraTypeList.SelectedIndex].Mon, null);
+                //SetCamera(_CameraChoice.Devices[ comboBoxCameraList.SelectedIndex ].Mon, null);
             }
         }
     }

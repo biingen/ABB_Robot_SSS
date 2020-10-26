@@ -147,18 +147,6 @@ namespace SSS
             }
         }
 
-        private void Form2_Load(object sender, EventArgs e)
-        {
-            /*
-            //填充摄像头下拉框和设置默认摄像头
-            FillCameraList();
-            if (cboCameraTypeList.Items.Count > 0)
-            {
-                cboCameraTypeList.SelectedIndex = 0;
-            }
-            */
-        }
-
         private void cboCameraTypeList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cboCameraTypeList.SelectedIndex < 0)
