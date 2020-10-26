@@ -344,7 +344,7 @@ namespace SSS
                     MessageBox.Show("Open Port fail");
                 }
                 */
-                if (IP != "" && NetworkPort > 0 && NetworkPort < 65536)
+                if (IP != "" && NetworkPort > 0 && NetworkPort < 65536 && NetworkHandle.TestConnection(IP, NetworkPort, 500) == true)
                 {
                     UINetworkLED.Invoke(1);
                     NetworkHandle.SetIpAddr(IP);
@@ -353,6 +353,12 @@ namespace SSS
                     NetworkHandle._updateTBSendCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
                     if (!NetworkHandle.IsConnected())
                         NetworkHandle.Start();
+                    else
+                    {
+                        NetworkHandle.Close();
+                        NetworkHandle.Start();
+                    }
+
                 }
                 else
                 {
