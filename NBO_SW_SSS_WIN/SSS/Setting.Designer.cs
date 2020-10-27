@@ -35,7 +35,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBox_Portname = new System.Windows.Forms.ComboBox();
             this.ComboBox_BaudRate = new System.Windows.Forms.ComboBox();
             this.ComboBox_ParrityBit = new System.Windows.Forms.ComboBox();
             this.ComboBox_ByteCount = new System.Windows.Forms.ComboBox();
@@ -53,15 +53,22 @@
             this.cboResolutionList = new System.Windows.Forms.ComboBox();
             this.textBox_Timeout = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.Port_groupBox = new System.Windows.Forms.GroupBox();
+            this.Network_groupBox = new System.Windows.Forms.GroupBox();
+            this.Comport_checkBox = new System.Windows.Forms.CheckBox();
+            this.Network_checkBox = new System.Windows.Forms.CheckBox();
+            this.Port_groupBox.SuspendLayout();
+            this.Network_groupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(7, 21);
+            this.label1.Location = new System.Drawing.Point(7, 54);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(72, 16);
+            this.label1.Size = new System.Drawing.Size(87, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "Port Num:";
             // 
@@ -69,9 +76,10 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label2.Location = new System.Drawing.Point(7, 59);
+            this.label2.Location = new System.Drawing.Point(7, 89);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(77, 16);
+            this.label2.Size = new System.Drawing.Size(92, 20);
             this.label2.TabIndex = 1;
             this.label2.Text = "Baud Rate:";
             // 
@@ -79,9 +87,10 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label3.Location = new System.Drawing.Point(7, 89);
+            this.label3.Location = new System.Drawing.Point(7, 124);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 16);
+            this.label3.Size = new System.Drawing.Size(91, 20);
             this.label3.TabIndex = 2;
             this.label3.Text = "Parrity Bit:";
             // 
@@ -89,9 +98,10 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label4.Location = new System.Drawing.Point(7, 122);
+            this.label4.Location = new System.Drawing.Point(7, 160);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(83, 16);
+            this.label4.Size = new System.Drawing.Size(99, 20);
             this.label4.TabIndex = 3;
             this.label4.Text = "Byte Count:";
             // 
@@ -99,9 +109,10 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label5.Location = new System.Drawing.Point(7, 152);
+            this.label5.Location = new System.Drawing.Point(7, 193);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(62, 16);
+            this.label5.Size = new System.Drawing.Size(75, 20);
             this.label5.TabIndex = 4;
             this.label5.Text = "Stop Bit:";
             // 
@@ -111,14 +122,15 @@
             this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // comboBox1
+            // comboBox_Portname
             // 
-            this.comboBox1.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(89, 18);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(93, 24);
-            this.comboBox1.TabIndex = 5;
+            this.comboBox_Portname.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.comboBox_Portname.FormattingEnabled = true;
+            this.comboBox_Portname.Location = new System.Drawing.Point(117, 50);
+            this.comboBox_Portname.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboBox_Portname.Name = "comboBox_Portname";
+            this.comboBox_Portname.Size = new System.Drawing.Size(123, 28);
+            this.comboBox_Portname.TabIndex = 5;
             // 
             // ComboBox_BaudRate
             // 
@@ -131,9 +143,10 @@
             "38400",
             "76800",
             "115200"});
-            this.ComboBox_BaudRate.Location = new System.Drawing.Point(89, 56);
+            this.ComboBox_BaudRate.Location = new System.Drawing.Point(117, 85);
+            this.ComboBox_BaudRate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ComboBox_BaudRate.Name = "ComboBox_BaudRate";
-            this.ComboBox_BaudRate.Size = new System.Drawing.Size(93, 24);
+            this.ComboBox_BaudRate.Size = new System.Drawing.Size(123, 28);
             this.ComboBox_BaudRate.TabIndex = 6;
             // 
             // ComboBox_ParrityBit
@@ -144,9 +157,10 @@
             "None",
             "Odd",
             "Even"});
-            this.ComboBox_ParrityBit.Location = new System.Drawing.Point(89, 89);
+            this.ComboBox_ParrityBit.Location = new System.Drawing.Point(117, 121);
+            this.ComboBox_ParrityBit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ComboBox_ParrityBit.Name = "ComboBox_ParrityBit";
-            this.ComboBox_ParrityBit.Size = new System.Drawing.Size(93, 24);
+            this.ComboBox_ParrityBit.Size = new System.Drawing.Size(123, 28);
             this.ComboBox_ParrityBit.TabIndex = 7;
             // 
             // ComboBox_ByteCount
@@ -156,9 +170,10 @@
             this.ComboBox_ByteCount.Items.AddRange(new object[] {
             "7",
             "8"});
-            this.ComboBox_ByteCount.Location = new System.Drawing.Point(89, 119);
+            this.ComboBox_ByteCount.Location = new System.Drawing.Point(117, 157);
+            this.ComboBox_ByteCount.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ComboBox_ByteCount.Name = "ComboBox_ByteCount";
-            this.ComboBox_ByteCount.Size = new System.Drawing.Size(93, 24);
+            this.ComboBox_ByteCount.Size = new System.Drawing.Size(123, 28);
             this.ComboBox_ByteCount.TabIndex = 8;
             // 
             // ComboBox_StopBit
@@ -168,17 +183,19 @@
             this.ComboBox_StopBit.Items.AddRange(new object[] {
             "1",
             "2"});
-            this.ComboBox_StopBit.Location = new System.Drawing.Point(89, 152);
+            this.ComboBox_StopBit.Location = new System.Drawing.Point(117, 193);
+            this.ComboBox_StopBit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ComboBox_StopBit.Name = "ComboBox_StopBit";
-            this.ComboBox_StopBit.Size = new System.Drawing.Size(93, 24);
+            this.ComboBox_StopBit.Size = new System.Drawing.Size(123, 28);
             this.ComboBox_StopBit.TabIndex = 9;
             // 
             // BTN_Connect
             // 
             this.BTN_Connect.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.BTN_Connect.Location = new System.Drawing.Point(355, 189);
+            this.BTN_Connect.Location = new System.Drawing.Point(475, 273);
+            this.BTN_Connect.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.BTN_Connect.Name = "BTN_Connect";
-            this.BTN_Connect.Size = new System.Drawing.Size(107, 41);
+            this.BTN_Connect.Size = new System.Drawing.Size(143, 51);
             this.BTN_Connect.TabIndex = 10;
             this.BTN_Connect.Text = "Connect";
             this.BTN_Connect.UseVisualStyleBackColor = true;
@@ -187,10 +204,11 @@
             // textBox_PortNum
             // 
             this.textBox_PortNum.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_PortNum.Location = new System.Drawing.Point(325, 48);
+            this.textBox_PortNum.Location = new System.Drawing.Point(173, 98);
+            this.textBox_PortNum.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox_PortNum.MaxLength = 5;
             this.textBox_PortNum.Name = "textBox_PortNum";
-            this.textBox_PortNum.Size = new System.Drawing.Size(139, 31);
+            this.textBox_PortNum.Size = new System.Drawing.Size(184, 36);
             this.textBox_PortNum.TabIndex = 19;
             this.textBox_PortNum.Text = "1025";
             // 
@@ -200,19 +218,21 @@
             this.label_Port.BackColor = System.Drawing.Color.Black;
             this.label_Port.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label_Port.ForeColor = System.Drawing.Color.White;
-            this.label_Port.Location = new System.Drawing.Point(204, 51);
+            this.label_Port.Location = new System.Drawing.Point(12, 102);
+            this.label_Port.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_Port.Name = "label_Port";
-            this.label_Port.Size = new System.Drawing.Size(113, 23);
+            this.label_Port.Size = new System.Drawing.Size(144, 29);
             this.label_Port.TabIndex = 18;
             this.label_Port.Text = "Port Number";
             // 
             // textBox_IPAddr
             // 
             this.textBox_IPAddr.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_IPAddr.Location = new System.Drawing.Point(291, 13);
+            this.textBox_IPAddr.Location = new System.Drawing.Point(128, 54);
+            this.textBox_IPAddr.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox_IPAddr.MaxLength = 15;
             this.textBox_IPAddr.Name = "textBox_IPAddr";
-            this.textBox_IPAddr.Size = new System.Drawing.Size(173, 31);
+            this.textBox_IPAddr.Size = new System.Drawing.Size(229, 36);
             this.textBox_IPAddr.TabIndex = 17;
             this.textBox_IPAddr.Text = "127.0.0.1";
             // 
@@ -222,18 +242,20 @@
             this.label_IPAddr.BackColor = System.Drawing.Color.Black;
             this.label_IPAddr.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label_IPAddr.ForeColor = System.Drawing.Color.White;
-            this.label_IPAddr.Location = new System.Drawing.Point(204, 16);
+            this.label_IPAddr.Location = new System.Drawing.Point(12, 58);
+            this.label_IPAddr.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_IPAddr.Name = "label_IPAddr";
-            this.label_IPAddr.Size = new System.Drawing.Size(81, 23);
+            this.label_IPAddr.Size = new System.Drawing.Size(101, 29);
             this.label_IPAddr.TabIndex = 16;
             this.label_IPAddr.Text = "Server IP";
             // 
             // textBox_MailAddress
             // 
             this.textBox_MailAddress.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_MailAddress.Location = new System.Drawing.Point(256, 118);
+            this.textBox_MailAddress.Location = new System.Drawing.Point(81, 186);
+            this.textBox_MailAddress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox_MailAddress.Name = "textBox_MailAddress";
-            this.textBox_MailAddress.Size = new System.Drawing.Size(208, 31);
+            this.textBox_MailAddress.Size = new System.Drawing.Size(276, 36);
             this.textBox_MailAddress.TabIndex = 21;
             this.textBox_MailAddress.Text = "tpdqatest@gmail.com";
             // 
@@ -243,9 +265,10 @@
             this.label6.BackColor = System.Drawing.Color.Black;
             this.label6.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(204, 122);
+            this.label6.Location = new System.Drawing.Point(12, 190);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(46, 23);
+            this.label6.Size = new System.Drawing.Size(58, 29);
             this.label6.TabIndex = 22;
             this.label6.Text = "Mail";
             // 
@@ -255,9 +278,10 @@
             this.label7.BackColor = System.Drawing.Color.Black;
             this.label7.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(10, 182);
+            this.label7.Location = new System.Drawing.Point(27, 258);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(64, 23);
+            this.label7.Size = new System.Drawing.Size(79, 29);
             this.label7.TabIndex = 23;
             this.label7.Text = "Device";
             this.label7.Visible = false;
@@ -269,9 +293,10 @@
             this.cboCameraTypeList.Items.AddRange(new object[] {
             "1",
             "2"});
-            this.cboCameraTypeList.Location = new System.Drawing.Point(80, 182);
+            this.cboCameraTypeList.Location = new System.Drawing.Point(121, 258);
+            this.cboCameraTypeList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cboCameraTypeList.Name = "cboCameraTypeList";
-            this.cboCameraTypeList.Size = new System.Drawing.Size(190, 24);
+            this.cboCameraTypeList.Size = new System.Drawing.Size(252, 28);
             this.cboCameraTypeList.TabIndex = 24;
             this.cboCameraTypeList.Visible = false;
             this.cboCameraTypeList.SelectedIndexChanged += new System.EventHandler(this.cboCameraTypeList_SelectedIndexChanged);
@@ -282,9 +307,10 @@
             this.label8.BackColor = System.Drawing.Color.Black;
             this.label8.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.ForeColor = System.Drawing.Color.White;
-            this.label8.Location = new System.Drawing.Point(10, 213);
+            this.label8.Location = new System.Drawing.Point(27, 296);
+            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(95, 23);
+            this.label8.Size = new System.Drawing.Size(121, 29);
             this.label8.TabIndex = 25;
             this.label8.Text = "Resolution";
             this.label8.Visible = false;
@@ -296,9 +322,10 @@
             this.cboResolutionList.Items.AddRange(new object[] {
             "1",
             "2"});
-            this.cboResolutionList.Location = new System.Drawing.Point(111, 213);
+            this.cboResolutionList.Location = new System.Drawing.Point(162, 296);
+            this.cboResolutionList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cboResolutionList.Name = "cboResolutionList";
-            this.cboResolutionList.Size = new System.Drawing.Size(159, 24);
+            this.cboResolutionList.Size = new System.Drawing.Size(211, 28);
             this.cboResolutionList.TabIndex = 26;
             this.cboResolutionList.Visible = false;
             this.cboResolutionList.SelectedIndexChanged += new System.EventHandler(this.cboResolutionList_SelectedIndexChanged);
@@ -306,10 +333,11 @@
             // textBox_Timeout
             // 
             this.textBox_Timeout.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_Timeout.Location = new System.Drawing.Point(334, 83);
+            this.textBox_Timeout.Location = new System.Drawing.Point(185, 142);
+            this.textBox_Timeout.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox_Timeout.MaxLength = 5;
             this.textBox_Timeout.Name = "textBox_Timeout";
-            this.textBox_Timeout.Size = new System.Drawing.Size(130, 31);
+            this.textBox_Timeout.Size = new System.Drawing.Size(172, 36);
             this.textBox_Timeout.TabIndex = 28;
             this.textBox_Timeout.Text = "5000";
             // 
@@ -319,44 +347,96 @@
             this.label9.BackColor = System.Drawing.Color.Black;
             this.label9.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label9.ForeColor = System.Drawing.Color.White;
-            this.label9.Location = new System.Drawing.Point(204, 86);
+            this.label9.Location = new System.Drawing.Point(12, 146);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(124, 23);
+            this.label9.Size = new System.Drawing.Size(156, 29);
             this.label9.TabIndex = 27;
             this.label9.Text = "Time-Out (ms)";
             // 
+            // Port_groupBox
+            // 
+            this.Port_groupBox.Controls.Add(this.Comport_checkBox);
+            this.Port_groupBox.Controls.Add(this.ComboBox_StopBit);
+            this.Port_groupBox.Controls.Add(this.ComboBox_ByteCount);
+            this.Port_groupBox.Controls.Add(this.ComboBox_ParrityBit);
+            this.Port_groupBox.Controls.Add(this.ComboBox_BaudRate);
+            this.Port_groupBox.Controls.Add(this.comboBox_Portname);
+            this.Port_groupBox.Controls.Add(this.label5);
+            this.Port_groupBox.Controls.Add(this.label4);
+            this.Port_groupBox.Controls.Add(this.label3);
+            this.Port_groupBox.Controls.Add(this.label2);
+            this.Port_groupBox.Controls.Add(this.label1);
+            this.Port_groupBox.Location = new System.Drawing.Point(385, 12);
+            this.Port_groupBox.Name = "Port_groupBox";
+            this.Port_groupBox.Size = new System.Drawing.Size(245, 234);
+            this.Port_groupBox.TabIndex = 29;
+            this.Port_groupBox.TabStop = false;
+            this.Port_groupBox.Text = "Comport Setting";
+            // 
+            // Network_groupBox
+            // 
+            this.Network_groupBox.Controls.Add(this.Network_checkBox);
+            this.Network_groupBox.Controls.Add(this.textBox_Timeout);
+            this.Network_groupBox.Controls.Add(this.label9);
+            this.Network_groupBox.Controls.Add(this.label6);
+            this.Network_groupBox.Controls.Add(this.textBox_MailAddress);
+            this.Network_groupBox.Controls.Add(this.textBox_PortNum);
+            this.Network_groupBox.Controls.Add(this.label_Port);
+            this.Network_groupBox.Controls.Add(this.textBox_IPAddr);
+            this.Network_groupBox.Controls.Add(this.label_IPAddr);
+            this.Network_groupBox.Location = new System.Drawing.Point(15, 12);
+            this.Network_groupBox.Name = "Network_groupBox";
+            this.Network_groupBox.Size = new System.Drawing.Size(364, 234);
+            this.Network_groupBox.TabIndex = 30;
+            this.Network_groupBox.TabStop = false;
+            this.Network_groupBox.Text = "Network setting";
+            // 
+            // Comport_checkBox
+            // 
+            this.Comport_checkBox.AutoSize = true;
+            this.Comport_checkBox.Font = new System.Drawing.Font("PMingLiU", 12F);
+            this.Comport_checkBox.Location = new System.Drawing.Point(11, 23);
+            this.Comport_checkBox.Name = "Comport_checkBox";
+            this.Comport_checkBox.Size = new System.Drawing.Size(81, 24);
+            this.Comport_checkBox.TabIndex = 10;
+            this.Comport_checkBox.Text = "Enable";
+            this.Comport_checkBox.UseVisualStyleBackColor = true;
+            this.Comport_checkBox.CheckedChanged += new System.EventHandler(this.Comport_checkBox_CheckedChanged);
+            // 
+            // Network_checkBox
+            // 
+            this.Network_checkBox.AutoSize = true;
+            this.Network_checkBox.Font = new System.Drawing.Font("PMingLiU", 12F);
+            this.Network_checkBox.Location = new System.Drawing.Point(6, 24);
+            this.Network_checkBox.Name = "Network_checkBox";
+            this.Network_checkBox.Size = new System.Drawing.Size(81, 24);
+            this.Network_checkBox.TabIndex = 11;
+            this.Network_checkBox.Text = "Enable";
+            this.Network_checkBox.UseVisualStyleBackColor = true;
+            this.Network_checkBox.CheckedChanged += new System.EventHandler(this.Network_checkBox_CheckedChanged);
+            // 
             // Setting
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(473, 246);
-            this.Controls.Add(this.textBox_Timeout);
-            this.Controls.Add(this.label9);
+            this.ClientSize = new System.Drawing.Size(631, 340);
+            this.Controls.Add(this.Network_groupBox);
+            this.Controls.Add(this.Port_groupBox);
             this.Controls.Add(this.cboResolutionList);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.cboCameraTypeList);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBox_MailAddress);
-            this.Controls.Add(this.textBox_PortNum);
-            this.Controls.Add(this.label_Port);
-            this.Controls.Add(this.textBox_IPAddr);
-            this.Controls.Add(this.label_IPAddr);
             this.Controls.Add(this.BTN_Connect);
-            this.Controls.Add(this.ComboBox_StopBit);
-            this.Controls.Add(this.ComboBox_ByteCount);
-            this.Controls.Add(this.ComboBox_ParrityBit);
-            this.Controls.Add(this.ComboBox_BaudRate);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Setting";
             this.Text = "Setting";
+            this.Port_groupBox.ResumeLayout(false);
+            this.Port_groupBox.PerformLayout();
+            this.Network_groupBox.ResumeLayout(false);
+            this.Network_groupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -370,7 +450,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBox_Portname;
         private System.Windows.Forms.ComboBox ComboBox_BaudRate;
         private System.Windows.Forms.ComboBox ComboBox_ParrityBit;
         private System.Windows.Forms.ComboBox ComboBox_ByteCount;
@@ -388,5 +468,9 @@
         private System.Windows.Forms.ComboBox cboResolutionList;
         private System.Windows.Forms.TextBox textBox_Timeout;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.GroupBox Port_groupBox;
+        private System.Windows.Forms.CheckBox Comport_checkBox;
+        private System.Windows.Forms.GroupBox Network_groupBox;
+        private System.Windows.Forms.CheckBox Network_checkBox;
     }
 }

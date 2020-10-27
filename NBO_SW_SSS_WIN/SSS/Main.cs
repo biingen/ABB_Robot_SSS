@@ -261,9 +261,9 @@ namespace SSS
                             CRCStr[3] = (char)ProcessStr.BytetoASCII((byte)((CRCResult & 0xF000) >> 12));
                             CRCStr[4] = (char)ProcessStr.BytetoASCII((byte)((CRCResult & 0x0F00) >> 8));
 
-                            UpdataUIDataGrid.Invoke(3, y, new string(CRCStr));
+                            UpdataUIDataGrid.Invoke(4, y, new string(CRCStr));
                         }
-                        UpdataUIDataGrid.Invoke(4, y, tempStr[3]);
+                        UpdataUIDataGrid.Invoke(3, y, tempStr[3]);
                         //judge criterion filed
                         if (tempStr.Length >= 5)
                         {
@@ -308,11 +308,13 @@ namespace SSS
             Setting form2 = new Setting();
             UpdateUI UILED = new UpdateUI(Form1UPDateComportLedStatus);
             UpdateUI UINetworkLED = new UpdateUI(Form1UPDateNetworkLedStatus);
+            int ComportStatus;
             string PortNumber;
             int BautRate;
             int ParryBit;
             int StopBit;
             int DataLen;
+            int NetworkStatus;
             string IP;
             int NetworkPort;
 
@@ -325,50 +327,55 @@ namespace SSS
             {
                 ComPortHandle = new ComPortFun();
                 NetworkHandle = new Drv_TCPSocket_Client();
+                ComportStatus = form2.getComPortChecked();
                 PortNumber = form2.getComPortSetting();
                 BautRate = Convert.ToInt32(form2.getComPortBaudRate());
                 ParryBit = form2.getComPortParrityBit();
                 StopBit = form2.getComPortStopBit();
                 DataLen = form2.getComPortByteCount();
+                NetworkStatus = form2.getNetworkChecked();
                 IP = form2.getNetworkIP();
                 NetworkPort = int.Parse(form2.getNetworkPort());
                 Timeout = form2.getNetworkTimeOut();
                 Device = form2.getCameraDevice();
                 Resolution = form2.getCameraResolution();
-				//remarked for current design//
-                /*
-                if (ComPortHandle.OpenPort(PortNumber, BautRate, ParryBit, DataLen, StopBit) >= 1)
+                
+                if (ComportStatus == 1)
                 {
-                    UILED.Invoke(1);
-                }
-                else
-                {
-                    UILED.Invoke(0);
-                    MessageBox.Show("Open Port fail");
-                }
-                */
-                if (IP != "" && NetworkPort > 0 && NetworkPort < 65536 && NetworkHandle.TestConnection(IP, NetworkPort, 500) == true)
-                {
-                    UINetworkLED.Invoke(1);
-                    NetworkHandle.SetIpAddr(IP);
-                    NetworkHandle.SetPortNumber(NetworkPort);
-                    NetworkHandle._updateTBRecvCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
-                    NetworkHandle._updateTBSendCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
-                    if (!NetworkHandle.IsConnected())
-                        NetworkHandle.Start();
+                    if (ComPortHandle.OpenPort(PortNumber, BautRate, ParryBit, DataLen, StopBit) >= 1)
+                    {
+                        UILED.Invoke(1);
+                    }
                     else
                     {
-                        NetworkHandle.Close();
-                        NetworkHandle.Start();
+                        UILED.Invoke(0);
+                        MessageBox.Show("Open Port fail");
                     }
-
                 }
-                else
+                if (NetworkStatus == 1)
                 {
-                    UINetworkLED.Invoke(0);
-                    MessageBox.Show("Open Socket fail");
-                }
+                    if (IP != "" && NetworkPort > 0 && NetworkPort < 65536 && NetworkHandle.TestConnection(IP, NetworkPort, 500) == true)
+                    {
+                        UINetworkLED.Invoke(1);
+                        NetworkHandle.SetIpAddr(IP);
+                        NetworkHandle.SetPortNumber(NetworkPort);
+                        NetworkHandle._updateTBRecvCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
+                        NetworkHandle._updateTBSendCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
+                        if (!NetworkHandle.IsConnected())
+                            NetworkHandle.Start();
+                        else
+                        {
+                            NetworkHandle.Close();
+                            NetworkHandle.Start();
+                        }
 
+                    }
+                    else
+                    {
+                        UINetworkLED.Invoke(0);
+                        MessageBox.Show("Open Socket fail");
+                    }
+                }
                 //ComPortHandle.OpenPort();
             }
             else if (form2.DialogResult == System.Windows.Forms.DialogResult.Cancel)

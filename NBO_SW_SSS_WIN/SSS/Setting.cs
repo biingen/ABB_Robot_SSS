@@ -19,9 +19,16 @@ namespace SSS
         private CameraChoice cameraChoice = new CameraChoice();
         private CameraControl cameraControl = new CameraControl();
 
+        public int getComPortChecked()
+        {
+            if (Comport_checkBox.Checked == true)
+                return 1;
+            else
+                return 0;
+        }
         public string getComPortSetting()
         {
-            return ((string)this.comboBox1.SelectedItem);
+            return ((string)this.comboBox_Portname.SelectedItem);
         }
         public string getComPortBaudRate()
         {
@@ -38,6 +45,13 @@ namespace SSS
         public int getComPortStopBit()
         {
             return (Convert.ToInt32((string)this.ComboBox_StopBit.SelectedItem));
+        }
+        public int getNetworkChecked()
+        {
+            if (Network_checkBox.Checked == true)
+                return 1;
+            else
+                return 0;
         }
         public string getNetworkIP()
         {
@@ -71,7 +85,7 @@ namespace SSS
             int i;
 
             InitializeComponent();
-            this.comboBox1.Items.Clear();
+            this.comboBox_Portname.Items.Clear();
             this.BTN_Connect.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.ComboBox_BaudRate.SelectedIndex = 1;
             this.ComboBox_ByteCount.SelectedIndex = 1;
@@ -83,32 +97,43 @@ namespace SSS
             {
                 for(i = 0; i <= (SerialPortName.Length - 1); i++)
                 {
-                    this.comboBox1.Items.Add(SerialPortName[i]);
+                    this.comboBox_Portname.Items.Add(SerialPortName[i]);
                 }
-                this.comboBox1.SelectedIndex = 0;
+                this.comboBox_Portname.SelectedIndex = 0;
             }
 
+            textBox_IPAddr.Enabled = false;
+            textBox_PortNum.Enabled = false;
+            textBox_Timeout.Enabled = false;
+            textBox_MailAddress.Enabled = false;
+            comboBox_Portname.Enabled = false;
+            ComboBox_BaudRate.Enabled = false;
+            ComboBox_ParrityBit.Enabled = false;
+            ComboBox_ByteCount.Enabled = false;
+            ComboBox_StopBit.Enabled = false;
         }
 
         private void BTN_Connect_Click(object sender, EventArgs e)
-        {	//remarked for current design//
-            /*
-            SerialPort PortHandle = new SerialPort();
-            //string tempStr;
-            PortHandle.PortName = (string)this.comboBox1.SelectedItem;
-            try
+        {
+            if (Comport_checkBox.Checked == true)
             {
-                PortHandle.Open();
-                System.Threading.Thread.Sleep(1);
-                PortHandle.Close();
+                SerialPort PortHandle = new SerialPort();
+                //string tempStr;
+                PortHandle.PortName = (string)this.comboBox_Portname.SelectedItem;
+                try
+                {
+                    PortHandle.Open();
+                    System.Threading.Thread.Sleep(1);
+                    PortHandle.Close();
 
-            }
-            catch (Exception)
-            {
-                
-                MessageBox.Show((string)this.comboBox1.SelectedItem + " is opened by other app.");
-            }
-            */
+                }
+                catch (Exception)
+                {
+
+                    MessageBox.Show((string)this.comboBox_Portname.SelectedItem + " is opened by other app.");
+                }
+            }	
+
         }
 
         //找到当前计算机上可用的摄像头
@@ -180,6 +205,44 @@ namespace SSS
             // Recreate camera
             //SetCamera(_Camera.Moniker, resolutions[comboBoxResolutionIndex]);
             cameraControl.SetCamera(cameraControl.Moniker, resolutions[comboBoxResolutionIndex]);
+        }
+
+        private void Network_checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Network_checkBox.Checked == true)
+            {
+                textBox_IPAddr.Enabled = true;
+                textBox_PortNum.Enabled = true;
+                textBox_Timeout.Enabled = true;
+                textBox_MailAddress.Enabled = true;
+            }
+            else
+            {
+                textBox_IPAddr.Enabled = false;
+                textBox_PortNum.Enabled = false;
+                textBox_Timeout.Enabled = false;
+                textBox_MailAddress.Enabled = false;
+            }
+        }
+
+        private void Comport_checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Comport_checkBox.Checked == true)
+            {
+                comboBox_Portname.Enabled = true;
+                ComboBox_BaudRate.Enabled = true;
+                ComboBox_ParrityBit.Enabled = true;
+                ComboBox_ByteCount.Enabled = true;
+                ComboBox_StopBit.Enabled = true;
+            }
+            else
+            {
+                comboBox_Portname.Enabled = false;
+                ComboBox_BaudRate.Enabled = false;
+                ComboBox_ParrityBit.Enabled = false;
+                ComboBox_ByteCount.Enabled = false;
+                ComboBox_StopBit.Enabled = false;
+            }
         }
     }
 }
