@@ -28,6 +28,7 @@ namespace SSS
         public int FlagComPortStauts;
         int FlagPause;
         int FlagStop;
+        string Cmdsend;
         string Cmdreceive;
         int Device, Resolution, Timeout;
         //创建摄像头操作对象
@@ -36,8 +37,8 @@ namespace SSS
         //------------------------------------------------------------------------------------------------//
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
-        ComPortFun ComPortHandle;
-        Drv_TCPSocket_Client NetworkHandle;
+        ComPortFun ComPortHandle = new ComPortFun();
+        Drv_TCPSocket_Client NetworkHandle = new Drv_TCPSocket_Client();
         Thread ExecuteCmdThreadHandle;
         //------------------------------------------------------------------------------------------------//
         public DataGridView tempDataGrid;
@@ -320,13 +321,23 @@ namespace SSS
 
             //---------------- display RS232 setting panel ------------------//
             //form2.Owner = this;
+            if (NetworkHandle.IsConnected())
+            {
+                NetworkHandle.Close();
+                UINetworkLED.Invoke(0);
+            }
+
+            if (ComPortHandle.IsOpen())
+            {
+                ComPortHandle.ClosePort();
+                UILED.Invoke(0);
+            }
+
             form2.ShowDialog(this);
 
 
             if (form2.DialogResult == System.Windows.Forms.DialogResult.OK)
             {
-                ComPortHandle = new ComPortFun();
-                NetworkHandle = new Drv_TCPSocket_Client();
                 ComportStatus = form2.getComPortChecked();
                 PortNumber = form2.getComPortSetting();
                 BautRate = Convert.ToInt32(form2.getComPortBaudRate());
@@ -354,26 +365,27 @@ namespace SSS
                 }
                 if (NetworkStatus == 1)
                 {
-                    if (IP != "" && NetworkPort > 0 && NetworkPort < 65536 && NetworkHandle.TestConnection(IP, NetworkPort, 500) == true)
+                    if (NetworkHandle.TestConnection(IP, NetworkPort, 500) == true)
                     {
-                        UINetworkLED.Invoke(1);
                         NetworkHandle.SetIpAddr(IP);
                         NetworkHandle.SetPortNumber(NetworkPort);
                         NetworkHandle._updateTBRecvCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
                         NetworkHandle._updateTBSendCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
                         if (!NetworkHandle.IsConnected())
-                            NetworkHandle.Start();
-                        else
                         {
-                            NetworkHandle.Close();
                             NetworkHandle.Start();
+                            UINetworkLED.Invoke(1);
                         }
-
+                    }
+                    else if (NetworkHandle.TestConnection(IP, NetworkPort, 500) == false)
+                    {
+                        UINetworkLED.Invoke(0);
+                        MessageBox.Show("Please Check the TCP server status.");
                     }
                     else
                     {
                         UINetworkLED.Invoke(0);
-                        MessageBox.Show("Open Socket fail");
+                        MessageBox.Show("Open Socket fail.");
                     }
                 }
                 //ComPortHandle.OpenPort();
@@ -551,6 +563,7 @@ namespace SSS
                                             bitmap.Save(Image_CurrentPath + "\\" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
                                             cameraControl.CloseCamera();
                                         }
+                                        Invoke(WriteDataGride, 5, ExeIndex, "Camera takes picture done.");
                                     }
                                     catch (Exception)
                                     {
@@ -576,6 +589,16 @@ namespace SSS
                                 Invoke(WriteDataGride, 7, ExeIndex, "Fail");
                             }
 
+                        }
+                        else if ((CmdType == "ROBOT") || (CmdType == "robot"))
+                        {
+                            if (NetworkHandle.IsConnected())
+                            {
+                                Cmdsend = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
+                                NetworkHandle.Send(Cmdsend);
+                                TimeoutCounter_Delay(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value));
+                                Invoke(WriteDataGride, 5, ExeIndex, Cmdreceive);
+                            }
                         }
                         //else if (CmdType == "LOOP")
                         //{
@@ -811,12 +834,6 @@ namespace SSS
                             Invoke(UpdataUIDataGrid, 0, -3, " ");//reflush data gride
                             Thread.Sleep(DelayTime);
                         }
-                        else if((CmdType == "ROBOT") || (CmdType == "robot"))
-                        {
-                            Cmdreceive = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
-                            NetworkHandle.Send(Cmdreceive);
-                            Counter_Delay(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value));
-                        }
 
                         //Invoke(UpdataUIDataGrid, ExeIndex, -3, "");//Flush datagrid
 
@@ -994,16 +1011,16 @@ namespace SSS
 
         // 這個Counter專用的delay的內部資料與function
         static bool Counter_Delay_TimeOutIndicator = false;
-        static UInt64 Counter_Count = 0;
+        static UInt64 TimeoutCounter_Count = 0;
         private void Counter_Delay_UsbOnTimedEvent(object source, ElapsedEventArgs e)
         {
-            Counter_Count++;
+            TimeoutCounter_Count++;
             Counter_Delay_TimeOutIndicator = true;
         }
 
-        private void Counter_Delay(int delay_ms)
+        private void TimeoutCounter_Delay(int delay_ms)
         {
-            if (Timeout <= 0) return;
+            if (Timeout < 0) return;
             bool network_receive = false;
             network_receive = true;
             System.Timers.Timer Counter_Timer = new System.Timers.Timer(Timeout);
@@ -1017,12 +1034,13 @@ namespace SSS
             {
                 Application.DoEvents();
                 System.Threading.Thread.Sleep(1);//釋放CPU//
-                if (NetworkHandle.Receive() == Cmdreceive + "_Finish")
+                if (NetworkHandle.Receive() == Cmdsend + "_Finish")
                 {
                     Counter_Timer.Stop();
                     Counter_Timer.Dispose();
                     network_receive = false;
                     Thread.Sleep(delay_ms);
+                    Cmdreceive = NetworkHandle.Receive();
                 }
             }
 
@@ -1033,6 +1051,7 @@ namespace SSS
                 Counter_Timer.Stop();
                 Counter_Timer.Dispose();
                 network_receive = false;
+                Cmdreceive = "Mail notification already sends.";
             }
         }
 
@@ -1066,7 +1085,7 @@ namespace SSS
             MailMessage msg = new MailMessage();
 
             msg.To.Add(string.Join(",", MailList.ToArray()));       //收件者，以逗號分隔不同收件者
-            msg.From = new MailAddress("tpdqatest@gmail.com", "TP_DQA_Test", System.Text.Encoding.UTF8);
+            msg.From = new MailAddress("nbosss.dqa@gmail.com", "NBOSSS_DQA", System.Text.Encoding.UTF8);
             msg.Subject = Subject;      //郵件標題 
             msg.SubjectEncoding = System.Text.Encoding.UTF8;        //郵件標題編碼  
             msg.Body = Body;        //郵件內容
@@ -1090,7 +1109,7 @@ namespace SSS
             try
             {
                 SmtpClient MySmtp = new SmtpClient("smtp.gmail.com", 587);
-                MySmtp.Credentials = new System.Net.NetworkCredential("tpdqatest@gmail.com", "Auoasc2019");     //設定你的帳號密碼
+                MySmtp.Credentials = new System.Net.NetworkCredential("nbosss.dqa@gmail.com", "Auo+1234");     //設定你的帳號密碼
                 MySmtp.EnableSsl = true;      //Gmail 的 smtp 需打開 SSL
                 MySmtp.Send(msg);
             }

@@ -159,5 +159,16 @@ namespace Rs232Drv
             return 1;
         }
 
+        public bool IsOpen()
+        {
+            if (ComPortHandle.IsOpen == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
