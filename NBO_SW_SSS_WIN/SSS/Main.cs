@@ -117,7 +117,7 @@ namespace SSS
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 004.002";
+            this.VerLabel.Text = "Version: 004.003";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -265,14 +265,13 @@ namespace SSS
 
                             updateDataGrid.Invoke(4, y, new string(CRCStr));
                         }
+
                         updateDataGrid.Invoke(3, y, tempStr[3]);
                         //judge criterion filed
                         if (tempStr.Length >= 5)
                         {
                             updateDataGrid.Invoke(9, y, tempStr[4]);
                         }
-
-
                     }
                     y++;
                 }
@@ -335,8 +334,6 @@ namespace SSS
             }
 
             form2.ShowDialog(this);
-
-
             if (form2.DialogResult == System.Windows.Forms.DialogResult.OK)
             {
                 ComportStatus = form2.getComPortChecked();
@@ -383,7 +380,7 @@ namespace SSS
                     else if (NetworkHandle.IsConnected())
                     {
                         UINetworkLED.Invoke(0);
-                        MessageBox.Show("Please Check the TCP server status.");
+                        MessageBox.Show("Please Check the TCPIP server status.");
                     }
                     else
                     {
@@ -599,6 +596,7 @@ namespace SSS
                                 NetworkHandle.Send(Cmdsend);
                                 
                                 Invoke(WriteDataGride, 5, ExeIndex, "");
+                                Thread.Sleep(100);
                                 TimeoutCounter_Delay(timeout);
                                 Invoke(WriteDataGride, 5, ExeIndex, Cmdreceive);
                                 Thread.Sleep(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value));
@@ -922,8 +920,6 @@ namespace SSS
                 ExecuteCmdThreadHandle = new Thread(ExecuteCmd);
                 ExecuteCmdThreadHandle.Start();
             }
-
-     
         }
 
         private void BTN_Pause_Click(object sender, EventArgs e)
@@ -1006,7 +1002,6 @@ namespace SSS
             if (timeout < 0) return;
             bool network_receive = true;
             System.Timers.Timer Counter_Timer = new System.Timers.Timer(timeOut);
-            //System.Threading.Timer myTimer = new System.Threading.Timer();
             Counter_Timer.Interval = timeOut;
             Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_OnTimedEvent);
             Counter_Timer.Enabled = true;
@@ -1137,4 +1132,3 @@ namespace SSS
         }
     }
 }
-
