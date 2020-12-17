@@ -42,12 +42,12 @@ namespace SSS
         Thread ExecuteCmdThreadHandle;
         //------------------------------------------------------------------------------------------------//
         public DataGridView tempDataGrid;
-        private delegate void UpdatDataGride(int x, int y, string data);
+        private delegate void dUpdateDataGrid(int x, int y, string data);
         private delegate void ProcessLoopText(int Cmd, ref int result);
         public delegate void UpdateUI(int status);
         public delegate void _UpdateUIBtn(int Btn, int Status);
         //------------------------------------------------------------------------------------------------//
-        private void UpdatUIDataUI(int x,int y,string data)
+        private void UpdatUiData(int x,int y,string data)
         {
             int i;
             if (y == -1)
@@ -116,7 +116,7 @@ namespace SSS
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Ver:004";
+            this.VerLabel.Text = "Version: 004.001";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -218,10 +218,10 @@ namespace SSS
             byte HighHalfByte, LowHalfByte;
             byte[] tempData = new byte[100];
             ushort CRCResult;
-            UpdatDataGride UpdataUIDataGrid = new UpdatDataGride(UpdatUIDataUI);
+            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdatUiData);
 
             System.IO.StreamReader rFile = new System.IO.StreamReader(@TargetFilePath);
-            UpdataUIDataGrid.Invoke(0, -2, "");//Clear datagrid
+            updateDataGrid.Invoke(0, -2, "");//Clear datagrid
             while ((InStrBuf = rFile.ReadLine()) != null)
             {
                 try
@@ -229,14 +229,14 @@ namespace SSS
                     Console.WriteLine(InStrBuf + "\n");
                     colIndex = 0;
                     tempStr = InStrBuf.Split(',');
-                    UpdataUIDataGrid.Invoke(0, -1, "");//Add one line
-                    UpdataUIDataGrid.Invoke(0,y, tempStr[colIndex++]);
+                    updateDataGrid.Invoke(0, -1, "");//Add one line
+                    updateDataGrid.Invoke(0,y, tempStr[colIndex++]);
                     if (tempStr.Length >= 3)
                     {
                         //1.W/R filed
-                        UpdataUIDataGrid.Invoke(1, y, tempStr[colIndex++]);
+                        updateDataGrid.Invoke(1, y, tempStr[colIndex++]);
                         //2.Cmd string filed
-                        UpdataUIDataGrid.Invoke(2, y, tempStr[colIndex++]);
+                        updateDataGrid.Invoke(2, y, tempStr[colIndex++]);
                         //CRC filed
                         cmdStr = tempStr[2].Split(' ');
                         //convert string to byte array
@@ -262,13 +262,13 @@ namespace SSS
                             CRCStr[3] = (char)ProcessStr.BytetoASCII((byte)((CRCResult & 0xF000) >> 12));
                             CRCStr[4] = (char)ProcessStr.BytetoASCII((byte)((CRCResult & 0x0F00) >> 8));
 
-                            UpdataUIDataGrid.Invoke(4, y, new string(CRCStr));
+                            updateDataGrid.Invoke(4, y, new string(CRCStr));
                         }
-                        UpdataUIDataGrid.Invoke(3, y, tempStr[3]);
+                        updateDataGrid.Invoke(3, y, tempStr[3]);
                         //judge criterion filed
                         if (tempStr.Length >= 5)
                         {
-                            UpdataUIDataGrid.Invoke(9, y, tempStr[4]);
+                            updateDataGrid.Invoke(9, y, tempStr[4]);
                         }
 
 
@@ -283,7 +283,7 @@ namespace SSS
 
             }
             rFile.Close();
-            UpdataUIDataGrid.Invoke(0, -3, "");//Flush datagrid
+            updateDataGrid.Invoke(0, -3, "");//Flush datagrid
         }
         //-------------------------------------------------------------------------------------------------//
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -365,19 +365,21 @@ namespace SSS
                 }
                 if (NetworkStatus == 1)
                 {
-                    if (NetworkHandle.TestConnection(IP, NetworkPort, 500) == true)
+                    //if (NetworkHandle.TestConnection(IP, NetworkPort, 500) == true)
+                    if (!NetworkHandle.IsConnected())
                     {
                         NetworkHandle.SetIpAddr(IP);
                         NetworkHandle.SetPortNumber(NetworkPort);
                         NetworkHandle._updateTBRecvCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
                         NetworkHandle._updateTBSendCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
-                        if (!NetworkHandle.IsConnected())
+                        //if (!NetworkHandle.IsConnected())
                         {
                             NetworkHandle.Start();
                             UINetworkLED.Invoke(1);
                         }
                     }
-                    else if (NetworkHandle.TestConnection(IP, NetworkPort, 500) == false)
+                    //else if (NetworkHandle.TestConnection(IP, NetworkPort, 500) == false)
+                    else if (NetworkHandle.IsConnected())
                     {
                         UINetworkLED.Invoke(0);
                         MessageBox.Show("Please Check the TCP server status.");
@@ -402,8 +404,8 @@ namespace SSS
         private void ExecuteCmd()
         {
             _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
-            UpdatDataGride WriteDataGride = new UpdatDataGride(UpdatUIDataUI);
-            UpdatDataGride UpdataUIDataGrid = new UpdatDataGride(UpdatUIDataUI);
+            dUpdateDataGrid WriteDataGride = new dUpdateDataGrid(UpdatUiData);
+            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdatUiData);
             ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
             CameraChoice _CameraChoice = new CameraChoice();
             CameraControl cameraControl = new CameraControl();
@@ -449,7 +451,6 @@ namespace SSS
                 {
                     loopCounter = 0;
                 }
-               
 
                 while (loopCounter > 0 && FlagStop == 0)
                 {
@@ -467,35 +468,32 @@ namespace SSS
                         this.dataGridView1.Rows[ExeIndex].Cells[6].Value = "";
                         this.dataGridView1.Rows[ExeIndex].Cells[7].Value = "";
                         this.dataGridView1.Rows[ExeIndex].Cells[8].Value = "";
-                        Invoke(UpdataUIDataGrid, ExeIndex, -5, "");//cleaer select status
+                        Invoke(updateDataGrid, ExeIndex, -5, "");//clear select status
                     }
                     
                     //-------------- Start to test -------------------------//
-
-
-
                     for (ExeIndex = this.dataGridView1.CurrentRow.Index; ExeIndex < RowCount; ExeIndex++)
                     {
-
                         CmdType = (string)this.dataGridView1.Rows[ExeIndex].Cells[0].Value;
                         if (ExeIndex >= 3)
                         {
-                            Invoke(UpdataUIDataGrid, (ExeIndex - 2), -4, "");
+                            Invoke(updateDataGrid, (ExeIndex - 2), -4, "");
                         }
                         else
                         {
-                            Invoke(UpdataUIDataGrid, 0, -4, "");
+                            Invoke(updateDataGrid, 0, -4, "");
                         }
                         if (ExeIndex >= 1)
                         {
-                            Invoke(UpdataUIDataGrid, (ExeIndex - 1), -5, "");//cleaer select status
+                            Invoke(updateDataGrid, (ExeIndex - 1), -5, "");//clear select status
                         }
-                        Invoke(UpdataUIDataGrid, ExeIndex, -6, "");
+                        Invoke(updateDataGrid, ExeIndex, -6, "");
                         this.dataGridView1.Rows[ExeIndex].Cells[5].Value = "";
                         this.dataGridView1.Rows[ExeIndex].Cells[6].Value = "";
                         this.dataGridView1.Rows[ExeIndex].Cells[7].Value = "";
                         this.dataGridView1.Rows[ExeIndex].Cells[8].Value = "";
-                        //
+
+                        #region --Schedule for Snapshot Command--
                         if ((CmdType == "PHOTO") || (CmdType == "photo"))
                         {
                             string Image_CurrentPath = System.Environment.CurrentDirectory;
@@ -563,7 +561,7 @@ namespace SSS
                                             bitmap.Save(Image_CurrentPath + "\\" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
                                             cameraControl.CloseCamera();
                                         }
-                                        Invoke(WriteDataGride, 5, ExeIndex, "Camera takes picture done.");
+                                        Invoke(WriteDataGride, 5, ExeIndex, "Snapshot done.");
                                     }
                                     catch (Exception)
                                     {
@@ -590,6 +588,8 @@ namespace SSS
                             }
 
                         }
+                        #endregion
+                        #region --Schedule for Robot Command--
                         else if ((CmdType == "ROBOT") || (CmdType == "robot"))
                         {
                             if (NetworkHandle.IsConnected())
@@ -600,6 +600,7 @@ namespace SSS
                                 Invoke(WriteDataGride, 5, ExeIndex, Cmdreceive);
                             }
                         }
+                        #endregion
                         //else if (CmdType == "LOOP")
                         //{
                         //    Thread.Sleep(300);
@@ -673,6 +674,7 @@ namespace SSS
                             }
 
                             //--------------------------------- Send cmd out via RS232 port ---------------------------------//
+                            #region --Send cmd out via RS232 port--
                             ComPortHandle.WriteDataOut(Cmdbuf, j);
 
                             //wait data return
@@ -730,7 +732,6 @@ namespace SSS
                                     Invoke(WriteDataGride, 6, ExeIndex, "NACK");
                                     Invoke(WriteDataGride, 7, ExeIndex, "Fail");
                                     Invoke(WriteDataGride, 8, ExeIndex, "Fail");
-
                                 }
                                 else
                                 {
@@ -756,19 +757,18 @@ namespace SSS
                                     }
                                     Invoke(WriteDataGride, 5, ExeIndex, ResultLine);
 
-
                                     retCRC = (ushort)((finBuf[retDataLen - 1] * 256) + finBuf[retDataLen - 2]);
                                     us_data = ProcessStr.CalculateCRC((retDataLen - 2), finBuf);
 
                                     if (retCRC != us_data)
-                                    {//CRC fail
+                                    {   //CRC fail
                                         Invoke(WriteDataGride, 6, ExeIndex, "CRC Fail");
                                         Invoke(WriteDataGride, 7, ExeIndex, "Fail");
                                         Invoke(WriteDataGride, 8, ExeIndex, "Fail");
                                     }
                                     else
                                     {
-                                        //out put result string
+                                        //output result string
                                         us_data = (ushort)((finBuf[retDataLen - 4] * 256) + finBuf[retDataLen - 3]);
                                         ResultLine = String.Format("0x{0:X}", us_data, us_data);
                                         Invoke(WriteDataGride, 6, ExeIndex, ResultLine);
@@ -811,27 +811,17 @@ namespace SSS
                                                         Invoke(WriteDataGride, 8, ExeIndex, "Unknow");
                                                     }
                                                 }
-
-
                                             }
                                         }
 
+                                    }   //else (return CRC = us_data)
 
-                                    }
+                                }   //else (while loop)
 
+                            }   //else (process return data)
+                            #endregion
 
-
-                                }
-
-
-
-
-
-
-                            }
-
-
-                            Invoke(UpdataUIDataGrid, 0, -3, " ");//reflush data gride
+                            Invoke(updateDataGrid, 0, -3, " ");   //reflush datagrid
                             Thread.Sleep(DelayTime);
                         }
 
@@ -855,7 +845,6 @@ namespace SSS
                         }
                     }
 
-
                     //--------------------- Save test result ----------------//
                     DateStr = Directory.GetCurrentDirectory() + "\\" + "TestResult_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
                     System.IO.StreamWriter wFile = new System.IO.StreamWriter(DateStr);
@@ -875,7 +864,7 @@ namespace SSS
                     loopCounter--;
                 }
                 //----------------------------------------------------//
-                MessageBox.Show("Finish");
+                MessageBox.Show("All schedules finished");
                 //UpdateUIBtn(3, 3);//display finish
                 Invoke(UpdateUIBtn, 3,3);//display finish
                 Invoke(LoopText, 3, loopCounter);
@@ -884,21 +873,10 @@ namespace SSS
                     Invoke(LoopText, 1, loopCounter);
                     Invoke(LoopText, 3, loopCounter);
                 }
-                
-
             }
-            
-
-
-
             Invoke(UpdateUIBtn, 0, 1);//this.BTN_StartTest.Enabled = true;
             Invoke(UpdateUIBtn, 1, 0);//this.BTN_Pause.Enabled = false;
             Invoke(UpdateUIBtn, 2, 0);//this.BTN_Stop.Enabled = false;
-
-
-
-
-
         }
 
         public void ShowMessageOnTBRecv(string msg)
@@ -917,7 +895,6 @@ namespace SSS
                 Drv_TCPSocket_Client.UpdateTBSendCallback updateTBCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
                 Invoke(updateTBCallback, new object[] { msg });
             }
-
         }
 
         private void BTN_StartTest_Click(object sender, EventArgs e)
@@ -1010,12 +987,12 @@ namespace SSS
         }
 
         // 這個Counter專用的delay的內部資料與function
-        static bool Counter_Delay_TimeOutIndicator = false;
+        static bool TimeoutIndicator = false;
         static UInt64 TimeoutCounter_Count = 0;
-        private void Counter_Delay_UsbOnTimedEvent(object source, ElapsedEventArgs e)
+        private void Counter_Delay_OnTimedEvent(object source, ElapsedEventArgs e)
         {
             TimeoutCounter_Count++;
-            Counter_Delay_TimeOutIndicator = true;
+            TimeoutIndicator = true;
         }
 
         private void TimeoutCounter_Delay(int delay_ms)
@@ -1025,16 +1002,16 @@ namespace SSS
             network_receive = true;
             System.Timers.Timer Counter_Timer = new System.Timers.Timer(Timeout);
             Counter_Timer.Interval = Timeout;
-            Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_UsbOnTimedEvent);
+            Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_OnTimedEvent);
             Counter_Timer.Enabled = true;
             Counter_Timer.Start();
             Counter_Timer.AutoReset = true;
 
-            while (Counter_Delay_TimeOutIndicator == false && network_receive == true)
+            while (TimeoutIndicator == false && network_receive == true)
             {
                 Application.DoEvents();
                 System.Threading.Thread.Sleep(1);//釋放CPU//
-                if (NetworkHandle.Receive() == Cmdsend + "_Finish")
+                if (NetworkHandle.Receive() == Cmdsend + "_Finish")     //later it must be changed as "_RobotDone" instead
                 {
                     Counter_Timer.Stop();
                     Counter_Timer.Dispose();
@@ -1044,7 +1021,7 @@ namespace SSS
                 }
             }
 
-            while (Counter_Delay_TimeOutIndicator == true && network_receive == true)
+            while (TimeoutIndicator == true && network_receive == true)
             {
                 Setting form2 = new Setting();
                 sendMail(form2.getMailAddress());
