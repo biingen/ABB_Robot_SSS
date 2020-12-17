@@ -29,8 +29,9 @@ namespace SSS
         int FlagPause;
         int FlagStop;
         string Cmdsend;
-        string Cmdreceive;
-        int Device, Resolution, Timeout;
+        string Cmdreceive, Cmdreceive_Robot;
+        int Device, Resolution;
+        double timeout;
         //创建摄像头操作对象
         private CameraChoice cameraChoice = new CameraChoice();
         private CameraControl cameraControl = new CameraControl();
@@ -55,7 +56,7 @@ namespace SSS
                 //add one row
                 this.dataGridView1.Rows.Add();
                 i = this.dataGridView1.Rows.Count;
-                Console.WriteLine("Courrent Rows Count:" + i.ToString());
+                Console.WriteLine("Current Rows Count:" + i.ToString());
             }
             else if (y == -2)
             {
@@ -116,7 +117,7 @@ namespace SSS
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 004.001";
+            this.VerLabel.Text = "Version: 004.002";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -347,7 +348,7 @@ namespace SSS
                 NetworkStatus = form2.getNetworkChecked();
                 IP = form2.getNetworkIP();
                 NetworkPort = int.Parse(form2.getNetworkPort());
-                Timeout = form2.getNetworkTimeOut();
+                timeout = form2.getNetworkTimeOut();
                 Device = form2.getCameraDevice();
                 Resolution = form2.getCameraResolution();
                 
@@ -596,8 +597,12 @@ namespace SSS
                             {
                                 Cmdsend = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
                                 NetworkHandle.Send(Cmdsend);
-                                TimeoutCounter_Delay(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value));
+                                
+                                Invoke(WriteDataGride, 5, ExeIndex, "");
+                                TimeoutCounter_Delay(timeout);
                                 Invoke(WriteDataGride, 5, ExeIndex, Cmdreceive);
+                                Thread.Sleep(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value));
+                                Cmdreceive = "";
                             }
                         }
                         #endregion
@@ -846,6 +851,7 @@ namespace SSS
                     }
 
                     //--------------------- Save test result ----------------//
+                    /*
                     DateStr = Directory.GetCurrentDirectory() + "\\" + "TestResult_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
                     System.IO.StreamWriter wFile = new System.IO.StreamWriter(DateStr);
                     ResultLine = "CMD,Out String,Delay(ms),CRC Field,Reply String,Result_1,Result_2,Judge,Judge Criterion";
@@ -860,7 +866,7 @@ namespace SSS
                         wFile.WriteLine(ResultLine);
 
                     }
-                    wFile.Close();
+                    wFile.Close();*/
                     loopCounter--;
                 }
                 //----------------------------------------------------//
@@ -995,13 +1001,13 @@ namespace SSS
             TimeoutIndicator = true;
         }
 
-        private void TimeoutCounter_Delay(int delay_ms)
+        private void TimeoutCounter_Delay(double timeOut)
         {
-            if (Timeout < 0) return;
-            bool network_receive = false;
-            network_receive = true;
-            System.Timers.Timer Counter_Timer = new System.Timers.Timer(Timeout);
-            Counter_Timer.Interval = Timeout;
+            if (timeout < 0) return;
+            bool network_receive = true;
+            System.Timers.Timer Counter_Timer = new System.Timers.Timer(timeOut);
+            //System.Threading.Timer myTimer = new System.Threading.Timer();
+            Counter_Timer.Interval = timeOut;
             Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_OnTimedEvent);
             Counter_Timer.Enabled = true;
             Counter_Timer.Start();
@@ -1009,15 +1015,13 @@ namespace SSS
 
             while (TimeoutIndicator == false && network_receive == true)
             {
-                Application.DoEvents();
-                System.Threading.Thread.Sleep(1);//釋放CPU//
-                if (NetworkHandle.Receive() == Cmdsend + "_Finish")     //later it must be changed as "_RobotDone" instead
+                Cmdreceive = NetworkHandle.Receive();
+                if (Cmdreceive == Cmdsend + "_RobotDone")     //instead of "_Finish"
                 {
+                    network_receive = false;
+                    Cmdsend = "";
                     Counter_Timer.Stop();
                     Counter_Timer.Dispose();
-                    network_receive = false;
-                    Thread.Sleep(delay_ms);
-                    Cmdreceive = NetworkHandle.Receive();
                 }
             }
 
