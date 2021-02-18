@@ -55,8 +55,8 @@ namespace Module_Layer
             {
                 connectedFlag = true;
             }
-            MessageBox.Show("Server starts listening...");
 
+            MessageBox.Show("Server starts listening...");
         }
 
         private void OnConnectionRequested(IAsyncResult asyncRes)
@@ -69,11 +69,10 @@ namespace Module_Layer
                 /* EndAccept completes a call to BeginAccept.
                   * It returns a new Socket that can be used to send data to and receive data from the remote host. */
                 var clientSocket = listener.EndAccept(asyncRes);
-
                 IPEndPoint clientEp = clientSocket.RemoteEndPoint as IPEndPoint;
                 string clientAddr = clientEp.Address.ToString();
                 int clientCount = -1;
-                //Server End: 10.62.32.96
+                
                 if (clientAddr != "127.0.0.1")                          //Robot End
                     clientCount = (int)eClientID.idx_Robot;
                 else if (clientAddr == "127.0.0.1")                 //TPsw End
@@ -132,7 +131,7 @@ namespace Module_Layer
             }
             catch (SocketException ex)
             {
-                Console.WriteLine(string.Format("Something fishy happened: {0}", ex.Message));
+                Console.WriteLine(string.Format("Something happened: {0}", ex.Message));
                 throw;
             }
         }
@@ -159,7 +158,7 @@ namespace Module_Layer
             }
             catch (SocketException ex)
             {
-                Console.WriteLine(string.Format("Something fishy happened: {0}", ex.Message));
+                Console.WriteLine(string.Format("Something happened: {0}", ex.Message));
                 throw;
             }
         }
@@ -212,12 +211,6 @@ namespace Module_Layer
             }
 
             listener.Close();
-            /*
-            if (m_clientHandler[0].Connected)
-                m_clientHandler[0].Close();
-
-            if (m_clientHandler[1].Connected)
-                m_clientHandler[1].Close();*/
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -271,6 +264,7 @@ namespace Module_Layer
     }   //End of class Mod_TCPIP_SocketListener
 
 
+    /* ============ Reserved For Future Modification  ============ */
     public class Mod_TCPIP_ClientHandler
     {
         private Socket m_clientSocket;

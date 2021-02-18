@@ -27,10 +27,12 @@ namespace SSS
         string TargetFilePath;
         public int FlagComPortStauts;
         int FlagPause, FlagStop;
-        string Cmdsend, Cmdreceive;
+        static string Cmdsend, Cmdreceive;
         int Device, Resolution;
-        double timeout;
-		
+        public double timeout;
+        public static double tmout = 0;
+        public TimeoutTimer timeOutTimer;
+
         //创建摄像头操作对象
         private CameraChoice cameraChoice = new CameraChoice();
         private CameraControl cameraControl = new CameraControl();
@@ -38,7 +40,7 @@ namespace SSS
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
         ComPortFun ComPortHandle = new ComPortFun();
-        Mod_TCPIP_SocketListener serverSocket = new Mod_TCPIP_SocketListener();     //newly added
+        static Mod_TCPIP_SocketListener serverSocket = new Mod_TCPIP_SocketListener();     //newly added
         
 
         Thread ExecuteCmdThreadHandle;
@@ -142,7 +144,7 @@ namespace SSS
             serverSocket.m_UpdateTPsw = new Mod_TCPIP_SocketListener.dUpdateUI(Form1UpdateTPswStatus);
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 005.001";
+            this.VerLabel.Text = "Version: 005.002";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -608,10 +610,10 @@ namespace SSS
 
                                 Invoke(WriteDataGride, 5, ExeIndex, "");
                                 Thread.Sleep(100);
-                                TimeoutCounter_Delay(timeout);
+                                timeOutTimer = new TimeoutTimer(timeout);
+                                timeOutTimer.StartTimeoutTimer();
+                                //TimeoutCounter_Delay(timeout);
                                 Invoke(WriteDataGride, 5, ExeIndex, Cmdreceive);
-
-                                //serverSocket.SendData(serverSocket.m_clientHandler[1], Cmdreceive);
 
                                 Thread.Sleep(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value));
                                 Cmdreceive = "";
@@ -620,13 +622,12 @@ namespace SSS
                         #endregion
                         else if ((CmdType == "W") || (CmdType == "R"))
                         {
-                            //-------------------------------- Process data string from csv file --------------------------------//
+                            /* ================================ Process data string from csv file ================================ */
                             retDataLen = 7;
                             if (CmdType == "W")
                             {
                                 retDataLen = 8;
                             }
-
 
                             //Cmd line
                             CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
@@ -652,59 +653,58 @@ namespace SSS
                             else
                             {
                                 DelayTime = 10;
-
                             }
 
                             Invoke(updateDataGrid, 0, -3, " ");   //reflush datagrid
                             Thread.Sleep(DelayTime);
                         }
 
-                        //Invoke(UpdataUIDataGrid, ExeIndex, -3, "");//Flush datagrid
-
                         if (FlagPause == 1)
                         {
-                            Invoke(UpdateUIBtn, 0, 1);//this.BTN_StartTest.Enabled = true;
-                            Invoke(UpdateUIBtn, 3, 2);//display pause
+                            Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+                            Invoke(UpdateUIBtn, 3, 2);  //display pause
                             while (FlagPause == 1)
                             {
                                 Thread.Sleep(10);
                             }
-                            Invoke(UpdateUIBtn, 3, 1);//display testing
-                            Invoke(UpdateUIBtn, 0, 0);//this.BTN_StartTest.Enabled = true;
+                            Invoke(UpdateUIBtn, 3, 1);  //display testing
+                            Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = true;
                         }
                         else if (FlagStop == 1)
                         {
-
                             break;      //stop for loop
                         }
                     }
+                    /* ================================ Save test result ================================ */
+                            /*
+                            DateStr = Directory.GetCurrentDirectory() + "\\" + "TestResult_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
+                            System.IO.StreamWriter wFile = new System.IO.StreamWriter(DateStr);
+                            ResultLine = "CMD,Out String,Delay(ms),CRC Field,Reply String,Result_1,Result_2,Judge,Judge Criterion";
+                            wFile.WriteLine(ResultLine);
+                            for (ExeIndex = 0; ExeIndex < RowCount; ExeIndex++)
+                            {
+                                ResultLine = "";
+                                for (i = 0; i <= 9; i++)
+                                {
+                                    ResultLine += (((string)this.dataGridView1.Rows[ExeIndex].Cells[i].Value) + ",");
+                                }
+                                wFile.WriteLine(ResultLine);
 
-                    //--------------------- Save test result ----------------//
-                    /*
-                    DateStr = Directory.GetCurrentDirectory() + "\\" + "TestResult_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
-                    System.IO.StreamWriter wFile = new System.IO.StreamWriter(DateStr);
-                    ResultLine = "CMD,Out String,Delay(ms),CRC Field,Reply String,Result_1,Result_2,Judge,Judge Criterion";
-                    wFile.WriteLine(ResultLine);
-                    for (ExeIndex = 0; ExeIndex < RowCount; ExeIndex++)
-                    {
-                        ResultLine = "";
-                        for (i = 0; i <= 9; i++)
-                        {
-                            ResultLine += (((string)this.dataGridView1.Rows[ExeIndex].Cells[i].Value) + ",");
-                        }
-                        wFile.WriteLine(ResultLine);
+                            }
+                            wFile.Close();
+                            ================================================================================== */
 
-                    }
-                    wFile.Close();*/
-                    loopCounter--;
+                            loopCounter--;
                 }
                 //----------------------------------------------------//
                 string endingStr = "All schedules finished";
                 serverSocket.SendData(1, endingStr);
                 serverSocket.SendData(2, endingStr);
+
                 MessageBox.Show(endingStr);
-                //UpdateUIBtn(3, 3);//display finish
-                Invoke(UpdateUIBtn, 3,3);//display finish
+
+                //UpdateUIBtn(3, 3);            //display finish
+                Invoke(UpdateUIBtn, 3,3);   //display finish
                 Invoke(LoopText, 3, loopCounter);
                 if (this.checkBox1.Checked == true)
                 {
@@ -713,9 +713,9 @@ namespace SSS
                 }
             }
 
-            Invoke(UpdateUIBtn, 0, 1);//this.BTN_StartTest.Enabled = true;
-            Invoke(UpdateUIBtn, 1, 0);//this.BTN_Pause.Enabled = false;
-            Invoke(UpdateUIBtn, 2, 0);//this.BTN_Stop.Enabled = false;
+            Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+            Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
         }
 
         private void BTN_StartTest_Click(object sender, EventArgs e)
@@ -743,15 +743,23 @@ namespace SSS
         {
             _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
             FlagPause = 1;
-            Invoke(UpdateUIBtn, 1, 0);//this.BTN_Pause.Enabled = false;
+            Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
         }
 
         private void BTN_Stop_Click(object sender, EventArgs e)
         {
-            serverSocket.CloseSocket();
+            //serverSocket.CloseSocket();
             _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
             FlagStop = 1;
-            Invoke(UpdateUIBtn, 2, 0);//this.BTN_Pause.Enabled = false;
+            Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
+            Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
+            timeOutTimer.StopTimeoutTimer(-9.9);
+            Thread.Sleep(500);
+            Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+            Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            //Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -806,7 +814,97 @@ namespace SSS
             }
         }
 
+        public class TimeoutTimer
+        {
+            private System.Timers.Timer Counter_Timer;
+            public TimeoutTimer(double tmOut)
+            {
+                Counter_Timer = new System.Timers.Timer(tmOut);
+                Counter_Timer.Interval = tmOut;
+                Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_OnTimedEvent);
+            }
+
+            static bool TimeoutIndicator = false;
+            static UInt64 TimeoutCounter_Count = 0;
+            private void Counter_Delay_OnTimedEvent(object source, ElapsedEventArgs e)
+            {
+                TimeoutCounter_Count++;
+                TimeoutIndicator = true;
+            }
+
+            public void StartTimeoutTimer()
+            {
+                if (Counter_Timer.Interval >= 0.0)
+                {
+                    Counter_Timer.Enabled = true;
+                    Counter_Timer.Start();
+                    Counter_Timer.AutoReset = true;
+
+                    TimeoutCounter_Delay();
+                }
+            }
+
+            public void StopTimeoutTimer(double tout)
+            {
+                if (tout == -9.9)
+                    Counter_Timer.Stop();
+            }
+
+            public void DisposeTimeoutTimer()
+            {
+                Counter_Timer.Dispose();
+            }
+
+            private void TimeoutCounter_Delay()
+            {
+                bool network_receive = false;
+                if (tmout >= 0)
+                    network_receive = true;
+                
+                while (TimeoutIndicator == false && network_receive == true)
+                {
+                    int hid = serverSocket.m_headerID;
+                    if (hid == 1)      //From ROBOT
+                    {
+                        Cmdreceive = serverSocket.ReceiveData(hid);
+                        if (Cmdreceive == Cmdsend + "_RobotDone")     //e.g. Path_10_RobotDone"
+                        {
+                            Cmdsend = Cmdreceive;
+                            serverSocket.SendData(hid + 1, Cmdsend);
+                            StopTimeoutTimer(-9.9);
+                            DisposeTimeoutTimer();
+                        }
+                    }
+                    else if (hid == 2)      //From TPSW
+                    {
+                        Cmdreceive = serverSocket.ReceiveData(hid);
+                        if (Cmdreceive == Cmdsend + "_TPswDone")     //e.g. Path_10_RobotDone_TPswDone"
+                        {
+                            StopTimeoutTimer(-9.9);
+                            DisposeTimeoutTimer();
+
+                            Cmdsend = "";
+                            network_receive = false;
+                        }
+                    }
+                }
+
+                while (TimeoutIndicator == true && network_receive == true)
+                {
+                    Setting form2 = new Setting();
+                    sendMail(form2.getMailAddress());
+                    StopTimeoutTimer(-9.9);
+                    DisposeTimeoutTimer();
+                    network_receive = false;
+                    TimeoutIndicator = false;
+                    Cmdreceive = "Mail notification already sends.";
+                }
+
+            }   //The end of TimeoutTimer.TimeoutCounter_Delay()
+        }
+
         // 這個Counter專用的delay的內部資料與function
+        /*
         static bool TimeoutIndicator = false;
         static UInt64 TimeoutCounter_Count = 0;
         private void Counter_Delay_OnTimedEvent(object source, ElapsedEventArgs e)
@@ -819,6 +917,8 @@ namespace SSS
         {
             if (timeout < 0) return;
             bool network_receive = true;
+            TimeoutTimer toutTimer = new TimeoutTimer(timeOut);
+            
             System.Timers.Timer Counter_Timer = new System.Timers.Timer(timeOut);
             Counter_Timer.Interval = timeOut;
             Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_OnTimedEvent);
@@ -826,7 +926,6 @@ namespace SSS
             Counter_Timer.Start();
             Counter_Timer.AutoReset = true;
 
-            
             while (TimeoutIndicator == false && network_receive == true)
             {
                 int hid = serverSocket.m_headerID;
@@ -837,8 +936,8 @@ namespace SSS
                     {
                         Cmdsend = Cmdreceive;
                         serverSocket.SendData(hid + 1, Cmdsend);
-                        Counter_Timer.Stop();
-                        Counter_Timer.Dispose();
+                        toutTimer.StopTimeoutTimer(-9.9);
+                        toutTimer.DisposeTimeoutTimer();
                     }
                 }
                 else if (hid == 2)      //From TPSW
@@ -846,8 +945,8 @@ namespace SSS
                     Cmdreceive = serverSocket.ReceiveData(hid);
                     if (Cmdreceive == Cmdsend + "_TPswDone")     //e.g. Path_10_RobotDone_TPswDone"
                     {
-                        Counter_Timer.Stop();
-                        Counter_Timer.Dispose();
+                        toutTimer.StopTimeoutTimer(-9.9);
+                        toutTimer.DisposeTimeoutTimer();
 
                         Cmdsend = "";
                         network_receive = false;
@@ -859,16 +958,16 @@ namespace SSS
             {
                 Setting form2 = new Setting();
                 sendMail(form2.getMailAddress());
-                Counter_Timer.Stop();
-                Counter_Timer.Dispose();
+                toutTimer.StopTimeoutTimer(-9.9);
+                toutTimer.DisposeTimeoutTimer();
                 network_receive = false;
                 TimeoutIndicator = false;
                 Cmdreceive = "Mail notification already sends.";
             }
 
-        }   //The end of TimeoutCounter_Delay()
+        }   //The end of TimeoutCounter_Delay()                         */
 
-        public void sendMail(string mailTo)
+        public static void sendMail(string mailTo)
         {
             string To = mailTo + ",";
             int z = 0;
@@ -893,7 +992,7 @@ namespace SSS
             SendMail(MailList, Subject, Body);
         }
 
-        public void SendMail(List<string> MailList, string Subject, string Body)
+        public static void SendMail(List<string> MailList, string Subject, string Body)
         {
             MailMessage msg = new MailMessage();
 
