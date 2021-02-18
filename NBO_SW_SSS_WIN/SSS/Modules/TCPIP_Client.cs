@@ -1,5 +1,4 @@
-﻿//#define OPTION_TPSW
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
@@ -7,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Module_Layer
+namespace ModuleLayer
 {
     public class Mod_TCPIP_Client
     {
@@ -19,12 +18,13 @@ namespace Module_Layer
         private object _Lock = new object();
         private string remote_ipAddress;
         private int remote_portNumber;
-        private static int recCount = 0;
         private byte[] _receiveBuffer = new byte[BUFFERSIZE];
-        private string clientMessage="", serverMessage, recMsg_first;
-        public enum eHID { SSS, ROBOT, TPSW };
-        string msgRecv;
-        public int hid;
+        private static string sendData;
+        private static string receiveData;
+
+        //private static AsyncCallback _dataTransferCallback;
+
+        //static private string showMessage;
 
         /* code2study.blogspot.com/2011/12/c.html */
         public delegate void UpdateTBRecvCallback(string showText);
@@ -38,22 +38,25 @@ namespace Module_Layer
 
         public void Start()
         {
-            ConnectToRemote();
+            ConnectThread();
         }
 
-        //public void Send(string message)
-		public void Send()
+        public void Send(string message)
         {
-            //SendThread(message);
-			SendData();
+            SendThread(message);
+        }
+
+        public string Receive()
+        {
+            return receiveData;
         }
 
         public void Close()
         {
             CloseConnection();
         }
-        
-        private void ConnectToRemote()
+		
+        private void ConnectThread()
         {
             try
             {
@@ -63,8 +66,8 @@ namespace Module_Layer
             }
             catch (Exception ex)
             {
-                //MessageBox.Show("On client connect exception " + ex);
-                _updateTBRecvCallback("On client connect exception " + ex.ToString());
+                MessageBox.Show("On client connect exception " + ex);
+                //_updateTBRecvCallback("On client connect exception " + ex);
             }
         }
 
@@ -92,61 +95,24 @@ namespace Module_Layer
                 while (_connectedFlag)
                 {
                     int byteRecv = _socket.Receive(_receiveBuffer);
-                    msgRecv = Encoding.ASCII.GetString(_receiveBuffer, 0, byteRecv);
-                    hid = StringExtraction(ref msgRecv, byteRecv);
-                    /* =============== ROBOT 10.83.102.149 || 10.62.32.96 ===============
-                    if (!msgRecv.Contains("_RobotDone"))
-                    {
-                        serverMessage = msgRecv + "_RobotDone";
-                        _updateTBRecvCallback("[RecFromSSS] " + msgRecv + ";    [hid] " + hid);
-
-                        Thread.Sleep(2000);
-                        SendMessage();
-                    }
-                    else if (msgRecv == "All schedules finished")
-                    {
-                        serverMessage = msgRecv;
-                        _updateTBRecvCallback("[RecFromSSS] " + msgRecv);
-                    }*/
-
-                    /* =============== TPSW 127.0.0.1 ===============*/
-                    if (msgRecv != recMsg_first + "_RobotDone")
-                    {
-                        //serverMessage = msgRecv;
-                        recMsg_first = msgRecv;
-                        _updateTBRecvCallback("[RecFromSSS-1] " + msgRecv + ";\r\n[recMsg_first] " + recMsg_first);
-                        serverMessage = "";
-                        //Thread.Sleep(100);
-                        //SendMessage();
-                    }
-                    //if (msgRecv == "Path_10_RobotDone" || msgRecv == "Path_20_RobotDone")
-                    else if (msgRecv == recMsg_first + "_RobotDone")
-                    {
-                        serverMessage = msgRecv + "_TPswDone";
-                        _updateTBRecvCallback("[RecFromSSS-2] " + msgRecv + ";\r\n[recMsg_first] " + recMsg_first);
-                        recMsg_first = "";
-
-                        Thread.Sleep(3000);
-                        SendMessage();
-                    }
-
-                    /* ===== Clean up data stored in DataBuffer ===== */
-                    
+                    string msgRecv = Encoding.ASCII.GetString(_receiveBuffer, 0, byteRecv);
+                    receiveData = msgRecv;
+                    //_updateTBRecvCallback("\r\n" + msgRecv);
                 }
             }
             catch (SocketException sEx)
             {
-                //MessageBox.Show("Socket listening exception: " + sEx);
+                MessageBox.Show("Socket listening exception: " + sEx);
                 //_updateTBSendCallback("Socket listening exception: " + sEx.Message);
                 clientReceiveThread.Abort();
             }
         }
 
-        //private void SendThread(string message)
-		private void SendData()
+        private void SendThread(string message)
         {
             try
             {
+                sendData = message;
                 clientSendThread = new Thread(new ThreadStart(SendMessage));
                 clientSendThread.IsBackground = true;
                 //_updateTBSendCallback("Client is ready to send message!");
@@ -155,7 +121,7 @@ namespace Module_Layer
             }
             catch (Exception ex)
             {
-                //MessageBox.Show("On client connect exception " + e);
+                MessageBox.Show("On client connect exception " + ex);
                 //_updateTBSendCallback("ClientEnd sending exception: " + ex.Message);
             }
         }
@@ -164,16 +130,16 @@ namespace Module_Layer
         {
             try
             {
-                //string sendingStr = StringEncoder(serverMessage);
-                byte[] clientMessageAsByte = Encoding.ASCII.GetBytes(serverMessage);
+                string clientMessage = sendData;
+                byte[] clientMessageAsByte = Encoding.ASCII.GetBytes(clientMessage);
                 //_socket.BeginSend(clientMessageAsByte, 0, clientMessageAsByte.Length, SocketFlags.None, _dataTransferCallback, null);
                 _socket.Send(clientMessageAsByte, SocketFlags.None);
                 //MessageBox.Show("Client sent his message - should be received by server");
-                //_updateTBSendCallback("[SentToSSS] " + serverMessage);
+                //_updateTBSendCallback(clientMessage);
             }
             catch (SocketException sEx)
             {
-                //MessageBox.Show("Socket sending exception: " + sEx);
+                MessageBox.Show("Socket sending exception: " + sEx);
                 //_updateTBSendCallback("Socket sending exception: " + sEx.Message);
             }
         }
@@ -183,9 +149,10 @@ namespace Module_Layer
             if (_socket.Connected == true)
             {
                 _connectedFlag = false;
-                _socket.Shutdown(SocketShutdown.Both);
-                _updateTBRecvCallback("Socket is shut down right now!!!");
-                //_socket.Close();
+                _socket.Close();
+                //_socket.Shutdown(SocketShutdown.Both);
+                MessageBox.Show("Socket is closed right now!!!");
+                //_updateTBRecvCallback("Socket is shut down right now!!!");
 
                 //clientReceiveThread.Abort();
                 //clientSendThread.Abort();   //Abort before creating SendThread
@@ -216,59 +183,7 @@ namespace Module_Layer
                 remote_portNumber = portNumber;
             }
         }
-		
-#if OPTION_TPSW
-        public string StringEncoder(string str)
-        {
-            string sendingStr = "[TPSW_]" + str;
 
-            return sendingStr;
-        }
-//#else
-        public string StringEncoder(string str)
-        {
-            string sendingStr = "[ROBOT]" + str;
-
-            return sendingStr;
-        }
-#endif
-
-        public int StringExtraction(ref string str, int str_length)
-        {
-            if (str.Length != str_length)
-            {
-                str = "FAIL";
-            }
-
-            string str_id = str;
-            string payload = str;
-            //sid = sid.Remove(7, str_length - 7);
-            bool sid_robot = str_id.Contains("_RobotDone");
-            bool sid_tpsw = str_id.Contains("_TPswDone");
-            if (sid_robot && !sid_tpsw)
-            {
-                hid = (int)eHID.ROBOT;
-                payload = "_RobotDone";
-            }
-            else if (sid_robot && sid_tpsw)
-            {
-                hid = (int)eHID.TPSW;
-                payload = "_TPswDone";
-            }
-            /*
-            if (str_header == "[SSS__]")
-                hid = (int)eHID.SSS;
-            else if (str_header == "[ROBOT]")
-                hid = (int)eHID.ROBOT;
-            else if (str_header == "[TPSW_]")
-                hid = (int)eHID.TPSW;*/
-
-            //str = str_data.Remove(0, 7);
-
-            return hid;
-        }
-		
-		
         #region 采用Socket方式，测试服务器连接 
         /// <summary> 
         /// 采用Socket方式，测试服务器连接 

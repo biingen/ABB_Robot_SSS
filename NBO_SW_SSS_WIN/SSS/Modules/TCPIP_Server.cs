@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Module_Layer
+namespace ModuleLayer
 {
     public class Mod_TCPIP_SocketListener
     {
@@ -320,4 +320,25 @@ namespace Module_Layer
         }
     }   //End of class Mod_TCPIP_ClientHandler
 
+
+    /* ================ reserved for reference ================ 
+    //#define OPTION_TPSW
+    //using System;
+    // ...
+    #if OPTION_TPSW
+            public string StringEncoder(string str)
+            {
+                string sendingStr = "[TPSW_]" + str;
+
+                return sendingStr;
+            }
+    //#else
+            public string StringEncoder(string str)
+            {
+                string sendingStr = "[ROBOT]" + str;
+
+                return sendingStr;
+            }
+    #endif
+    */
 }

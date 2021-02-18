@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DQASerailPortFunction;
 using DQATestCoreFun;
+using ModuleLayer;
 using Rs232Drv;
 using Camera_NET;
 using DirectShowLib;
-using Module_Layer;
 using System.Net.Sockets;
 using System.Timers;
 using System.Net.Mail;
@@ -30,7 +30,7 @@ namespace SSS
         static string Cmdsend, Cmdreceive;
         int Device, Resolution;
         public double timeout;
-        public static double tmout = 0;
+        public static double tmout = 0.0;
         public TimeoutTimer timeOutTimer;
 
         //创建摄像头操作对象
@@ -40,7 +40,7 @@ namespace SSS
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
         ComPortFun ComPortHandle = new ComPortFun();
-        static Mod_TCPIP_SocketListener serverSocket = new Mod_TCPIP_SocketListener();     //newly added
+        static Mod_TCPIP_SocketListener serverSocket = new Mod_TCPIP_SocketListener();
         
 
         Thread ExecuteCmdThreadHandle;
@@ -48,8 +48,8 @@ namespace SSS
         public DataGridView tempDataGrid;
         private delegate void dUpdateDataGrid(int x, int y, string data);
         private delegate void ProcessLoopText(int Cmd, ref int result);
-        public delegate void UpdateUI(int status);
-        public delegate void _UpdateUIBtn(int Btn, int Status);
+        public delegate void dUpdateUI(int status);
+        public delegate void dUpdateUIBtn(int Btn, int Status);
         //------------------------------------------------------------------------------------------------//
         private void UpdateUiData(int x, int y, string data)
         {
@@ -144,7 +144,7 @@ namespace SSS
             serverSocket.m_UpdateTPsw = new Mod_TCPIP_SocketListener.dUpdateUI(Form1UpdateTPswStatus);
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 005.002";
+            this.VerLabel.Text = "Version: 005.003";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -334,8 +334,8 @@ namespace SSS
         {
 
             Setting form2 = new Setting();
-            UpdateUI UILED = new UpdateUI(Form1UPDateComportLedStatus);
-            UpdateUI UINetworkLED = new UpdateUI(Form1UPDateNetworkLedStatus);
+            dUpdateUI UILED = new dUpdateUI(Form1UPDateComportLedStatus);
+            dUpdateUI UINetworkLED = new dUpdateUI(Form1UPDateNetworkLedStatus);
             int ComportStatus;
             string PortNumber;
             int BautRate;
@@ -417,7 +417,7 @@ namespace SSS
         }
         private void ExecuteCmd()
         {
-            _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
             dUpdateDataGrid WriteDataGride = new dUpdateDataGrid(UpdateUiData);
             dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdateUiData);
             ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
@@ -668,7 +668,6 @@ namespace SSS
                                 Thread.Sleep(10);
                             }
                             Invoke(UpdateUIBtn, 3, 1);  //display testing
-                            Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = true;
                         }
                         else if (FlagStop == 1)
                         {
@@ -741,25 +740,23 @@ namespace SSS
 
         private void BTN_Pause_Click(object sender, EventArgs e)
         {
-            _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
-            FlagPause = 1;
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
             Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
             Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
+            FlagPause = 1;
         }
 
         private void BTN_Stop_Click(object sender, EventArgs e)
         {
-            //serverSocket.CloseSocket();
-            _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
-            FlagStop = 1;
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
             Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
             Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
-            Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
             timeOutTimer.StopTimeoutTimer(-9.9);
-            Thread.Sleep(500);
-            Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
-            Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
-            //Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
+
+            if (FlagPause == 1)
+                FlagPause = 0;
+            FlagStop = 1;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -1033,7 +1030,7 @@ namespace SSS
 
         private void Main_Load(object sender, EventArgs e)
         {
-            //填充摄像头下拉框和设置默认摄像头
+            //Fill Camera ListBox and set default value
             FillCameraList();
             if (cboCameraTypeList.Items.Count > 0)
             {
@@ -1041,12 +1038,12 @@ namespace SSS
             }
         }
 
-        //找到当前计算机上可用的摄像头
+        //Update all the camera list
         private void FillCameraList()
         {
-            cboCameraTypeList.Items.Clear();//首先清空下拉列表
-            cameraChoice.UpdateDeviceList();//更新设备列表
-            //循环把设备列表添加到下拉框
+            cboCameraTypeList.Items.Clear();
+            cameraChoice.UpdateDeviceList();
+            //Iterate all cameras and put into list
             foreach (var device in cameraChoice.Devices)
             {
                 cboCameraTypeList.Items.Add(device.Name);
