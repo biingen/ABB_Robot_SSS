@@ -62,15 +62,16 @@
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="Modules\TCPIP_Client.cs" />
     <Compile Include="Setting.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Setting.Designer.cs">
       <DependentUpon>Setting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Function\RS232_Drv.cs" />
-    <Compile Include="Function\DQASerialPort.cs" />
-    <Compile Include="Function\TCPIP_Drv.cs" />
+    <Compile Include="Modules\RS232_Drv.cs" />
+    <Compile Include="Modules\DQASerialPort.cs" />
+    <Compile Include="Modules\TCPIP_Server.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ImageResource.Designer.cs">

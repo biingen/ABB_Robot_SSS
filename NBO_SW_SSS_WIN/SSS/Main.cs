@@ -14,7 +14,7 @@ using DQATestCoreFun;
 using Rs232Drv;
 using Camera_NET;
 using DirectShowLib;
-using Driver_Layer;
+using Module_Layer;
 using System.Net.Sockets;
 using System.Timers;
 using System.Net.Mail;
@@ -28,10 +28,11 @@ namespace SSS
         public int FlagComPortStauts;
         int FlagPause;
         int FlagStop;
-        string Cmdsend;
-        string Cmdreceive, Cmdreceive_Robot;
+        string Cmdsend, Cmdreceive;
+        int clientIdx;
         int Device, Resolution;
         double timeout;
+		
         //创建摄像头操作对象
         private CameraChoice cameraChoice = new CameraChoice();
         private CameraControl cameraControl = new CameraControl();
@@ -39,7 +40,8 @@ namespace SSS
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
         ComPortFun ComPortHandle = new ComPortFun();
-        Drv_TCPSocket_Client NetworkHandle = new Drv_TCPSocket_Client();
+        Mod_TCPIP_SocketListener serverSocket = new Mod_TCPIP_SocketListener();     //newly added
+
         Thread ExecuteCmdThreadHandle;
         //------------------------------------------------------------------------------------------------//
         public DataGridView tempDataGrid;
@@ -117,7 +119,7 @@ namespace SSS
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 004.003";
+            this.VerLabel.Text = "Version: 005.000";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -315,15 +317,16 @@ namespace SSS
             int ParryBit;
             int StopBit;
             int DataLen;
-            int NetworkStatus;
+            int NetworkChecked;
             string IP;
             int NetworkPort;
 
             //---------------- display RS232 setting panel ------------------//
             //form2.Owner = this;
-            if (NetworkHandle.IsConnected())
+            /* SSS as a server */
+            if (serverSocket.IsConnected())
             {
-                NetworkHandle.Close();
+                serverSocket.CloseSocket();
                 UINetworkLED.Invoke(0);
             }
 
@@ -342,7 +345,7 @@ namespace SSS
                 ParryBit = form2.getComPortParrityBit();
                 StopBit = form2.getComPortStopBit();
                 DataLen = form2.getComPortByteCount();
-                NetworkStatus = form2.getNetworkChecked();
+                NetworkChecked = form2.getNetworkChecked();
                 IP = form2.getNetworkIP();
                 NetworkPort = int.Parse(form2.getNetworkPort());
                 timeout = form2.getNetworkTimeOut();
@@ -361,26 +364,19 @@ namespace SSS
                         MessageBox.Show("Open Port fail");
                     }
                 }
-                if (NetworkStatus == 1)
+                if (NetworkChecked == 1)
                 {
-                    //if (NetworkHandle.TestConnection(IP, NetworkPort, 500) == true)
-                    if (!NetworkHandle.IsConnected())
+                    /* SSS as a server */
+                    if (!serverSocket.IsConnected())
                     {
-                        NetworkHandle.SetIpAddr(IP);
-                        NetworkHandle.SetPortNumber(NetworkPort);
-                        NetworkHandle._updateTBRecvCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
-                        NetworkHandle._updateTBSendCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
-                        //if (!NetworkHandle.IsConnected())
-                        {
-                            NetworkHandle.Start();
-                            UINetworkLED.Invoke(1);
-                        }
+                        serverSocket.CreateSocket();
+                        UINetworkLED.Invoke(1);
                     }
-                    //else if (NetworkHandle.TestConnection(IP, NetworkPort, 500) == false)
-                    else if (NetworkHandle.IsConnected())
+                    else if (serverSocket.IsConnected())
                     {
+                        serverSocket.CloseSocket();
                         UINetworkLED.Invoke(0);
-                        MessageBox.Show("Please Check the TCPIP server status.");
+                        MessageBox.Show("Server is not ready to listen.");
                     }
                     else
                     {
@@ -388,15 +384,10 @@ namespace SSS
                         MessageBox.Show("Open Socket fail.");
                     }
                 }
-                //ComPortHandle.OpenPort();
+
             }
             else if (form2.DialogResult == System.Windows.Forms.DialogResult.Cancel)
             {
-
-            }
-            else
-            {
-
             }
         }
         private void ExecuteCmd()
@@ -412,7 +403,6 @@ namespace SSS
             string CmdLine = "";
             string ResultLine = "";
             string CmdType;
-            string DateStr;
             string[] CmdString = new string[100];
             byte[] Cmdbuf = new byte[100];
             byte[] retBuf = new byte[100];
@@ -483,7 +473,7 @@ namespace SSS
                         }
                         if (ExeIndex >= 1)
                         {
-                            Invoke(updateDataGrid, (ExeIndex - 1), -5, "");//clear select status
+                            Invoke(updateDataGrid, (ExeIndex - 1), -5, "");     //clear select status
                         }
                         Invoke(updateDataGrid, ExeIndex, -6, "");
                         this.dataGridView1.Rows[ExeIndex].Cells[5].Value = "";
@@ -590,55 +580,25 @@ namespace SSS
                         #region --Schedule for Robot Command--
                         else if ((CmdType == "ROBOT") || (CmdType == "robot"))
                         {
-                            if (NetworkHandle.IsConnected())
+                            if (serverSocket.m_clientHandler[0] != null && serverSocket.m_clientHandler[1] != null)
                             {
+                                //Cmdsend = (string)(this.dataGridView1.Rows[ExeIndex].Cells[2].Value + "-" + loopIndex.ToString());
                                 Cmdsend = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
-                                NetworkHandle.Send(Cmdsend);
-                                
+                                serverSocket.SendData(1, Cmdsend);
+                                serverSocket.SendData(2, Cmdsend);
+
                                 Invoke(WriteDataGride, 5, ExeIndex, "");
                                 Thread.Sleep(100);
                                 TimeoutCounter_Delay(timeout);
                                 Invoke(WriteDataGride, 5, ExeIndex, Cmdreceive);
+
+                                //serverSocket.SendData(serverSocket.m_clientHandler[1], Cmdreceive);
+
                                 Thread.Sleep(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value));
                                 Cmdreceive = "";
                             }
                         }
                         #endregion
-                        //else if (CmdType == "LOOP")
-                        //{
-                        //    Thread.Sleep(300);
-                        //    CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[2].Value;
-                        //    CmdString = CmdLine.Split(' ');
-                        //    Cmdbuf[0] = Convert.ToByte(CmdString[0]);
-                        //    Cmdbuf[1] = Convert.ToByte(CmdString[1]);
-
-                        //    if (loopCounter == 0)
-                        //    {
-                        //        if (loopFlag == 0)
-                        //        {
-                        //            Invoke(UpdataUIDataGrid, ExeIndex, -5, "");//cleaer current select status   
-
-                        //            loopIndex = ExeIndex = (int)(Cmdbuf[0] - 1);
-                        //            loopCounter = (int)(Cmdbuf[1] - 1);
-                        //            loopFlag = 1;
-
-                        //            //Invoke(UpdataUIDataGrid, ExeIndex, -7, "");
-                        //        }
-                        //        else
-                        //        {
-                        //            loopFlag = 0;
-                        //        }
-
-                        //    }
-                        //    else if (loopCounter >= 1)
-                        //    {
-                        //        Invoke(UpdataUIDataGrid, ExeIndex, -5, "");//cleaer current select status
-                        //        loopCounter--;
-                        //        ExeIndex = loopIndex;
-
-                        //    }
-
-                        //}
                         else if ((CmdType == "W") || (CmdType == "R"))
                         {
                             //-------------------------------- Process data string from csv file --------------------------------//
@@ -676,154 +636,6 @@ namespace SSS
 
                             }
 
-                            //--------------------------------- Send cmd out via RS232 port ---------------------------------//
-                            #region --Send cmd out via RS232 port--
-                            ComPortHandle.WriteDataOut(Cmdbuf, j);
-
-                            //wait data return
-                            j = 0;
-                            while (ComPortHandle.GetReceiveBufLen() < 2)
-                            {
-
-                                Thread.Sleep(1);
-                                j++;
-                                if (j >= 500)
-                                {
-                                    break;
-                                }
-                            }
-                            if (j >= 500)
-                            {//time out
-                                Invoke(WriteDataGride, 5, ExeIndex, "Time out");
-                                Invoke(WriteDataGride, 6, ExeIndex, "Time out");
-                                Invoke(WriteDataGride, 7, ExeIndex, "Fail");
-                                Invoke(WriteDataGride, 8, ExeIndex, "Fail");
-                            }
-                            else
-                            {//process return data
-                                ComPortHandle.GetReciveData(2, ref retBuf);
-                                ResultLine = "";
-                                ResultLine += (char)ProStr.BytetoASCII((byte)((retBuf[0] >> 4) & 0x0F));
-                                ResultLine += (char)ProStr.BytetoASCII((byte)(retBuf[0] & 0x0F));
-                                ResultLine += ' ';
-                                ResultLine += (char)ProStr.BytetoASCII((byte)((retBuf[1] >> 4) & 0x0F));
-                                ResultLine += (char)ProStr.BytetoASCII((byte)(retBuf[1] & 0x0F));
-                                ResultLine += ' ';
-                                finBuf[0] = retBuf[0];
-                                finBuf[1] = retBuf[1];
-                                if ((retBuf[1] == 0x83) || (retBuf[1] == 0x86) || (retBuf[1] == 0x90))
-                                {
-                                    while (ComPortHandle.GetReceiveBufLen() < (retDataLen - 2))
-                                    {
-
-                                        Thread.Sleep(1);
-                                        j++;
-                                        if (j >= 500)
-                                        {
-                                            break;
-                                        }
-                                    }
-                                    ComPortHandle.GetReciveData(3, ref retBuf);
-
-                                    for (i = 0; i <= 2; i++)
-                                    {
-                                        ResultLine += (char)ProStr.BytetoASCII((byte)((retBuf[i] >> 4) & 0x0F));
-                                        ResultLine += (char)ProStr.BytetoASCII((byte)(retBuf[i] & 0x0F));
-                                        ResultLine += ' ';
-                                    }
-                                    Invoke(WriteDataGride, 5, ExeIndex, ResultLine);
-                                    Invoke(WriteDataGride, 6, ExeIndex, "NACK");
-                                    Invoke(WriteDataGride, 7, ExeIndex, "Fail");
-                                    Invoke(WriteDataGride, 8, ExeIndex, "Fail");
-                                }
-                                else
-                                {
-                                    while (ComPortHandle.GetReceiveBufLen() < (retDataLen - 2))
-                                    {
-
-                                        Thread.Sleep(1);
-                                        j++;
-                                        if (j >= 500)
-                                        {
-                                            break;
-                                        }
-                                    }
-
-                                    ComPortHandle.GetReciveData((retDataLen - 2), ref retBuf);
-
-                                    for (i = 0; i <= (retDataLen - 3); i++)
-                                    {
-                                        finBuf[i + 2] = retBuf[i];
-                                        ResultLine += (char)ProStr.BytetoASCII((byte)((retBuf[i] >> 4) & 0x0F));
-                                        ResultLine += (char)ProStr.BytetoASCII((byte)(retBuf[i] & 0x0F));
-                                        ResultLine += ' ';
-                                    }
-                                    Invoke(WriteDataGride, 5, ExeIndex, ResultLine);
-
-                                    retCRC = (ushort)((finBuf[retDataLen - 1] * 256) + finBuf[retDataLen - 2]);
-                                    us_data = ProcessStr.CalculateCRC((retDataLen - 2), finBuf);
-
-                                    if (retCRC != us_data)
-                                    {   //CRC fail
-                                        Invoke(WriteDataGride, 6, ExeIndex, "CRC Fail");
-                                        Invoke(WriteDataGride, 7, ExeIndex, "Fail");
-                                        Invoke(WriteDataGride, 8, ExeIndex, "Fail");
-                                    }
-                                    else
-                                    {
-                                        //output result string
-                                        us_data = (ushort)((finBuf[retDataLen - 4] * 256) + finBuf[retDataLen - 3]);
-                                        ResultLine = String.Format("0x{0:X}", us_data, us_data);
-                                        Invoke(WriteDataGride, 6, ExeIndex, ResultLine);
-                                        ResultLine = String.Format("{0}", us_data);
-                                        Invoke(WriteDataGride, 7, ExeIndex, ResultLine);
-
-                                        if (CmdType == "W")
-                                        {
-                                            if ((Cmdbuf[4] == finBuf[4]) && (Cmdbuf[5] == finBuf[5]))
-                                            {
-                                                Invoke(WriteDataGride, 8, ExeIndex, "Pass");
-                                            }
-                                            else
-                                            {
-                                                Invoke(WriteDataGride, 8, ExeIndex, "Pass");
-                                            }
-                                        }
-                                        else if (CmdType == "R")
-                                        {
-                                            CmdLine = (string)this.dataGridView1.Rows[ExeIndex].Cells[9].Value;
-                                            if ((CmdLine != null) && (CmdLine.Length >= 1))
-                                            {
-                                                CmdString = CmdLine.Split('/');
-                                                if (CmdString.Length >= 1)
-                                                {
-                                                    j = 0;
-                                                    for (i = 0; i <= (CmdString.Length - 1); i++)
-                                                    {
-                                                        tempStr = CmdString[i].Split(':');
-                                                        retCRC = Convert.ToUInt16(tempStr[0]);
-                                                        if (retCRC == us_data)
-                                                        {
-                                                            Invoke(WriteDataGride, 8, ExeIndex, tempStr[1]);
-                                                            j = 1;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (j == 0)
-                                                    {
-                                                        Invoke(WriteDataGride, 8, ExeIndex, "Unknow");
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                    }   //else (return CRC = us_data)
-
-                                }   //else (while loop)
-
-                            }   //else (process return data)
-                            #endregion
-
                             Invoke(updateDataGrid, 0, -3, " ");   //reflush datagrid
                             Thread.Sleep(DelayTime);
                         }
@@ -844,7 +656,7 @@ namespace SSS
                         else if (FlagStop == 1)
                         {
 
-                            break;//stop for loop
+                            break;      //stop for loop
                         }
                     }
 
@@ -868,7 +680,10 @@ namespace SSS
                     loopCounter--;
                 }
                 //----------------------------------------------------//
-                MessageBox.Show("All schedules finished");
+                string endingStr = "All schedules finished";
+                MessageBox.Show(endingStr);
+                serverSocket.SendData(1, endingStr);
+                serverSocket.SendData(2, endingStr);
                 //UpdateUIBtn(3, 3);//display finish
                 Invoke(UpdateUIBtn, 3,3);//display finish
                 Invoke(LoopText, 3, loopCounter);
@@ -881,24 +696,6 @@ namespace SSS
             Invoke(UpdateUIBtn, 0, 1);//this.BTN_StartTest.Enabled = true;
             Invoke(UpdateUIBtn, 1, 0);//this.BTN_Pause.Enabled = false;
             Invoke(UpdateUIBtn, 2, 0);//this.BTN_Stop.Enabled = false;
-        }
-
-        public void ShowMessageOnTBRecv(string msg)
-        {
-            if (InvokeRequired)
-            {
-                Drv_TCPSocket_Client.UpdateTBRecvCallback updateTBCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
-                Invoke(updateTBCallback, new object[] { msg });
-            }
-        }
-
-        public void ShowMessageOnTBSend(string msg)
-        {
-            if (InvokeRequired)
-            {
-                Drv_TCPSocket_Client.UpdateTBSendCallback updateTBCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
-                Invoke(updateTBCallback, new object[] { msg });
-            }
         }
 
         private void BTN_StartTest_Click(object sender, EventArgs e)
@@ -1008,15 +805,32 @@ namespace SSS
             Counter_Timer.Start();
             Counter_Timer.AutoReset = true;
 
+            
             while (TimeoutIndicator == false && network_receive == true)
             {
-                Cmdreceive = NetworkHandle.Receive();
-                if (Cmdreceive == Cmdsend + "_RobotDone")     //instead of "_Finish"
+                int hid = serverSocket.m_headerID;
+                if (hid == 1)      //From ROBOT
                 {
-                    network_receive = false;
-                    Cmdsend = "";
-                    Counter_Timer.Stop();
-                    Counter_Timer.Dispose();
+                    Cmdreceive = serverSocket.ReceiveData(hid);
+                    if (Cmdreceive == Cmdsend + "_RobotDone")     //e.g. Path_10_RobotDone"
+                    {
+                        Cmdsend = Cmdreceive;
+                        serverSocket.SendData(hid + 1, Cmdsend);
+                        Counter_Timer.Stop();
+                        Counter_Timer.Dispose();
+                    }
+                }
+                else if (hid == 2)      //From TPSW
+                {
+                    Cmdreceive = serverSocket.ReceiveData(hid);
+                    if (Cmdreceive == Cmdsend + "_TPswDone")     //e.g. Path_10_RobotDone_TPswDone"
+                    {
+                        Counter_Timer.Stop();
+                        Counter_Timer.Dispose();
+
+                        Cmdsend = "";
+                        network_receive = false;
+                    }
                 }
             }
 
@@ -1027,9 +841,11 @@ namespace SSS
                 Counter_Timer.Stop();
                 Counter_Timer.Dispose();
                 network_receive = false;
+                TimeoutIndicator = false;
                 Cmdreceive = "Mail notification already sends.";
             }
-        }
+
+        }   //The end of TimeoutCounter_Delay()
 
         public void sendMail(string mailTo)
         {
