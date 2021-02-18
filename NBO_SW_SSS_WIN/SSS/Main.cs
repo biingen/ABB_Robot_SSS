@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DQASerailPortFunction;
 using DQATestCoreFun;
+using ModuleLayer;
 using Rs232Drv;
 using Camera_NET;
 using DirectShowLib;
-using Driver_Layer;
 using System.Net.Sockets;
 using System.Timers;
 using System.Net.Mail;
@@ -26,12 +26,13 @@ namespace SSS
     {
         string TargetFilePath;
         public int FlagComPortStauts;
-        int FlagPause;
-        int FlagStop;
-        string Cmdsend;
-        string Cmdreceive, Cmdreceive_Robot;
+        int FlagPause, FlagStop;
+        static string Cmdsend, Cmdreceive;
         int Device, Resolution;
-        double timeout;
+        public double timeout;
+        public static double tmout = 0.0;
+        public TimeoutTimer timeOutTimer;
+
         //创建摄像头操作对象
         private CameraChoice cameraChoice = new CameraChoice();
         private CameraControl cameraControl = new CameraControl();
@@ -39,16 +40,16 @@ namespace SSS
         ProcessString ProcessStr = new ProcessString();
         DQACoreFun DQACoreFun = new DQACoreFun();
         ComPortFun ComPortHandle = new ComPortFun();
-        Drv_TCPSocket_Client NetworkHandle = new Drv_TCPSocket_Client();
+        static Mod_TCPIP_Client NetworkHandle = new Mod_TCPIP_Client();
         Thread ExecuteCmdThreadHandle;
         //------------------------------------------------------------------------------------------------//
         public DataGridView tempDataGrid;
         private delegate void dUpdateDataGrid(int x, int y, string data);
         private delegate void ProcessLoopText(int Cmd, ref int result);
-        public delegate void UpdateUI(int status);
-        public delegate void _UpdateUIBtn(int Btn, int Status);
+        public delegate void dUpdateUI(int status);
+        public delegate void dUpdateUIBtn(int Btn, int Status);
         //------------------------------------------------------------------------------------------------//
-        private void UpdatUiData(int x,int y,string data)
+        private void UpdateUiData(int x, int y, string data)
         {
             int i;
             if (y == -1)
@@ -117,7 +118,7 @@ namespace SSS
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 004.003";
+            this.VerLabel.Text = "Version: 004.004";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -219,7 +220,7 @@ namespace SSS
             byte HighHalfByte, LowHalfByte;
             byte[] tempData = new byte[100];
             ushort CRCResult;
-            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdatUiData);
+            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdateUiData);
 
             System.IO.StreamReader rFile = new System.IO.StreamReader(@TargetFilePath);
             updateDataGrid.Invoke(0, -2, "");//Clear datagrid
@@ -307,8 +308,8 @@ namespace SSS
         {
 
             Setting form2 = new Setting();
-            UpdateUI UILED = new UpdateUI(Form1UPDateComportLedStatus);
-            UpdateUI UINetworkLED = new UpdateUI(Form1UPDateNetworkLedStatus);
+            dUpdateUI UILED = new dUpdateUI(Form1UPDateComportLedStatus);
+            dUpdateUI UINetworkLED = new dUpdateUI(Form1UPDateNetworkLedStatus);
             int ComportStatus;
             string PortNumber;
             int BautRate;
@@ -368,8 +369,6 @@ namespace SSS
                     {
                         NetworkHandle.SetIpAddr(IP);
                         NetworkHandle.SetPortNumber(NetworkPort);
-                        NetworkHandle._updateTBRecvCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
-                        NetworkHandle._updateTBSendCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
                         //if (!NetworkHandle.IsConnected())
                         {
                             NetworkHandle.Start();
@@ -401,9 +400,9 @@ namespace SSS
         }
         private void ExecuteCmd()
         {
-            _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
-            dUpdateDataGrid WriteDataGride = new dUpdateDataGrid(UpdatUiData);
-            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdatUiData);
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
+            dUpdateDataGrid WriteDataGride = new dUpdateDataGrid(UpdateUiData);
+            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdateUiData);
             ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
             CameraChoice _CameraChoice = new CameraChoice();
             CameraControl cameraControl = new CameraControl();
@@ -436,7 +435,6 @@ namespace SSS
             else if (ComPortHandle == null)
             {
                 MessageBox.Show("Check Comport Status First");
-
             }
             else
             {
@@ -483,7 +481,7 @@ namespace SSS
                         }
                         if (ExeIndex >= 1)
                         {
-                            Invoke(updateDataGrid, (ExeIndex - 1), -5, "");//clear select status
+                            Invoke(updateDataGrid, (ExeIndex - 1), -5, "");     //clear select status
                         }
                         Invoke(updateDataGrid, ExeIndex, -6, "");
                         this.dataGridView1.Rows[ExeIndex].Cells[5].Value = "";
@@ -597,7 +595,8 @@ namespace SSS
                                 
                                 Invoke(WriteDataGride, 5, ExeIndex, "");
                                 Thread.Sleep(100);
-                                TimeoutCounter_Delay(timeout);
+                                timeOutTimer = new TimeoutTimer(timeout);
+                                timeOutTimer.StartTimeoutTimer();
                                 Invoke(WriteDataGride, 5, ExeIndex, Cmdreceive);
                                 Thread.Sleep(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[3].Value));
                                 Cmdreceive = "";
@@ -673,7 +672,6 @@ namespace SSS
                             else
                             {
                                 DelayTime = 10;
-
                             }
 
                             //--------------------------------- Send cmd out via RS232 port ---------------------------------//
@@ -828,23 +826,20 @@ namespace SSS
                             Thread.Sleep(DelayTime);
                         }
 
-                        //Invoke(UpdataUIDataGrid, ExeIndex, -3, "");//Flush datagrid
-
                         if (FlagPause == 1)
                         {
-                            Invoke(UpdateUIBtn, 0, 1);//this.BTN_StartTest.Enabled = true;
-                            Invoke(UpdateUIBtn, 3, 2);//display pause
+                            Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+                            Invoke(UpdateUIBtn, 3, 2);  //display pause
                             while (FlagPause == 1)
                             {
                                 Thread.Sleep(10);
                             }
-                            Invoke(UpdateUIBtn, 3, 1);//display testing
-                            Invoke(UpdateUIBtn, 0, 0);//this.BTN_StartTest.Enabled = true;
+                            Invoke(UpdateUIBtn, 3, 1);  //display testing
                         }
                         else if (FlagStop == 1)
                         {
-
-                            break;//stop for loop
+                            //All other stop actions are going at BTN_Stop
+                            break;  //stop for loop
                         }
                     }
 
@@ -869,8 +864,8 @@ namespace SSS
                 }
                 //----------------------------------------------------//
                 MessageBox.Show("All schedules finished");
-                //UpdateUIBtn(3, 3);//display finish
-                Invoke(UpdateUIBtn, 3,3);//display finish
+                //UpdateUIBtn(3, 3);        //display finish
+                Invoke(UpdateUIBtn, 3,3);   //display finish
                 Invoke(LoopText, 3, loopCounter);
                 if (this.checkBox1.Checked == true)
                 {
@@ -878,27 +873,10 @@ namespace SSS
                     Invoke(LoopText, 3, loopCounter);
                 }
             }
-            Invoke(UpdateUIBtn, 0, 1);//this.BTN_StartTest.Enabled = true;
-            Invoke(UpdateUIBtn, 1, 0);//this.BTN_Pause.Enabled = false;
-            Invoke(UpdateUIBtn, 2, 0);//this.BTN_Stop.Enabled = false;
-        }
 
-        public void ShowMessageOnTBRecv(string msg)
-        {
-            if (InvokeRequired)
-            {
-                Drv_TCPSocket_Client.UpdateTBRecvCallback updateTBCallback = new Drv_TCPSocket_Client.UpdateTBRecvCallback(ShowMessageOnTBRecv);
-                Invoke(updateTBCallback, new object[] { msg });
-            }
-        }
-
-        public void ShowMessageOnTBSend(string msg)
-        {
-            if (InvokeRequired)
-            {
-                Drv_TCPSocket_Client.UpdateTBSendCallback updateTBCallback = new Drv_TCPSocket_Client.UpdateTBSendCallback(ShowMessageOnTBSend);
-                Invoke(updateTBCallback, new object[] { msg });
-            }
+            Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+            Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
         }
 
         private void BTN_StartTest_Click(object sender, EventArgs e)
@@ -924,16 +902,23 @@ namespace SSS
 
         private void BTN_Pause_Click(object sender, EventArgs e)
         {
-            _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
+            Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
+            Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
             FlagPause = 1;
-            Invoke(UpdateUIBtn, 1, 0);//this.BTN_Pause.Enabled = false;
         }
 
         private void BTN_Stop_Click(object sender, EventArgs e)
         {
-            _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
+            Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
+            Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            timeOutTimer.StopTimeoutTimer(-9.9);
+
+            if (FlagPause == 1)
+                FlagPause = 0;
             FlagStop = 1;
-            Invoke(UpdateUIBtn, 2, 0);//this.BTN_Pause.Enabled = false;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -988,50 +973,83 @@ namespace SSS
             }
         }
 
-        // 這個Counter專用的delay的內部資料與function
-        static bool TimeoutIndicator = false;
-        static UInt64 TimeoutCounter_Count = 0;
-        private void Counter_Delay_OnTimedEvent(object source, ElapsedEventArgs e)
+        public class TimeoutTimer
         {
-            TimeoutCounter_Count++;
-            TimeoutIndicator = true;
-        }
-
-        private void TimeoutCounter_Delay(double timeOut)
-        {
-            if (timeout < 0) return;
-            bool network_receive = true;
-            System.Timers.Timer Counter_Timer = new System.Timers.Timer(timeOut);
-            Counter_Timer.Interval = timeOut;
-            Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_OnTimedEvent);
-            Counter_Timer.Enabled = true;
-            Counter_Timer.Start();
-            Counter_Timer.AutoReset = true;
-
-            while (TimeoutIndicator == false && network_receive == true)
+            private System.Timers.Timer Counter_Timer;
+            public TimeoutTimer(double tmOut)
             {
-                Cmdreceive = NetworkHandle.Receive();
-                if (Cmdreceive == Cmdsend + "_RobotDone")     //instead of "_Finish"
+                Counter_Timer = new System.Timers.Timer(tmOut);
+                Counter_Timer.Interval = tmOut;
+                Counter_Timer.Elapsed += new ElapsedEventHandler(Counter_Delay_OnTimedEvent);
+            }
+
+            static bool TimeoutIndicator = false;
+            static UInt64 TimeoutCounter_Count = 0;
+            private void Counter_Delay_OnTimedEvent(object source, ElapsedEventArgs e)
+            {
+                TimeoutCounter_Count++;
+                TimeoutIndicator = true;
+            }
+
+            public void StartTimeoutTimer()
+            {
+                if (Counter_Timer.Interval >= 0.0)
                 {
-                    network_receive = false;
-                    Cmdsend = "";
-                    Counter_Timer.Stop();
-                    Counter_Timer.Dispose();
+                    Counter_Timer.Enabled = true;
+                    Counter_Timer.Start();
+                    Counter_Timer.AutoReset = true;
+
+                    TimeoutCounter_Delay();
                 }
             }
 
-            while (TimeoutIndicator == true && network_receive == true)
+            public void StopTimeoutTimer(double tout)
             {
-                Setting form2 = new Setting();
-                sendMail(form2.getMailAddress());
-                Counter_Timer.Stop();
-                Counter_Timer.Dispose();
-                network_receive = false;
-                Cmdreceive = "Mail notification already sends.";
+                if (tout == -9.9)
+                    Counter_Timer.Stop();
             }
+
+            public void DisposeTimeoutTimer()
+            {
+                Counter_Timer.Dispose();
+            }
+
+            private void TimeoutCounter_Delay()
+            {
+                bool network_receive = false;
+                if (tmout >= 0)
+                    network_receive = true;
+                
+                while (TimeoutIndicator == false && network_receive == true)
+                {
+                    //Application.DoEvents();
+                    //Thread.Sleep(50);
+                    Cmdreceive = NetworkHandle.Receive();
+                    
+                    if (Cmdreceive == Cmdsend + "_RobotDone")     //e.g. Path_10_RobotDone"
+                    {
+                        network_receive = false;
+                    	Cmdsend = "";
+                        StopTimeoutTimer(-9.9);
+                        DisposeTimeoutTimer();
+                    }
+                }
+
+                while (TimeoutIndicator == true && network_receive == true)
+                {
+                    Setting form2 = new Setting();
+                    sendMail(form2.getMailAddress());
+                    StopTimeoutTimer(-9.9);
+                    DisposeTimeoutTimer();
+                    network_receive = false;
+                    TimeoutIndicator = false;
+                    Cmdreceive = "Mail notification already sends.";
+                }
+
+            }   //The end of TimeoutTimer.TimeoutCounter_Delay()
         }
 
-        public void sendMail(string mailTo)
+        public static void sendMail(string mailTo)
         {
             string To = mailTo + ",";
             int z = 0;
@@ -1056,7 +1074,7 @@ namespace SSS
             SendMail(MailList, Subject, Body);
         }
 
-        public void SendMail(List<string> MailList, string Subject, string Body)
+        public static void SendMail(List<string> MailList, string Subject, string Body)
         {
             MailMessage msg = new MailMessage();
 
@@ -1097,7 +1115,7 @@ namespace SSS
 
         private void Main_Load(object sender, EventArgs e)
         {
-            //填充摄像头下拉框和设置默认摄像头
+            //Fill Camera ListBox and set default value
             FillCameraList();
             if (cboCameraTypeList.Items.Count > 0)
             {
@@ -1105,12 +1123,12 @@ namespace SSS
             }
         }
 
-        //找到当前计算机上可用的摄像头
+        //Update all the camera list
         private void FillCameraList()
         {
-            cboCameraTypeList.Items.Clear();//首先清空下拉列表
-            cameraChoice.UpdateDeviceList();//更新设备列表
-            //循环把设备列表添加到下拉框
+            cboCameraTypeList.Items.Clear();
+            cameraChoice.UpdateDeviceList();
+            //Iterate all cameras and put into list
             foreach (var device in cameraChoice.Devices)
             {
                 cboCameraTypeList.Items.Add(device.Name);

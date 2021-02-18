@@ -317,7 +317,7 @@
             this.textBox_Timeout.Name = "textBox_Timeout";
             this.textBox_Timeout.Size = new System.Drawing.Size(130, 31);
             this.textBox_Timeout.TabIndex = 28;
-            this.textBox_Timeout.Text = "5000";
+            this.textBox_Timeout.Text = "25000";
             // 
             // label9
             // 
