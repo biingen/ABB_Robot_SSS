@@ -18,6 +18,8 @@ namespace Module_Layer
         public Socket[] m_clientHandler = new Socket[MAX_CLIENTS];
         private static AsyncCallback dataTransferCallback;
         private object oLock = new object();
+        public delegate void dUpdateUI(int status);
+        public dUpdateUI m_UpdateRobot, m_UpdateTPsw;
 
         private static string receivedMessage;
         private enum eClientID { idx_Robot, idx_TPsw };
@@ -79,6 +81,11 @@ namespace Module_Layer
 
                 WaitForData(clientSocket);
                 m_clientHandler[clientCount] = clientSocket;
+                if (clientCount == 0)
+                    m_UpdateRobot(1);
+                else if (clientCount == 1)
+                    m_UpdateTPsw(1);
+
                 listener.BeginAccept(OnConnectionRequested, null);
             }
             catch (ObjectDisposedException)
@@ -103,8 +110,13 @@ namespace Module_Layer
 
                 if (numberOfByteReceived <= 0)
                 {
-                    MessageBox.Show("Disconnected with Client - " + sp.WorkSocket.RemoteEndPoint);
-                    listener.Close();
+                    sp.WorkSocket.Close();
+                    //MessageBox.Show("Disconnected with Client - " + sp.WorkSocket.RemoteEndPoint);
+                    if (sp.WorkSocket.Equals(m_clientHandler[0]))
+                        m_UpdateRobot(0);
+                    else if (sp.WorkSocket.Equals(m_clientHandler[1]))
+                        m_UpdateTPsw(0);
+
                     return;
                 }
 

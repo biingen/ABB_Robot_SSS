@@ -43,13 +43,11 @@
             this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label1 = new System.Windows.Forms.Label();
             this.VerLabel = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.Txt_LoopCount = new System.Windows.Forms.TextBox();
             this.Label_LoopCounter = new System.Windows.Forms.Label();
             this.Picbox_CurrentStyatus = new System.Windows.Forms.PictureBox();
-            this.PIC_ComPortStatus = new System.Windows.Forms.PictureBox();
             this.BTN_Stop = new System.Windows.Forms.Button();
             this.BTN_Pause = new System.Windows.Forms.Button();
             this.BTN_StartTest = new System.Windows.Forms.Button();
@@ -57,11 +55,16 @@
             this.PIC_NetworkStatus = new System.Windows.Forms.PictureBox();
             this.cboCameraTypeList = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.PB_ROBOT = new System.Windows.Forms.PictureBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.PB_TPSW = new System.Windows.Forms.PictureBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStyatus)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PIC_ComPortStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_NetworkStatus)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PB_ROBOT)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PB_TPSW)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -179,16 +182,6 @@
             this.Column8.HeaderText = "Judge Criterion";
             this.Column8.Name = "Column8";
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(8, 618);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(130, 21);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "ComPort Status";
-            // 
             // VerLabel
             // 
             this.VerLabel.AutoSize = true;
@@ -238,15 +231,6 @@
             this.Picbox_CurrentStyatus.TabIndex = 8;
             this.Picbox_CurrentStyatus.TabStop = false;
             // 
-            // PIC_ComPortStatus
-            // 
-            this.PIC_ComPortStatus.Image = global::SSS.ImageResource.BlackLED;
-            this.PIC_ComPortStatus.Location = new System.Drawing.Point(31, 642);
-            this.PIC_ComPortStatus.Name = "PIC_ComPortStatus";
-            this.PIC_ComPortStatus.Size = new System.Drawing.Size(33, 35);
-            this.PIC_ComPortStatus.TabIndex = 5;
-            this.PIC_ComPortStatus.TabStop = false;
-            // 
             // BTN_Stop
             // 
             this.BTN_Stop.Enabled = false;
@@ -283,16 +267,16 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label2.Location = new System.Drawing.Point(144, 618);
+            this.label2.Location = new System.Drawing.Point(12, 620);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(128, 21);
+            this.label2.Size = new System.Drawing.Size(63, 21);
             this.label2.TabIndex = 12;
-            this.label2.Text = "Network Status";
+            this.label2.Text = "LISTEN";
             // 
             // PIC_NetworkStatus
             // 
             this.PIC_NetworkStatus.Image = global::SSS.ImageResource.BlackLED;
-            this.PIC_NetworkStatus.Location = new System.Drawing.Point(163, 643);
+            this.PIC_NetworkStatus.Location = new System.Drawing.Point(31, 645);
             this.PIC_NetworkStatus.Name = "PIC_NetworkStatus";
             this.PIC_NetworkStatus.Size = new System.Drawing.Size(33, 35);
             this.PIC_NetworkStatus.TabIndex = 13;
@@ -322,11 +306,53 @@
             this.label7.TabIndex = 27;
             this.label7.Text = "Camera Device:";
             // 
+            // PB_ROBOT
+            // 
+            this.PB_ROBOT.Image = global::SSS.ImageResource.BlackLED;
+            this.PB_ROBOT.Location = new System.Drawing.Point(110, 645);
+            this.PB_ROBOT.Name = "PB_ROBOT";
+            this.PB_ROBOT.Size = new System.Drawing.Size(33, 35);
+            this.PB_ROBOT.TabIndex = 30;
+            this.PB_ROBOT.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label1.Location = new System.Drawing.Point(91, 620);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(66, 21);
+            this.label1.TabIndex = 29;
+            this.label1.Text = "ROBOT";
+            // 
+            // PB_TPSW
+            // 
+            this.PB_TPSW.Image = global::SSS.ImageResource.BlackLED;
+            this.PB_TPSW.Location = new System.Drawing.Point(192, 645);
+            this.PB_TPSW.Name = "PB_TPSW";
+            this.PB_TPSW.Size = new System.Drawing.Size(33, 35);
+            this.PB_TPSW.TabIndex = 32;
+            this.PB_TPSW.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label3.Location = new System.Drawing.Point(173, 620);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(55, 21);
+            this.label3.TabIndex = 31;
+            this.label3.Text = "TPSW";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1219, 729);
+            this.Controls.Add(this.PB_TPSW);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.PB_ROBOT);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.cboCameraTypeList);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.PIC_NetworkStatus);
@@ -336,8 +362,6 @@
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.Picbox_CurrentStyatus);
             this.Controls.Add(this.VerLabel);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.PIC_ComPortStatus);
             this.Controls.Add(this.BTN_Stop);
             this.Controls.Add(this.BTN_Pause);
             this.Controls.Add(this.BTN_StartTest);
@@ -351,8 +375,9 @@
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStyatus)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PIC_ComPortStatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_NetworkStatus)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PB_ROBOT)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PB_TPSW)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -367,8 +392,6 @@
         private System.Windows.Forms.Button BTN_StartTest;
         private System.Windows.Forms.Button BTN_Pause;
         private System.Windows.Forms.Button BTN_Stop;
-        private System.Windows.Forms.PictureBox PIC_ComPortStatus;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label VerLabel;
         private System.Windows.Forms.PictureBox Picbox_CurrentStyatus;
         private System.Windows.Forms.CheckBox checkBox1;
@@ -389,6 +412,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
         private System.Windows.Forms.ComboBox cboCameraTypeList;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.PictureBox PB_ROBOT;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.PictureBox PB_TPSW;
+        private System.Windows.Forms.Label label3;
     }
 }
 

@@ -26,10 +26,8 @@ namespace SSS
     {
         string TargetFilePath;
         public int FlagComPortStauts;
-        int FlagPause;
-        int FlagStop;
+        int FlagPause, FlagStop;
         string Cmdsend, Cmdreceive;
-        int clientIdx;
         int Device, Resolution;
         double timeout;
 		
@@ -41,6 +39,7 @@ namespace SSS
         DQACoreFun DQACoreFun = new DQACoreFun();
         ComPortFun ComPortHandle = new ComPortFun();
         Mod_TCPIP_SocketListener serverSocket = new Mod_TCPIP_SocketListener();     //newly added
+        
 
         Thread ExecuteCmdThreadHandle;
         //------------------------------------------------------------------------------------------------//
@@ -50,7 +49,7 @@ namespace SSS
         public delegate void UpdateUI(int status);
         public delegate void _UpdateUIBtn(int Btn, int Status);
         //------------------------------------------------------------------------------------------------//
-        private void UpdatUiData(int x,int y,string data)
+        private void UpdateUiData(int x, int y, string data)
         {
             int i;
             if (y == -1)
@@ -95,11 +94,11 @@ namespace SSS
         {
             if (status == 1)
             {
-                this.PIC_ComPortStatus.Image = ImageResource.GleenLed;
+                //this.PIC_ComPortStatus.Image = ImageResource.GleenLed;
             }
             else
             {
-                this.PIC_ComPortStatus.Image = ImageResource.BlackLED;
+                //this.PIC_ComPortStatus.Image = ImageResource.BlackLED;
             }
         }
         public void Form1UPDateNetworkLedStatus(int status)
@@ -113,13 +112,37 @@ namespace SSS
                 this.PIC_NetworkStatus.Image = ImageResource.BlackLED;
             }
         }
+        public void Form1UpdateRobotStatus(int status)
+        {
+            if (status == 1)
+            {
+                this.PB_ROBOT.Image = ImageResource.GleenLed;
+            }
+            else
+            {
+                this.PB_ROBOT.Image = ImageResource.BlackLED;
+            }
+        }
+        public void Form1UpdateTPswStatus(int status)
+        {
+            if (status == 1)
+            {
+                this.PB_TPSW.Image = ImageResource.GleenLed;
+            }
+            else
+            {
+                this.PB_TPSW.Image = ImageResource.BlackLED;
+            }
+        }
         //------------------------------------------------------------------------------------------------//
         public Main()
         {
             InitializeComponent();
+            serverSocket.m_UpdateRobot = new Mod_TCPIP_SocketListener.dUpdateUI(Form1UpdateRobotStatus);
+            serverSocket.m_UpdateTPsw = new Mod_TCPIP_SocketListener.dUpdateUI(Form1UpdateTPswStatus);
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 005.000";
+            this.VerLabel.Text = "Version: 005.001";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -221,7 +244,7 @@ namespace SSS
             byte HighHalfByte, LowHalfByte;
             byte[] tempData = new byte[100];
             ushort CRCResult;
-            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdatUiData);
+            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdateUiData);
 
             System.IO.StreamReader rFile = new System.IO.StreamReader(@TargetFilePath);
             updateDataGrid.Invoke(0, -2, "");//Clear datagrid
@@ -393,27 +416,24 @@ namespace SSS
         private void ExecuteCmd()
         {
             _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
-            dUpdateDataGrid WriteDataGride = new dUpdateDataGrid(UpdatUiData);
-            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdatUiData);
+            dUpdateDataGrid WriteDataGride = new dUpdateDataGrid(UpdateUiData);
+            dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdateUiData);
             ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
             CameraChoice _CameraChoice = new CameraChoice();
             CameraControl cameraControl = new CameraControl();
             ProcessString ProStr = new ProcessString();
             Setting form2 = new Setting();
             string CmdLine = "";
-            string ResultLine = "";
             string CmdType;
             string[] CmdString = new string[100];
             byte[] Cmdbuf = new byte[100];
             byte[] retBuf = new byte[100];
             byte[] finBuf = new byte[100];
-            int DelayTime,retDataLen;
-            ushort us_data,retCRC;
+            int DelayTime, retDataLen;
             string[] tempStr = new string[100];
             int loopCounter = 0;
             int loopIndex = 0;
-            int loopFlag = 0;
-            int i, j, RowCount,ExeIndex = 1;
+            int i, j, RowCount, ExeIndex = 1;
 
             RowCount = this.dataGridView1.Rows.Count;
             if (RowCount <= 1) 
@@ -426,7 +446,6 @@ namespace SSS
             else if (ComPortHandle == null)
             {
                 MessageBox.Show("Check Comport Status First");
-
             }
             else
             {
@@ -681,9 +700,9 @@ namespace SSS
                 }
                 //----------------------------------------------------//
                 string endingStr = "All schedules finished";
-                MessageBox.Show(endingStr);
                 serverSocket.SendData(1, endingStr);
                 serverSocket.SendData(2, endingStr);
+                MessageBox.Show(endingStr);
                 //UpdateUIBtn(3, 3);//display finish
                 Invoke(UpdateUIBtn, 3,3);//display finish
                 Invoke(LoopText, 3, loopCounter);
@@ -693,6 +712,7 @@ namespace SSS
                     Invoke(LoopText, 3, loopCounter);
                 }
             }
+
             Invoke(UpdateUIBtn, 0, 1);//this.BTN_StartTest.Enabled = true;
             Invoke(UpdateUIBtn, 1, 0);//this.BTN_Pause.Enabled = false;
             Invoke(UpdateUIBtn, 2, 0);//this.BTN_Stop.Enabled = false;
@@ -728,6 +748,7 @@ namespace SSS
 
         private void BTN_Stop_Click(object sender, EventArgs e)
         {
+            serverSocket.CloseSocket();
             _UpdateUIBtn UpdateUIBtn = new _UpdateUIBtn(UpdateUIBtnFun);
             FlagStop = 1;
             Invoke(UpdateUIBtn, 2, 0);//this.BTN_Pause.Enabled = false;
