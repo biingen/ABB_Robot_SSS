@@ -34,15 +34,19 @@
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label1 = new System.Windows.Forms.Label();
             this.VerLabel = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -55,13 +59,22 @@
             this.BTN_StartTest = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.PIC_NetworkStatus = new System.Windows.Forms.PictureBox();
-            this.cboCameraTypeList = new System.Windows.Forms.ComboBox();
+            this.cboxCameraList = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.PIC_Arduino = new System.Windows.Forms.PictureBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button_AcOn = new System.Windows.Forms.Button();
+            this.button_AcOff = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStyatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_ComPortStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_NetworkStatus)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PIC_Arduino)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -73,7 +86,7 @@
             this.toolStripButton3});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1219, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(1194, 27);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -109,105 +122,131 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
-            this.Column10,
             this.Column2,
-            this.Column4,
             this.Column3,
+            this.Column4,
             this.Column5,
             this.Column6,
-            this.Column9,
             this.Column7,
-            this.Column8});
-            this.dataGridView1.Location = new System.Drawing.Point(12, 28);
+            this.Column8,
+            this.Column9,
+            this.Column10,
+            this.Column11,
+            this.Column12,
+            this.Column13,
+            this.Column14});
+            this.dataGridView1.Location = new System.Drawing.Point(12, 68);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(1197, 570);
+            this.dataGridView1.Size = new System.Drawing.Size(1172, 480);
             this.dataGridView1.TabIndex = 1;
             // 
             // Column1
             // 
             this.Column1.HeaderText = "CMD";
             this.Column1.Name = "Column1";
-            this.Column1.Width = 50;
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "Times";
+            this.Column2.Name = "Column2";
+            this.Column2.Width = 50;
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "Interval";
+            this.Column3.Name = "Column3";
+            this.Column3.Width = 50;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "PIN";
+            this.Column4.Name = "Column4";
+            this.Column4.Width = 50;
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "Function/CRC_mode";
+            this.Column5.Name = "Column5";
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "Sub-function";
+            this.Column6.Name = "Column6";
+            // 
+            // Column7
+            // 
+            this.Column7.HeaderText = "Output String";
+            this.Column7.Name = "Column7";
+            this.Column7.Width = 200;
+            // 
+            // Column8
+            // 
+            this.Column8.HeaderText = "AC/USB_Switch";
+            this.Column8.Name = "Column8";
+            // 
+            // Column9
+            // 
+            this.Column9.HeaderText = "Delay(ms)";
+            this.Column9.Name = "Column9";
             // 
             // Column10
             // 
             this.Column10.HeaderText = "CMD Description";
             this.Column10.Name = "Column10";
-            this.Column10.Width = 200;
+            this.Column10.Width = 150;
             // 
-            // Column2
+            // Column11
             // 
-            this.Column2.HeaderText = "Out String";
-            this.Column2.Name = "Column2";
-            this.Column2.Width = 200;
+            this.Column11.HeaderText = "Reply String";
+            this.Column11.Name = "Column11";
+            this.Column11.Width = 200;
             // 
-            // Column4
+            // Column12
             // 
-            this.Column4.HeaderText = "Delay(ms)";
-            this.Column4.Name = "Column4";
+            this.Column12.HeaderText = "Result_1";
+            this.Column12.Name = "Column12";
             // 
-            // Column3
+            // Column13
             // 
-            this.Column3.HeaderText = "CRC Field";
-            this.Column3.Name = "Column3";
+            this.Column13.HeaderText = "Result_2";
+            this.Column13.Name = "Column13";
             // 
-            // Column5
+            // Column14
             // 
-            this.Column5.HeaderText = "Reply String";
-            this.Column5.Name = "Column5";
-            this.Column5.Width = 200;
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "Result_1";
-            this.Column6.Name = "Column6";
-            // 
-            // Column9
-            // 
-            this.Column9.HeaderText = "Result_2";
-            this.Column9.Name = "Column9";
-            // 
-            // Column7
-            // 
-            this.Column7.HeaderText = "Judge ";
-            this.Column7.Name = "Column7";
-            this.Column7.Width = 150;
-            // 
-            // Column8
-            // 
-            this.Column8.HeaderText = "Judge Criterion";
-            this.Column8.Name = "Column8";
+            this.Column14.HeaderText = "Judge";
+            this.Column14.Name = "Column14";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(8, 618);
+            this.label1.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(173, 42);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(130, 21);
+            this.label1.Size = new System.Drawing.Size(116, 19);
             this.label1.TabIndex = 6;
             this.label1.Text = "ComPort Status";
             // 
             // VerLabel
             // 
             this.VerLabel.AutoSize = true;
-            this.VerLabel.Font = new System.Drawing.Font("Microsoft JhengHei", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.VerLabel.Location = new System.Drawing.Point(837, 685);
+            this.VerLabel.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VerLabel.ForeColor = System.Drawing.Color.Coral;
+            this.VerLabel.Location = new System.Drawing.Point(886, 640);
             this.VerLabel.Name = "VerLabel";
-            this.VerLabel.Size = new System.Drawing.Size(94, 26);
+            this.VerLabel.Size = new System.Drawing.Size(96, 29);
             this.VerLabel.TabIndex = 7;
             this.VerLabel.Text = "Version:";
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.checkBox1.Location = new System.Drawing.Point(286, 618);
+            this.checkBox1.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox1.Location = new System.Drawing.Point(359, 574);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(67, 25);
+            this.checkBox1.Size = new System.Drawing.Size(118, 27);
             this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "Loop";
+            this.checkBox1.Text = "Loop Times";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
@@ -215,9 +254,9 @@
             // 
             this.Txt_LoopCount.Enabled = false;
             this.Txt_LoopCount.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.Txt_LoopCount.Location = new System.Drawing.Point(286, 645);
+            this.Txt_LoopCount.Location = new System.Drawing.Point(517, 574);
             this.Txt_LoopCount.Name = "Txt_LoopCount";
-            this.Txt_LoopCount.Size = new System.Drawing.Size(90, 29);
+            this.Txt_LoopCount.Size = new System.Drawing.Size(79, 29);
             this.Txt_LoopCount.TabIndex = 10;
             this.Txt_LoopCount.Text = "1";
             // 
@@ -232,18 +271,18 @@
             // 
             // Picbox_CurrentStyatus
             // 
-            this.Picbox_CurrentStyatus.Location = new System.Drawing.Point(434, 618);
+            this.Picbox_CurrentStyatus.Location = new System.Drawing.Point(656, 574);
             this.Picbox_CurrentStyatus.Name = "Picbox_CurrentStyatus";
-            this.Picbox_CurrentStyatus.Size = new System.Drawing.Size(160, 60);
+            this.Picbox_CurrentStyatus.Size = new System.Drawing.Size(197, 49);
             this.Picbox_CurrentStyatus.TabIndex = 8;
             this.Picbox_CurrentStyatus.TabStop = false;
             // 
             // PIC_ComPortStatus
             // 
             this.PIC_ComPortStatus.Image = global::SSS.ImageResource.BlackLED;
-            this.PIC_ComPortStatus.Location = new System.Drawing.Point(31, 642);
+            this.PIC_ComPortStatus.Location = new System.Drawing.Point(153, 43);
             this.PIC_ComPortStatus.Name = "PIC_ComPortStatus";
-            this.PIC_ComPortStatus.Size = new System.Drawing.Size(33, 35);
+            this.PIC_ComPortStatus.Size = new System.Drawing.Size(20, 20);
             this.PIC_ComPortStatus.TabIndex = 5;
             this.PIC_ComPortStatus.TabStop = false;
             // 
@@ -251,7 +290,7 @@
             // 
             this.BTN_Stop.Enabled = false;
             this.BTN_Stop.Image = global::SSS.ImageResource.stop;
-            this.BTN_Stop.Location = new System.Drawing.Point(836, 629);
+            this.BTN_Stop.Location = new System.Drawing.Point(1087, 583);
             this.BTN_Stop.Name = "BTN_Stop";
             this.BTN_Stop.Size = new System.Drawing.Size(95, 40);
             this.BTN_Stop.TabIndex = 4;
@@ -262,7 +301,7 @@
             // 
             this.BTN_Pause.Enabled = false;
             this.BTN_Pause.Image = global::SSS.ImageResource.pause_button;
-            this.BTN_Pause.Location = new System.Drawing.Point(735, 629);
+            this.BTN_Pause.Location = new System.Drawing.Point(986, 583);
             this.BTN_Pause.Name = "BTN_Pause";
             this.BTN_Pause.Size = new System.Drawing.Size(95, 40);
             this.BTN_Pause.TabIndex = 3;
@@ -272,7 +311,7 @@
             // BTN_StartTest
             // 
             this.BTN_StartTest.Image = global::SSS.ImageResource.play_button;
-            this.BTN_StartTest.Location = new System.Drawing.Point(634, 629);
+            this.BTN_StartTest.Location = new System.Drawing.Point(885, 583);
             this.BTN_StartTest.Name = "BTN_StartTest";
             this.BTN_StartTest.Size = new System.Drawing.Size(95, 40);
             this.BTN_StartTest.TabIndex = 2;
@@ -282,33 +321,33 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label2.Location = new System.Drawing.Point(144, 618);
+            this.label2.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(323, 42);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(128, 21);
+            this.label2.Size = new System.Drawing.Size(116, 19);
             this.label2.TabIndex = 12;
             this.label2.Text = "Network Status";
             // 
             // PIC_NetworkStatus
             // 
             this.PIC_NetworkStatus.Image = global::SSS.ImageResource.BlackLED;
-            this.PIC_NetworkStatus.Location = new System.Drawing.Point(163, 643);
+            this.PIC_NetworkStatus.Location = new System.Drawing.Point(304, 43);
             this.PIC_NetworkStatus.Name = "PIC_NetworkStatus";
-            this.PIC_NetworkStatus.Size = new System.Drawing.Size(33, 35);
+            this.PIC_NetworkStatus.Size = new System.Drawing.Size(20, 20);
             this.PIC_NetworkStatus.TabIndex = 13;
             this.PIC_NetworkStatus.TabStop = false;
             // 
-            // cboCameraTypeList
+            // cboxCameraList
             // 
-            this.cboCameraTypeList.Font = new System.Drawing.Font("PMingLiU", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.cboCameraTypeList.FormattingEnabled = true;
-            this.cboCameraTypeList.Items.AddRange(new object[] {
+            this.cboxCameraList.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cboxCameraList.FormattingEnabled = true;
+            this.cboxCameraList.Items.AddRange(new object[] {
             "1",
             "2"});
-            this.cboCameraTypeList.Location = new System.Drawing.Point(148, 687);
-            this.cboCameraTypeList.Name = "cboCameraTypeList";
-            this.cboCameraTypeList.Size = new System.Drawing.Size(228, 24);
-            this.cboCameraTypeList.TabIndex = 28;
+            this.cboxCameraList.Location = new System.Drawing.Point(947, 37);
+            this.cboxCameraList.Name = "cboxCameraList";
+            this.cboxCameraList.Size = new System.Drawing.Size(228, 27);
+            this.cboxCameraList.TabIndex = 28;
             // 
             // label7
             // 
@@ -316,18 +355,110 @@
             this.label7.BackColor = System.Drawing.Color.Black;
             this.label7.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(10, 687);
+            this.label7.Location = new System.Drawing.Point(808, 40);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(133, 23);
             this.label7.TabIndex = 27;
             this.label7.Text = "Camera Device:";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(31, 43);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(112, 19);
+            this.label3.TabIndex = 30;
+            this.label3.Text = "Arduino Status";
+            // 
+            // PIC_Arduino
+            // 
+            this.PIC_Arduino.Image = global::SSS.ImageResource.BlackLED;
+            this.PIC_Arduino.Location = new System.Drawing.Point(11, 44);
+            this.PIC_Arduino.Name = "PIC_Arduino";
+            this.PIC_Arduino.Size = new System.Drawing.Size(20, 20);
+            this.PIC_Arduino.TabIndex = 29;
+            this.PIC_Arduino.TabStop = false;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(375, 615);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(136, 23);
+            this.label4.TabIndex = 31;
+            this.label4.Text = "Loop Remaining";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Enabled = false;
+            this.textBox1.Font = new System.Drawing.Font("Microsoft JhengHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.textBox1.Location = new System.Drawing.Point(517, 615);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(79, 29);
+            this.textBox1.TabIndex = 32;
+            this.textBox1.Text = "0";
+            // 
+            // button1
+            // 
+            this.button1.Enabled = false;
+            this.button1.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(12, 574);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(109, 43);
+            this.button1.TabIndex = 33;
+            this.button1.Text = "Schedule";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Enabled = false;
+            this.button2.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(127, 574);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(109, 43);
+            this.button2.TabIndex = 34;
+            this.button2.Text = "Camera";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button_AcOn
+            // 
+            this.button_AcOn.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_AcOn.Location = new System.Drawing.Point(12, 623);
+            this.button_AcOn.Name = "button_AcOn";
+            this.button_AcOn.Size = new System.Drawing.Size(109, 43);
+            this.button_AcOn.TabIndex = 35;
+            this.button_AcOn.Text = "AC On";
+            this.button_AcOn.UseVisualStyleBackColor = true;
+            this.button_AcOn.Click += new System.EventHandler(this.button_AcOn_Click);
+            // 
+            // button_AcOff
+            // 
+            this.button_AcOff.Enabled = false;
+            this.button_AcOff.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_AcOff.Location = new System.Drawing.Point(127, 623);
+            this.button_AcOff.Name = "button_AcOff";
+            this.button_AcOff.Size = new System.Drawing.Size(109, 43);
+            this.button_AcOff.TabIndex = 36;
+            this.button_AcOff.Text = "AC off";
+            this.button_AcOff.UseVisualStyleBackColor = true;
+            this.button_AcOff.Click += new System.EventHandler(this.button_AcOff_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1219, 729);
-            this.Controls.Add(this.cboCameraTypeList);
+            this.ClientSize = new System.Drawing.Size(1194, 692);
+            this.Controls.Add(this.button_AcOff);
+            this.Controls.Add(this.button_AcOn);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.PIC_Arduino);
+            this.Controls.Add(this.cboxCameraList);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.PIC_NetworkStatus);
             this.Controls.Add(this.label2);
@@ -353,6 +484,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStyatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_ComPortStatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_NetworkStatus)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PIC_Arduino)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -377,18 +509,30 @@
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox PIC_NetworkStatus;
+        private System.Windows.Forms.ComboBox cboxCameraList;
+        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
-        private System.Windows.Forms.ComboBox cboCameraTypeList;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column14;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.PictureBox PIC_Arduino;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button_AcOn;
+        private System.Windows.Forms.Button button_AcOff;
     }
 }
 

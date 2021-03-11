@@ -43,8 +43,12 @@
     <Reference Include="DirectShowLib-2010">
       <HintPath>DLL\DirectShowLib-2010.dll</HintPath>
     </Reference>
+    <Reference Include="jini">
+      <HintPath>DLL\jini.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="add_ons.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,8 +73,8 @@
     <Compile Include="Setting.Designer.cs">
       <DependentUpon>Setting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Modules\RS232_Drv.cs" />
-    <Compile Include="Modules\DQASerialPort.cs" />
+    <Compile Include="Modules\Mod_RS232.cs" />
+    <Compile Include="Modules\Data_Conversion.cs" />
     <Compile Include="Modules\TCPIP_Client.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
