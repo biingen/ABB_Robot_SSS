@@ -440,7 +440,7 @@ namespace SSS
 
                             if (cameraChoice.Devices.Count >= 1)
                             {
-                                Snapshot(cameraIdx, columns_wait);
+                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                 /*
                                 //Cmd line
                                 CmdStringArray = columns_cmdLine.PadLeft(2, '0').Split(' ');
@@ -765,7 +765,11 @@ namespace SSS
                             //string GPIO = "01010101";
                             //Arduino_IO_INPUT();
                             string GPIO_string = columns_times;
-                            //byte GPIO_B = Convert.ToByte(GPIO, 2);
+                            byte GPIO_B = Convert.ToByte(GPIO_string, 2);
+                            if ((GPIO_B & 0x02) == 0x00)
+                                GlobalData.Arduino_relay_status = false;
+                            else
+                                GlobalData.Arduino_relay_status = true;
                             Arduino_Set_GPIO_Output(GPIO_string, sysDelay);
                             //label_Command.Text = "(" + columns_command + ") " + columns_times;
                         }
@@ -805,7 +809,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -838,7 +842,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -884,7 +888,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -916,7 +920,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -959,7 +963,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -991,7 +995,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1034,7 +1038,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1065,7 +1069,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1108,7 +1112,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1139,7 +1143,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1182,7 +1186,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1213,7 +1217,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1256,7 +1260,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1287,7 +1291,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1330,7 +1334,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1361,7 +1365,7 @@ namespace SSS
 
                                             if (cameraChoice.Devices.Count >= 1)
                                             {
-                                                Snapshot(cameraIdx, columns_wait);
+                                                Snapshot(cameraIdx, columns_wait, columns_remark);
                                             }
                                             else
                                             {
@@ -1591,7 +1595,7 @@ namespace SSS
         bool PauseFlag = false;
         bool ShotFlag = false;
         #region -- IO CMD 指令集 --
-        private void IO_CMD(string cmdLine, int cameraIdx, string columns_wait)
+        private void IO_CMD(string cmdLine, int cameraIdx, string columns_wait, string columns_remark)
         {
             if (cmdLine == "_shot")
             {
@@ -1601,7 +1605,7 @@ namespace SSS
                 if (GlobalData.Loop_Number == 1)
                     GlobalData.caption_Sum = GlobalData.caption_Num;
                     */
-                Snapshot(cameraIdx, columns_wait);
+                Snapshot(cameraIdx, columns_wait, columns_remark);
                 //label_Command.Text = "IO CMD_SHOT";
             }/*
             else if (cmdLine == "_pause")
@@ -1875,7 +1879,7 @@ namespace SSS
             GetSerialData(GlobalData.m_SerialPort);
         }
 
-        public void Snapshot(int cameraIndex, string delayTimeString)
+        public void Snapshot(int cameraIndex, string delayTimeString, string remark)
         {
             string image_currentPath = System.Environment.CurrentDirectory;
             int delayTime;
@@ -1907,7 +1911,14 @@ namespace SSS
 
                     bitmap = cameraControl.SnapshotSourceImage();
                     g = Graphics.FromImage(bitmap);
-                    g.DrawString(DateTime.Now.ToString("yyyyMMdd_HHmmss"), new Font("Arial", 12), Brushes.Yellow, 0, 0);
+                    DateTime dt = DateTime.Now;
+                    g.DrawString(string.Format("{0:R}", dt), new Font("Arial", 12), Brushes.Yellow, 0, 0);
+                    if(GlobalData.Arduino_relay_status)
+                        g.DrawString("AC Source: On", new Font("Arial", 12), Brushes.Yellow, 0, 15);
+                    else
+                        g.DrawString("AC Source: Off", new Font("Arial", 12), Brushes.Yellow, 0, 15);
+                    if (remark != "")
+                        g.DrawString(remark, new Font("Arial", 12), Brushes.Yellow, 0, 30);
                     g.Flush();
                     
                     //Delay Time

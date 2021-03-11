@@ -58,6 +58,7 @@ namespace SSS
         public static string Arduino_IO_INPUT = "";
         public static ushort Arduino_IO_INPUT_value = 0x100;
         public static string Arduino_Read_String = "";
+        public static bool Arduino_relay_status = false;
         public static bool Arduino_openFlag;
         public static bool Arduino_recFlag;
         public static short Arduino_Read_Byte = 0x0000;
