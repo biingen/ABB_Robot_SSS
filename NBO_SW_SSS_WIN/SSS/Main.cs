@@ -1931,7 +1931,10 @@ namespace SSS
                         delayTime = 500;
                     }
                     Thread.Sleep(delayTime);
-                    bitmap.Save(image_currentPath + "\\" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    if (createCamerafolder(cameraChoice.Devices[i].Name.ToString()))
+                        bitmap.Save(image_currentPath + "\\" + cameraChoice.Devices[i].Name.ToString() + "\\" + cameraChoice.Devices[i].Name.ToString() + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    else
+                        MessageBox.Show("Camera picture save folder error.", "Save error", MessageBoxButtons.OK, MessageBoxIcon.Question);
                     cameraControl.CloseCamera();
                 }
                 catch
@@ -2142,6 +2145,23 @@ namespace SSS
                 cameraControl.SetCamera(cameraChoice.Devices[cboxCameraList.SelectedIndex].Mon, null);
                 //SetCamera(_CameraChoice.Devices[ comboBoxCameraList.SelectedIndex ].Mon, null);
             }
+        }
+
+        private bool createCamerafolder(string camera)
+        {
+            bool status = false;
+            string picFolder = System.Environment.CurrentDirectory + "\\" + camera;
+
+            if (Directory.Exists(picFolder))
+            {
+                status = true;
+            }
+            else
+            {
+                Directory.CreateDirectory(picFolder);
+                status = true;
+            }
+            return status;
         }
     }
 }
