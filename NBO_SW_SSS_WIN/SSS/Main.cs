@@ -772,6 +772,7 @@ namespace SSS
                                 GlobalData.Arduino_relay_status = true;
                             Arduino_Set_GPIO_Output(GPIO_B, sysDelay);
                             //label_Command.Text = "(" + columns_command + ") " + columns_times;
+                            Thread.Sleep(Convert.ToInt32(columns_wait));
                         }
                         #endregion
                         #region -- Schedule for Normal I/O --
