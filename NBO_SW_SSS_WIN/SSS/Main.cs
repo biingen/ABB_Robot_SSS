@@ -770,7 +770,7 @@ namespace SSS
                                 GlobalData.Arduino_relay_status = false;
                             else
                                 GlobalData.Arduino_relay_status = true;
-                            Arduino_Set_GPIO_Output(GPIO_string, sysDelay);
+                            Arduino_Set_GPIO_Output(GPIO_B, sysDelay);
                             //label_Command.Text = "(" + columns_command + ") " + columns_times;
                         }
                         #endregion
@@ -1547,7 +1547,7 @@ namespace SSS
             
         }
 
-        public void Arduino_Set_GPIO_Output(string outputString, int delay_time)
+        public void Arduino_Set_GPIO_Output(byte outputbyte, int delay_time)
         {
             int retry_cnt = 5;
 
@@ -1555,7 +1555,7 @@ namespace SSS
             {
                 try
                 {
-                    string dataString = "io x " + outputString;
+                    string dataString = "io x " + outputbyte;
                     
                     do
                     {
