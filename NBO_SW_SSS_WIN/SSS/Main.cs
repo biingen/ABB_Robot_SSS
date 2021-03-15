@@ -24,7 +24,7 @@ namespace SSS
     {
         string TargetFilePath;
         public int FlagComPortStauts;
-        int FlagPause, FlagStop;
+        int FlagPause, FlagStop, loopTimes = 0, loopCounter = 0;
         static string Cmdsend, Cmdreceive;
         int Device, Resolution;
         public double timeout;
@@ -132,7 +132,7 @@ namespace SSS
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 006.000";
+            this.VerLabel.Text = "Version: 006.001";
             FlagPause = 0;
             FlagStop = 0;
 
@@ -203,25 +203,27 @@ namespace SSS
         {
             if (Cmd == 0)
             {
-                this.Txt_LoopCount.Enabled = false;
+                this.Txt_LoopTimes.Enabled = false;
+                this.Txt_LoopCounter.Visible = false;
             }
             else if (Cmd == 1)
             {
-                this.Txt_LoopCount.Enabled = true;
+                this.Txt_LoopTimes.Enabled = true;
+                this.Txt_LoopCounter.Visible = true;
             }
             else if (Cmd == 2)
             {
-                result = Convert.ToInt32(this.Txt_LoopCount.Text);
+                result = Convert.ToInt32(this.Txt_LoopTimes.Text);
             }
             else if (Cmd == 3)
             {
-                this.Label_LoopCounter.Visible = false;
+                //this.Txt_LoopCounter.Visible = false;
             }
             else if (Cmd ==4)
             {
-                this.Label_LoopCounter.Visible = false;
-                this.Label_LoopCounter.Text = "Loop:" + result.ToString();
-                this.Label_LoopCounter.Visible = true;
+                //this.Txt_LoopCounter.Visible = false;
+                this.Txt_LoopCounter.Text = result.ToString();
+                //this.Txt_LoopCounter.Visible = true;
             }
             
         }
@@ -340,9 +342,8 @@ namespace SSS
             byte[] finBuf = new byte[100];
             ushort us_data, retCRC;
             int delayTime, retDataLen;
-            int loopCounter = 0;
+            //int loopCounter = 0;
             int loopIndex = 0;
-            int loopFlag = 0;
             int sysDelay = 0;
             int i, j, RowCount, ExeIndex = 0;
             int GPIO_Read_IntValue = -1;
@@ -352,8 +353,8 @@ namespace SSS
             {
                 MessageBox.Show("Finish");
                 //UpdateLoopTxt(1, ref loopCounter);//Enable Loop Text
-                Invoke(LoopText, 1, loopCounter);
-                Invoke(LoopText, 3, loopCounter);
+                //Invoke(LoopText, 1, loopCounter);
+                //Invoke(LoopText, 3, loopCounter);
             }
             else if (GlobalData.m_SerialPort == null)
             {
@@ -361,11 +362,10 @@ namespace SSS
             }
             else
             {
-                //
-                Invoke(LoopText, 0, loopCounter);
-                //UpdateLoopTxt(0, ref loopCounter);//disable Loop Test
-                UpdateLoopTxt(2, ref loopCounter);//get Loop counter
-                Invoke(LoopText, 2, loopCounter);
+                //Invoke(LoopText, 0, loopCounter);
+                //UpdateLoopTxt(0, ref loopCounter);  //disable Loop Test
+                UpdateLoopTxt(2, ref loopCounter);  //get Loop counter
+                //Invoke(LoopText, 2, loopCounter);
                 if (loopCounter < 0)
                 {
                     loopCounter = 0;
@@ -373,10 +373,11 @@ namespace SSS
 
                 while (loopCounter > 0 && FlagStop == 0)
                 {
-                    if (this.checkBox1.Checked == true)
+                    if (this.chkBox_LoopTimes.Checked == true)
                     {
                         loopIndex++;
-                        Invoke(LoopText, 4, loopIndex);
+                        //Invoke(LoopText, 4, loopIndex);
+                        Invoke(LoopText, 4, loopCounter);
                     }
 
                     Invoke(UpdateUIBtn, 3, 1);  //display testing
@@ -1426,17 +1427,12 @@ namespace SSS
                     wFile.Close();*/
 
                     loopCounter--;
+					Invoke(LoopText, 4, loopCounter);
                 }
                 //----------------------------------------------------//
                 MessageBox.Show("All schedules finished");
                 //UpdateUIBtn(3, 3);        //display finish
                 Invoke(UpdateUIBtn, 3,3);   //display finish
-                Invoke(LoopText, 3, loopCounter);
-                if (this.checkBox1.Checked == true)
-                {
-                    Invoke(LoopText, 1, loopCounter);
-                    Invoke(LoopText, 3, loopCounter);
-                }
             }
 
             Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
@@ -1690,19 +1686,7 @@ namespace SSS
 
             //SerialPort_Receive_Thread.Abort();
         }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.checkBox1.Checked == true)
-            {
-                this.Txt_LoopCount.Enabled = true;
-            }
-            else
-            {
-                this.Txt_LoopCount.Enabled = false;
-            }
-        }
-
+        
         private void toolStripButton1_Click(object sender, EventArgs e)
         {   // == Open File BTN == //
             OpenFileDialog dialog = new OpenFileDialog();
@@ -1938,9 +1922,9 @@ namespace SSS
                         MessageBox.Show("Camera picture save folder error.", "Save error", MessageBoxButtons.OK, MessageBoxIcon.Question);
                     cameraControl.CloseCamera();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    MessageBox.Show("No such Camera Index!");
+                    MessageBox.Show("Snapshot error: " + ex);
                 }
             }
         }
@@ -2120,6 +2104,34 @@ namespace SSS
                 ArduinoLED.Invoke(1);
             else
                 ArduinoLED.Invoke(0);
+        }
+
+        private void chkBox_Loop_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkBox_LoopTimes.Checked == true)
+            {
+                this.Txt_LoopTimes.Enabled = true;
+                this.Txt_LoopCounter.Enabled = true;
+                loopTimes = Convert.ToInt32(Txt_LoopTimes.Text);
+                loopCounter = Convert.ToInt32(Txt_LoopCounter.Text);
+            }
+            else
+            {
+                this.Txt_LoopTimes.Enabled = false;
+                this.Txt_LoopCounter.Enabled = false;
+                loopTimes = 0;
+                loopCounter = 0;
+            }
+        }
+
+        private void Txt_LoopTimes_TextChanged(object sender, EventArgs e)
+        {
+            TextBox txtBox = (TextBox)sender;
+            if (this.chkBox_LoopTimes.Checked == true)
+            {
+                Txt_LoopCounter.Text = txtBox.Text;
+                //loopCounter = Convert.ToInt32(Txt_LoopCounter.Text);
+            }
         }
 
         //Update all the camera list
