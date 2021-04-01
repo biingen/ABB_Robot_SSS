@@ -118,14 +118,13 @@ namespace SSS
             if (Comport_checkBox.Checked == true)
             {
                 SerialPort PortHandle = new SerialPort();
-                //string tempStr;
+                
                 PortHandle.PortName = (string)this.comboBox_Portname.SelectedItem;
                 try
                 {
                     PortHandle.Open();
                     System.Threading.Thread.Sleep(1);
                     PortHandle.Close();
-
                 }
                 catch (Exception)
                 {

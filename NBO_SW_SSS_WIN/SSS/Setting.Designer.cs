@@ -345,9 +345,9 @@
             this.Port_groupBox.Controls.Add(this.label2);
             this.Port_groupBox.Controls.Add(this.label1);
             this.Port_groupBox.Location = new System.Drawing.Point(289, 10);
-            this.Port_groupBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Port_groupBox.Margin = new System.Windows.Forms.Padding(2);
             this.Port_groupBox.Name = "Port_groupBox";
-            this.Port_groupBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Port_groupBox.Padding = new System.Windows.Forms.Padding(2);
             this.Port_groupBox.Size = new System.Drawing.Size(184, 187);
             this.Port_groupBox.TabIndex = 29;
             this.Port_groupBox.TabStop = false;
@@ -358,7 +358,7 @@
             this.Comport_checkBox.AutoSize = true;
             this.Comport_checkBox.Font = new System.Drawing.Font("PMingLiU", 12F);
             this.Comport_checkBox.Location = new System.Drawing.Point(8, 18);
-            this.Comport_checkBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Comport_checkBox.Margin = new System.Windows.Forms.Padding(2);
             this.Comport_checkBox.Name = "Comport_checkBox";
             this.Comport_checkBox.Size = new System.Drawing.Size(70, 20);
             this.Comport_checkBox.TabIndex = 10;
@@ -378,9 +378,9 @@
             this.Network_groupBox.Controls.Add(this.textBox_IPAddr);
             this.Network_groupBox.Controls.Add(this.label_IPAddr);
             this.Network_groupBox.Location = new System.Drawing.Point(11, 10);
-            this.Network_groupBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Network_groupBox.Margin = new System.Windows.Forms.Padding(2);
             this.Network_groupBox.Name = "Network_groupBox";
-            this.Network_groupBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Network_groupBox.Padding = new System.Windows.Forms.Padding(2);
             this.Network_groupBox.Size = new System.Drawing.Size(273, 187);
             this.Network_groupBox.TabIndex = 30;
             this.Network_groupBox.TabStop = false;
@@ -391,7 +391,7 @@
             this.Network_checkBox.AutoSize = true;
             this.Network_checkBox.Font = new System.Drawing.Font("PMingLiU", 12F);
             this.Network_checkBox.Location = new System.Drawing.Point(4, 19);
-            this.Network_checkBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Network_checkBox.Margin = new System.Windows.Forms.Padding(2);
             this.Network_checkBox.Name = "Network_checkBox";
             this.Network_checkBox.Size = new System.Drawing.Size(70, 20);
             this.Network_checkBox.TabIndex = 11;
