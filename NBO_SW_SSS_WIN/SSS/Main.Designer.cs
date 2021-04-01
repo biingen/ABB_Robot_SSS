@@ -52,7 +52,7 @@
             this.chkBox_LoopTimes = new System.Windows.Forms.CheckBox();
             this.Txt_LoopTimes = new System.Windows.Forms.TextBox();
             this.Label_LoopCounter = new System.Windows.Forms.Label();
-            this.Picbox_CurrentStyatus = new System.Windows.Forms.PictureBox();
+            this.Picbox_CurrentStatus = new System.Windows.Forms.PictureBox();
             this.PIC_ComPortStatus = new System.Windows.Forms.PictureBox();
             this.BTN_Stop = new System.Windows.Forms.Button();
             this.BTN_Pause = new System.Windows.Forms.Button();
@@ -75,7 +75,7 @@
             this.videoSourcePlayer2 = new AForge.Controls.VideoSourcePlayer();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStyatus)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_ComPortStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_NetworkStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_Arduino)).BeginInit();
@@ -277,13 +277,13 @@
             this.Label_LoopCounter.TabIndex = 11;
             this.Label_LoopCounter.Text = "Loop Remaining";
             // 
-            // Picbox_CurrentStyatus
+            // Picbox_CurrentStatus
             // 
-            this.Picbox_CurrentStyatus.Location = new System.Drawing.Point(656, 574);
-            this.Picbox_CurrentStyatus.Name = "Picbox_CurrentStyatus";
-            this.Picbox_CurrentStyatus.Size = new System.Drawing.Size(197, 49);
-            this.Picbox_CurrentStyatus.TabIndex = 8;
-            this.Picbox_CurrentStyatus.TabStop = false;
+            this.Picbox_CurrentStatus.Location = new System.Drawing.Point(656, 574);
+            this.Picbox_CurrentStatus.Name = "Picbox_CurrentStatus";
+            this.Picbox_CurrentStatus.Size = new System.Drawing.Size(197, 49);
+            this.Picbox_CurrentStatus.TabIndex = 8;
+            this.Picbox_CurrentStatus.TabStop = false;
             // 
             // PIC_ComPortStatus
             // 
@@ -515,7 +515,7 @@
             this.Controls.Add(this.Label_LoopCounter);
             this.Controls.Add(this.Txt_LoopTimes);
             this.Controls.Add(this.chkBox_LoopTimes);
-            this.Controls.Add(this.Picbox_CurrentStyatus);
+            this.Controls.Add(this.Picbox_CurrentStatus);
             this.Controls.Add(this.VerLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.PIC_ComPortStatus);
@@ -532,7 +532,7 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStyatus)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_ComPortStatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_NetworkStatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_Arduino)).EndInit();
@@ -555,7 +555,7 @@
         private System.Windows.Forms.PictureBox PIC_ComPortStatus;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label VerLabel;
-        private System.Windows.Forms.PictureBox Picbox_CurrentStyatus;
+        private System.Windows.Forms.PictureBox Picbox_CurrentStatus;
         private System.Windows.Forms.CheckBox chkBox_LoopTimes;
         private System.Windows.Forms.TextBox Txt_LoopTimes;
         private System.Windows.Forms.Label Label_LoopCounter;

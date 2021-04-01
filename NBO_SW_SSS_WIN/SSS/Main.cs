@@ -11,8 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ModuleLayer;
-using Camera_NET;
-using DirectShowLib;
 using System.Net.Sockets;
 using System.Timers;
 using System.Net.Mail;
@@ -36,9 +34,6 @@ namespace SSS
         Thread SerialPort_Receive_Thread;
 
         // ----------------------------------------------------------------------------------------------- //
-        private static CameraChoice cameraChoice = new CameraChoice();
-        private static CameraControl cameraControl = new CameraControl();
-        
         private FilterInfoCollection videoDevices = null;
         private VideoCaptureDevice videoSource = null;
         private VideoCapabilities[] videoCapabilities;
@@ -46,8 +41,8 @@ namespace SSS
         static VideoCaptureDevice videoSource_1, videoSource_2;
         private static Bitmap bitmap = null;
         static Graphics g = null;
-        public delegate void dPassBitmapOn(ref Bitmap bmp, string remarkString);
-        public static dPassBitmapOn passBitmapOn, copyBitmap;
+        //public delegate void dPassBitmapOn(ref Bitmap bmp, string remarkString);
+        //public static dPassBitmapOn passBitmapOn;
         private object objLock = new object();
         private bool DeviceExist = false;
         static int CamaraExist = 0, cameraIndex = -1;
@@ -149,70 +144,125 @@ namespace SSS
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 004.005";
+            this.VerLabel.Text = "Version: 004.006";
             FlagPause = 0;
             FlagStop = 0;
         }
-        private void UpdateUIBtnFun(int Btn,int Status)
+        private void UpdateUIBtnFun(int Btn, int Status)
         {
             switch (Btn)
             {
-                case 0://Start BTN
+                case 0:     //Start BTN
                     if (Status == 1)
                     {
-                        this.BTN_StartTest.Enabled = true;
+                        BTN_StartTest.Enabled = true;
                     }
                     else
                     {
-                        this.BTN_StartTest.Enabled = false;
+                        BTN_StartTest.Enabled = false;
                     }
                     break;
-                case 1://Pause BTN
+                case 1:     //Pause BTN
                     if (Status == 1)
                     {
-                        this.BTN_Pause.Enabled = true;
+                        BTN_Pause.Enabled = true;
                     }
                     else
                     {
-                        this.BTN_Pause.Enabled = false;
+                        BTN_Pause.Enabled = false;
                     }
                     break;
-                case 2://Stop BTN
+                case 2:     //Stop BTN
                     if (Status == 1)
                     {
-                        this.BTN_Stop.Enabled = true;
+                        BTN_Stop.Enabled = true;
                     }
                     else
                     {
-                        this.BTN_Stop.Enabled = false;
+                        BTN_Stop.Enabled = false;
                     }
                     break;
-                case 3://Update status picture box
+                case 3:     //Update status picture box
                     if (Status == 1)
                     {
-                        //this.
-                        this.Picbox_CurrentStyatus.Image = ImageResource.Testing;
+                        Picbox_CurrentStatus.Image = ImageResource.Testing;
                     }
                     else if (Status == 2)
                     {
-                        //this.
-                        this.Picbox_CurrentStyatus.Image = ImageResource.pause;
+                        Picbox_CurrentStatus.Image = ImageResource.pause;
                     }
                     else if (Status == 3)
                     {
-                        //this.
-                        this.Picbox_CurrentStyatus.Image = ImageResource.Finish;
+                        Picbox_CurrentStatus.Image = ImageResource.Finish;
                     }
                     else
                     {
-                        this.Picbox_CurrentStyatus.Image = null;
-
+                        Picbox_CurrentStatus.Image = null;
                     }
-                    //this.Picbox_CurrentStyatus.Refresh();
+                    //this.Picbox_CurrentStatus.Refresh();
                     break;
-
+                case 4:     //Camera BTN
+                    if (Status == 1)
+                    {
+                        button_Camera.Enabled = true;
+                    }
+                    else
+                    {
+                        button_Camera.Enabled = false;
+                    }
+                    break;
+                case 5:     //Snapshot BTN
+                    if (Status == 1)
+                    {
+                        button_Snapshot.Enabled = true;
+                    }
+                    else
+                    {
+                        button_Snapshot.Enabled = false;
+                    }
+                    break;
+                case 6:     //Schedule BTN
+                    if (Status == 1)
+                    {
+                        button_Schedule.Enabled = true;
+                    }
+                    else
+                    {
+                        button_Schedule.Enabled = false;
+                    }
+                    break;
+                case 7:     //AC_On BTN
+                    if (Status == 1)
+                    {
+                        button_AcOn.Enabled = true;
+                    }
+                    else
+                    {
+                        button_AcOn.Enabled = false;
+                    }
+                    break;
+                case 8:     //AC_Off BTN
+                    if (Status == 1)
+                    {
+                        button_AcOff.Enabled = true;
+                    }
+                    else
+                    {
+                        button_AcOff.Enabled = false;
+                    }
+                    break;
+                case 9:     //Update cboxCameraList enable state
+                    if (Status == 1)
+                    {
+                        cboxCameraList.Enabled = true;
+                    }
+                    else
+                    {
+                        cboxCameraList.Enabled = false;
+                    }
+                    break;
             }
-            this.Refresh();
+            //this.Refresh();
         }
         private void UpdateLoopTxt(int Cmd,ref int result)
         {
@@ -336,30 +386,22 @@ namespace SSS
             updateDataGrid.Invoke(0, -3, "");   //Fresh datagrid
         }
         // ------------------------------------------------------------------------------------------------ //
-        
         private void ExecuteCmd()
         {
             dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
             dUpdateDataGrid WriteDataGrid = new dUpdateDataGrid(UpdateUiData);
             dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdateUiData);
             ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
-            //CameraChoice _CameraChoice = new CameraChoice();
-            //CameraControl cameraControl = new CameraControl();
-            //passBitmapOn = new dPassBitmapOn(DrawOnBitmap);
             DataTypeConversion ProStr = new DataTypeConversion();
             Setting form2 = new Setting();
             string resultLine = "";
-            string dateStr;
             string[] CmdStringArray = new string[100];
             string[] tempStr = new string[100];
             byte[] Cmdbuf = new byte[100];
             byte[] retBuf = new byte[100];
             byte[] finBuf = new byte[100];
-            ushort us_data, retCRC, arduino_input_status;
-            int delayTime, retDataLen;
-            //int loopCounter = 0;
-            int loopIndex = 0;
-            int sysDelay = 0;
+            ushort arduino_input_status;
+            int delayTime, loopIndex = 0;
             int i, j, RowCount, ExeIndex = 0;
 
             
@@ -498,7 +540,6 @@ namespace SSS
                                 }
                                 else if (columns_function != "XOR8")
                                 {
-                                    //retDataLen = 8;
                                     j = 0;
                                     for (i = 0; i <= (CmdStringArray.Length - 1); i++)
                                     {
@@ -518,7 +559,6 @@ namespace SSS
 
                             if (columns_command == "_HEX_R")
                             {
-                                //retDataLen = 7;
                                 int rxLength = GlobalData.m_SerialPort.ReceivedBufferLength();
 
                                 if (columns_function == "XOR8")
@@ -548,7 +588,7 @@ namespace SSS
                             //Delay Time
                             if (this.dataGridView1.Rows[ExeIndex].Cells[8].Value != null)
                             {
-                                delayTime = Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[8].Value);
+                                delayTime = Convert.ToInt32(columns_wait);
                             }
                             else
                             {
@@ -714,8 +754,8 @@ namespace SSS
                         #region -- GPIO_INPUT_OUTPUT --
                         else if (columns_command == "_Arduino_Input")
                         {
-                            sysDelay = Convert.ToInt32(columns_wait);
-                            Arduino_Get_GPIO_Input(ref GPIO_Read_Data, sysDelay);
+                            delayTime = Convert.ToInt32(columns_wait);
+                            Arduino_Get_GPIO_Input(ref GPIO_Read_Data, delayTime);
                         }
                         else if (columns_command == "_Arduino_Output")
                         {
@@ -727,10 +767,10 @@ namespace SSS
                                 GlobalData.Arduino_relay_status = true;
                             Arduino_Set_GPIO_Output(GPIO_B, 100);
 
-                            sysDelay = Convert.ToInt32(columns_wait);
-                            Thread.Sleep(sysDelay);
+                            delayTime = Convert.ToInt32(columns_wait);
+                            Thread.Sleep(delayTime);
 
-                            Arduino_Get_GPIO_Input(ref GPIO_Read_Data, sysDelay);
+                            Arduino_Get_GPIO_Input(ref GPIO_Read_Data, delayTime);
                         }
                         #endregion
                         #region -- Schedule for Normal I/O --
@@ -1412,9 +1452,12 @@ namespace SSS
                 //----------------------------------------------------//
                 MessageBox.Show("All schedules finished");
                 //CloseCamera();
-                button_Snapshot.Enabled = false;
                 //UpdateUIBtn(3, 3);        //display finish
-                Invoke(UpdateUIBtn, 3,3);   //display finish
+                Invoke(UpdateUIBtn, 3, 3);   //display finish
+                Invoke(UpdateUIBtn, 4, 1);  //button_Camera.Enabled = true;
+                Invoke(UpdateUIBtn, 5, 0);  //button_Snapshot.Enabled = false;
+                Invoke(UpdateUIBtn, 6, 0);  //button_Schedule.Enabled = false;
+                Invoke(UpdateUIBtn, 9, 1);  //cboxCameraList.Enabled = true;
             }
 
             Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
@@ -1466,13 +1509,7 @@ namespace SSS
                             Read_Arduino_Data = GlobalData.Arduino_Read_String;
                             string l_strResult = Read_Arduino_Data.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", "").Replace("ioi", "");
                             GPIO_Read_Data = Convert.ToInt32(l_strResult, 16);
-                            //GlobalData.Arduino_Read_Byte = (short)(GPIO_Read_Data & 0x00FF);
-                            /*
-                            if (GPIO_Read_Data < 0x100)
-                                GlobalData.Arduino_IO_INPUT_value = (ushort)(GPIO_Read_Data & 0X00FF);
-                            else
-                                MessageBox.Show("Received byte value format error", "Format Error");
-                            */
+                            
                             GlobalData.Arduino_IO_INPUT_value = (ushort)(GPIO_Read_Data & 0X00FF);
                             GlobalData.Arduino_IO_INPUT_status = (ushort)((GPIO_Read_Data & 0XFF00) >> 8);
                         }
@@ -1511,15 +1548,7 @@ namespace SSS
                         }
                         else if (serial_receive == true)
                         {
-                            /*
-                            if (ini12.INIRead(MainSettingPath, "Record", "Timestamp", "") == "1")
-                            {
-                                DateTime dt = DateTime.Now;
-                                dataValue = "[Send_Port_Arduino_IO_OUTPUT] [" + dt.ToString("yyyy/MM/dd HH:mm:ss.fff") + "]  " + dataValue + "\r\n"; //OK
-                            }
-                            log_process("Arduino", dataValue);
-                            log_process("All", dataValue);
-                            */
+                            //reserved
                         }
                         retry_cnt--;
                     }
@@ -1573,9 +1602,12 @@ namespace SSS
 
         private void BTN_StartTest_Click(object sender, EventArgs e)
         {
-            this.BTN_StartTest.Enabled = false;
-            this.BTN_Pause.Enabled = true;
-            this.BTN_Stop.Enabled = true;
+            dataGridView1.Visible = true;
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
+            Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
+            Invoke(UpdateUIBtn, 1, 1);  //this.BTN_Pause.Enabled = true;
+            Invoke(UpdateUIBtn, 2, 1);  //this.BTN_Stop.Enabled = true;
+            Invoke(UpdateUIBtn, 9, 0);  //cboxCameraList.Enabled = false;
             FlagPause = 0;
             FlagStop = 0;
 
@@ -1632,6 +1664,7 @@ namespace SSS
         private void toolStripButton1_Click(object sender, EventArgs e)
         {   // == Open File BTN == //
             OpenFileDialog dialog = new OpenFileDialog();
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
 
             dialog.Filter = "csv files (*.*) |*.csv";
             dialog.Title = "Select Souce File";
@@ -1643,12 +1676,11 @@ namespace SSS
                 //Task task = new Task();
                 //task.Start();
                 UpdateDataGrid();
-
-                button_Schedule.Enabled = true;
-                button_Camera.Enabled = false;
-                button_Snapshot.Enabled = false;
+                
+                Invoke(UpdateUIBtn, 4, 0);  //button_Camera.Enabled = false;
+                Invoke(UpdateUIBtn, 5, 0);  //button_Snapshot.Enabled = false;
+                Invoke(UpdateUIBtn, 6, 1);  //button_Schedule.Enabled = true;
             }
-
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -1659,10 +1691,7 @@ namespace SSS
             dUpdateUI UINetworkLED = new dUpdateUI(Form1UpdateNetworkLedStatus);
             int ComportStatus;
             string PortNumber;
-            int BautRate;
-            int ParryBit;
-            int StopBit;
-            int DataLen;
+            int BautRate, ParryBit, StopBit, DataLen;
             int NetworkStatus;
             string IP;
             int NetworkPort;
@@ -1744,10 +1773,10 @@ namespace SSS
             }
             else if (form2.DialogResult == System.Windows.Forms.DialogResult.Cancel)
             {
-                if (!GlobalData.sp_Arduino.IsOpen())
+                if (GlobalData.sp_Arduino.IsOpen())
                 {
                     GlobalData.sp_Arduino.OpenPort_Arduino(GlobalData.Arduino_Comport);
-                    ArduinoLED.Invoke(1);
+                    ArduinoLED.Invoke(0);
                 }
 
             }
@@ -2043,7 +2072,6 @@ namespace SSS
         private void Main_Load(object sender, EventArgs e)
         {
             //Fill Camera ListBox and set default value
-            //FillCameraList();
             CameraFilterCollection();
 
             if (cboxCameraList.Items.Count > 0)
@@ -2075,6 +2103,7 @@ namespace SSS
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
         {
+            SerialPort_Receive_Thread.Abort();
             CloseCamera();
             //Environment.Exit(0); //exit the Application process
             Application.Exit();
@@ -2122,6 +2151,7 @@ namespace SSS
 
         private void button_Camera_Click(object sender, EventArgs e)
         {
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
             if (videoDevices.Count > 0)     //(cboxCameraList.Items.Count > 0)
                 {
                 //VideoPlayerInitializing(cboxCameraList.SelectedIndex);
@@ -2133,9 +2163,9 @@ namespace SSS
                     VideoPlayerInitializing(1);
 
                 dataGridView1.Visible = false;
-                button_Camera.Enabled = false;
-                button_Snapshot.Enabled = true;
-                button_Schedule.Enabled = true;
+                Invoke(UpdateUIBtn, 4, 0);  //button_Camera.Enabled = false;
+                Invoke(UpdateUIBtn, 5, 1);  //button_Snapshot.Enabled = true;
+                Invoke(UpdateUIBtn, 6, 1);  //button_Schedule.Enabled = true;
             }
             else
             {
@@ -2145,12 +2175,13 @@ namespace SSS
 
         private void button_Schedule_Click(object sender, EventArgs e)
         {
+            dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
             dataGridView1.Visible = true;
             if (videoDevices.Count > 0)
             {
-                button_Schedule.Enabled = false;
-                button_Camera.Enabled = true;
-                button_Snapshot.Enabled = false;
+                Invoke(UpdateUIBtn, 4, 1);  //button_Camera.Enabled = true;
+                Invoke(UpdateUIBtn, 5, 0);  //button_Snapshot.Enabled = false;
+                Invoke(UpdateUIBtn, 6, 0);  //button_Schedule.Enabled = false;
                 //CloseCamera();
             }
         }
@@ -2302,7 +2333,6 @@ namespace SSS
                 videoSourcePlayer1.Stop();
                 videoSource_1 = null;
             }
-            
             if (videoSourcePlayer2.IsRunning)
             {
                 videoSourcePlayer2.Stop();
@@ -2311,16 +2341,16 @@ namespace SSS
             
             if (bitmap != null)
                 bitmap.Dispose();
-
+            int res_Index = 6;
             if (videoDevices.Count > 0 && videoSource_1 == null && videoSource_2 == null)
             {
                 videoSource_1 = new VideoCaptureDevice(videoDevices[0].MonikerString);
 
                 int resolution_Index_1 = videoSource_1.VideoCapabilities.Count();
-                // C310 [15/19]: 1024x576; //C615 [11/15]: 960x720
+                // C310 [13/19]: 960x544; // C310 [15/19]: 1024x576; //C615 [11/15]: 960x720
                 //do not set too high resolution in case of crash issue
-                if (resolution_Index_1 >= 4)
-                    videoSource_1.VideoResolution = videoSource_1.VideoCapabilities[resolution_Index_1 - 4];
+                if (resolution_Index_1 >= res_Index)
+                    videoSource_1.VideoResolution = videoSource_1.VideoCapabilities[resolution_Index_1 - res_Index];
                 else
                     MessageBox.Show("Not enough items present in resolution list");
 
@@ -2328,14 +2358,14 @@ namespace SSS
                 videoSourcePlayer1.Start();
             }
 
+            Thread.Sleep(100);
             if (videoDevices.Count > 1 && videoSource_1 != null && videoSource_2 == null)
             {
-                Thread.Sleep(500);
                 videoSource_2 = new VideoCaptureDevice(videoDevices[1].MonikerString);
 
                 int resolution_Index_2 = videoSource_2.VideoCapabilities.Count();
-                if (resolution_Index_2 >= 4)
-                    videoSource_2.VideoResolution = videoSource_2.VideoCapabilities[resolution_Index_2 - 4];
+                if (resolution_Index_2 >= res_Index)
+                    videoSource_2.VideoResolution = videoSource_2.VideoCapabilities[resolution_Index_2 - res_Index];
                 else
                     MessageBox.Show("Not enough items present in resolution list");
 
@@ -2348,8 +2378,8 @@ namespace SSS
         {
             if (videoSource1 != null)
             {
-                //videoSource1.SignalToStop();
-                videoSource1.WaitForStop();
+                videoSource1.SignalToStop();
+                //videoSource1.WaitForStop();
                 //videoSource1 = null;
                 videoSource_1.SignalToStop();
                 //videoSource_1 = null;
@@ -2357,10 +2387,9 @@ namespace SSS
 
             if (videoSource2 != null)
             {
-                videoSource2.WaitForStop();
-                //videoSource2 = null;
+                videoSource2.SignalToStop();
+                //videoSource2.WaitForStop();
                 videoSource_2.SignalToStop();
-                //videoSource_2 = null;
             }
 
             if (bitmap != null)

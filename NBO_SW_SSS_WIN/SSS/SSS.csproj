@@ -52,12 +52,6 @@
     <Reference Include="AForge.Video.DirectShow">
       <HintPath>DLL\AForge.Video.DirectShow.dll</HintPath>
     </Reference>
-    <Reference Include="Camera_NET">
-      <HintPath>DLL\Camera_NET.dll</HintPath>
-    </Reference>
-    <Reference Include="DirectShowLib-2010">
-      <HintPath>DLL\DirectShowLib-2010.dll</HintPath>
-    </Reference>
     <Reference Include="jini">
       <HintPath>DLL\jini.dll</HintPath>
     </Reference>
@@ -163,9 +157,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Image\save-file.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

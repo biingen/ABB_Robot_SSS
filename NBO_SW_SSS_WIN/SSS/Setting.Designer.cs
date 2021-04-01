@@ -280,7 +280,6 @@
             this.cboCameraTypeList.Size = new System.Drawing.Size(190, 24);
             this.cboCameraTypeList.TabIndex = 24;
             this.cboCameraTypeList.Visible = false;
-            this.cboCameraTypeList.SelectedIndexChanged += new System.EventHandler(this.cboCameraTypeList_SelectedIndexChanged);
             // 
             // label8
             // 
@@ -307,7 +306,6 @@
             this.cboResolutionList.Size = new System.Drawing.Size(159, 24);
             this.cboResolutionList.TabIndex = 26;
             this.cboResolutionList.Visible = false;
-            this.cboResolutionList.SelectedIndexChanged += new System.EventHandler(this.cboResolutionList_SelectedIndexChanged);
             // 
             // textBox_Timeout
             // 
