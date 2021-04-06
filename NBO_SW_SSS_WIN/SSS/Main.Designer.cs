@@ -1,4 +1,4 @@
-﻿namespace SSS
+﻿namespace Cheese
 {
     partial class Main
     {
@@ -98,7 +98,7 @@
             // 
             // toolStripButton1
             // 
-            this.toolStripButton1.Image = global::SSS.ImageResource.open_file;
+            this.toolStripButton1.Image = global::Cheese.ImageResource.open_file;
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(85, 24);
@@ -107,7 +107,7 @@
             // 
             // toolStripButton2
             // 
-            this.toolStripButton2.Image = global::SSS.ImageResource.tools;
+            this.toolStripButton2.Image = global::Cheese.ImageResource.tools;
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(71, 24);
@@ -116,7 +116,7 @@
             // 
             // toolStripButton3
             // 
-            this.toolStripButton3.Image = global::SSS.ImageResource.save_file;
+            this.toolStripButton3.Image = global::Cheese.ImageResource.save_file;
             this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton3.Name = "toolStripButton3";
             this.toolStripButton3.Size = new System.Drawing.Size(80, 24);
@@ -287,7 +287,7 @@
             // 
             // PIC_ComPortStatus
             // 
-            this.PIC_ComPortStatus.Image = global::SSS.ImageResource.BlackLED;
+            this.PIC_ComPortStatus.Image = global::Cheese.ImageResource.BlackLED;
             this.PIC_ComPortStatus.Location = new System.Drawing.Point(153, 43);
             this.PIC_ComPortStatus.Name = "PIC_ComPortStatus";
             this.PIC_ComPortStatus.Size = new System.Drawing.Size(20, 20);
@@ -297,7 +297,7 @@
             // BTN_Stop
             // 
             this.BTN_Stop.Enabled = false;
-            this.BTN_Stop.Image = global::SSS.ImageResource.stop;
+            this.BTN_Stop.Image = global::Cheese.ImageResource.stop;
             this.BTN_Stop.Location = new System.Drawing.Point(1087, 583);
             this.BTN_Stop.Name = "BTN_Stop";
             this.BTN_Stop.Size = new System.Drawing.Size(95, 40);
@@ -308,7 +308,7 @@
             // BTN_Pause
             // 
             this.BTN_Pause.Enabled = false;
-            this.BTN_Pause.Image = global::SSS.ImageResource.pause_button;
+            this.BTN_Pause.Image = global::Cheese.ImageResource.pause_button;
             this.BTN_Pause.Location = new System.Drawing.Point(986, 583);
             this.BTN_Pause.Name = "BTN_Pause";
             this.BTN_Pause.Size = new System.Drawing.Size(95, 40);
@@ -318,7 +318,7 @@
             // 
             // BTN_StartTest
             // 
-            this.BTN_StartTest.Image = global::SSS.ImageResource.play_button;
+            this.BTN_StartTest.Image = global::Cheese.ImageResource.play_button;
             this.BTN_StartTest.Location = new System.Drawing.Point(885, 583);
             this.BTN_StartTest.Name = "BTN_StartTest";
             this.BTN_StartTest.Size = new System.Drawing.Size(95, 40);
@@ -338,7 +338,7 @@
             // 
             // PIC_NetworkStatus
             // 
-            this.PIC_NetworkStatus.Image = global::SSS.ImageResource.BlackLED;
+            this.PIC_NetworkStatus.Image = global::Cheese.ImageResource.BlackLED;
             this.PIC_NetworkStatus.Location = new System.Drawing.Point(304, 43);
             this.PIC_NetworkStatus.Name = "PIC_NetworkStatus";
             this.PIC_NetworkStatus.Size = new System.Drawing.Size(20, 20);
@@ -382,7 +382,7 @@
             // 
             // PIC_Arduino
             // 
-            this.PIC_Arduino.Image = global::SSS.ImageResource.BlackLED;
+            this.PIC_Arduino.Image = global::Cheese.ImageResource.BlackLED;
             this.PIC_Arduino.Location = new System.Drawing.Point(11, 44);
             this.PIC_Arduino.Name = "PIC_Arduino";
             this.PIC_Arduino.Size = new System.Drawing.Size(20, 20);
@@ -526,7 +526,7 @@
             this.Controls.Add(this.panel1);
             this.MaximizeBox = false;
             this.Name = "Main";
-            this.Text = "SSS";
+            this.Text = "Cheese";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
             this.Load += new System.EventHandler(this.Main_Load);
             this.toolStrip1.ResumeLayout(false);

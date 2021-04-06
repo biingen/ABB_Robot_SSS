@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SSS.Properties {
+namespace Cheese.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

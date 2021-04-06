@@ -1,4 +1,4 @@
-﻿namespace SSS
+﻿namespace Cheese
 {
     partial class Setting
     {

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using jini;
 using ModuleLayer;
 
-namespace SSS
+namespace Cheese
 {
     class Add_ons
     {

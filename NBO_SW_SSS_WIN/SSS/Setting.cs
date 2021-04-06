@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 
-namespace SSS
+namespace Cheese
 {
     public partial class Setting : Form
     {

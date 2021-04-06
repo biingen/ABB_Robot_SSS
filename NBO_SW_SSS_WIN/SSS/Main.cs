@@ -19,7 +19,7 @@ using AForge.Controls;
 using AForge.Video.DirectShow;
 using AForge.Video;
 
-namespace SSS
+namespace Cheese
 {
     public partial class Main : Form
     {
@@ -144,7 +144,7 @@ namespace SSS
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 004.006";
+            this.VerLabel.Text = "Version: 007.001";
             FlagPause = 0;
             FlagStop = 0;
         }

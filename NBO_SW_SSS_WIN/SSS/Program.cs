@@ -5,7 +5,7 @@ using System.Threading;
 using System.Windows.Forms;
 using ModuleLayer;
 
-namespace SSS
+namespace Cheese
 {
     static class Program
     {

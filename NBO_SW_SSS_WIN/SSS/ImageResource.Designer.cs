@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SSS {
+namespace Cheese {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SSS {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SSS.ImageResource", typeof(ImageResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Cheese.ImageResource", typeof(ImageResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
