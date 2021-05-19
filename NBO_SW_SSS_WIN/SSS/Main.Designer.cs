@@ -69,10 +69,12 @@
             this.button_AcOff = new System.Windows.Forms.Button();
             this.Txt_LoopCounter = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.videoSourcePlayer2 = new AForge.Controls.VideoSourcePlayer();
             this.picBox_preview = new System.Windows.Forms.PictureBox();
             this.videoSourcePlayer1 = new AForge.Controls.VideoSourcePlayer();
             this.button_Snapshot = new System.Windows.Forms.Button();
-            this.videoSourcePlayer2 = new AForge.Controls.VideoSourcePlayer();
+            this.label_cam1 = new System.Windows.Forms.Label();
+            this.label_cam2 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStatus)).BeginInit();
@@ -362,11 +364,11 @@
             // 
             this.label7.AutoSize = true;
             this.label7.BackColor = System.Drawing.Color.Black;
-            this.label7.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(808, 40);
+            this.label7.Location = new System.Drawing.Point(786, 39);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(133, 23);
+            this.label7.Size = new System.Drawing.Size(155, 22);
             this.label7.TabIndex = 27;
             this.label7.Text = "Camera Device:";
             // 
@@ -449,6 +451,8 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.dataGridView1);
+            this.panel1.Controls.Add(this.label_cam2);
+            this.panel1.Controls.Add(this.label_cam1);
             this.panel1.Controls.Add(this.videoSourcePlayer2);
             this.panel1.Controls.Add(this.picBox_preview);
             this.panel1.Controls.Add(this.videoSourcePlayer1);
@@ -456,6 +460,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1180, 480);
             this.panel1.TabIndex = 37;
+            // 
+            // videoSourcePlayer2
+            // 
+            this.videoSourcePlayer2.Location = new System.Drawing.Point(603, 162);
+            this.videoSourcePlayer2.Name = "videoSourcePlayer2";
+            this.videoSourcePlayer2.Size = new System.Drawing.Size(560, 315);
+            this.videoSourcePlayer2.TabIndex = 2;
+            this.videoSourcePlayer2.Text = "videoSourcePlayer2";
+            this.videoSourcePlayer2.VideoSource = null;
             // 
             // picBox_preview
             // 
@@ -467,6 +480,7 @@
             // 
             // videoSourcePlayer1
             // 
+            this.videoSourcePlayer1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.videoSourcePlayer1.Location = new System.Drawing.Point(3, 3);
             this.videoSourcePlayer1.Name = "videoSourcePlayer1";
             this.videoSourcePlayer1.Size = new System.Drawing.Size(560, 315);
@@ -486,14 +500,29 @@
             this.button_Snapshot.UseVisualStyleBackColor = true;
             this.button_Snapshot.Click += new System.EventHandler(this.button_Snapshot_Click);
             // 
-            // videoSourcePlayer2
+            // label_cam1
             // 
-            this.videoSourcePlayer2.Location = new System.Drawing.Point(603, 162);
-            this.videoSourcePlayer2.Name = "videoSourcePlayer2";
-            this.videoSourcePlayer2.Size = new System.Drawing.Size(560, 315);
-            this.videoSourcePlayer2.TabIndex = 2;
-            this.videoSourcePlayer2.Text = "videoSourcePlayer2";
-            this.videoSourcePlayer2.VideoSource = null;
+            this.label_cam1.AutoSize = true;
+            this.label_cam1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.label_cam1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_cam1.ForeColor = System.Drawing.Color.White;
+            this.label_cam1.Location = new System.Drawing.Point(3, 321);
+            this.label_cam1.Name = "label_cam1";
+            this.label_cam1.Size = new System.Drawing.Size(98, 22);
+            this.label_cam1.TabIndex = 3;
+            this.label_cam1.Text = "Camera 1";
+            // 
+            // label_cam2
+            // 
+            this.label_cam2.AutoSize = true;
+            this.label_cam2.BackColor = System.Drawing.Color.Black;
+            this.label_cam2.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_cam2.ForeColor = System.Drawing.Color.White;
+            this.label_cam2.Location = new System.Drawing.Point(1065, 137);
+            this.label_cam2.Name = "label_cam2";
+            this.label_cam2.Size = new System.Drawing.Size(98, 22);
+            this.label_cam2.TabIndex = 4;
+            this.label_cam2.Text = "Camera 2";
             // 
             // Main
             // 
@@ -537,6 +566,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.PIC_NetworkStatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PIC_Arduino)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_preview)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -590,6 +620,8 @@
         private AForge.Controls.VideoSourcePlayer videoSourcePlayer1;
         private System.Windows.Forms.Button button_Snapshot;
         private AForge.Controls.VideoSourcePlayer videoSourcePlayer2;
+        private System.Windows.Forms.Label label_cam2;
+        private System.Windows.Forms.Label label_cam1;
     }
 }
 

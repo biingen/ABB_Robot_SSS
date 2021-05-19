@@ -139,6 +139,17 @@ namespace Cheese
             }
         }
         #endregion
+
+        #region -- Schedule CSV File --
+        public void ScheduleCSV_InitialFlag()
+        {
+            if (ini12.INIRead(MainSettingPath, "Schedule1", "Exist", "") == "")
+            {
+                ini12.INIWrite(MainSettingPath, "Schedule1", "Exist", "0");
+                ini12.INIWrite(MainSettingPath, "Schedule1", "Path", "Not yet opened");
+            }
+        }
+        #endregion
         /*
         public void SaveSXPReport()
         {

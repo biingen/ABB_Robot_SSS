@@ -34,9 +34,8 @@ namespace Cheese
         {
             Add_ons Add_ons = new Add_ons();
             Add_ons.CreateConfig();	//Create Config.ini if it is not present in root directory
-            Add_ons.USB_Read();	//read Pid and Vid of USB device
-
-            //Add_ons.CreateExcelFile();
+            Add_ons.USB_Read(); //read Pid and Vid of USB device
+            Add_ons.ScheduleCSV_InitialFlag();
         }
     }
 

@@ -18,6 +18,7 @@ using AForge;
 using AForge.Controls;
 using AForge.Video.DirectShow;
 using AForge.Video;
+using jini;
 
 namespace Cheese
 {
@@ -144,7 +145,7 @@ namespace Cheese
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 007.001";
+            this.VerLabel.Text = "Version: 007.002";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -1665,18 +1666,27 @@ namespace Cheese
         {   // == Open File BTN == //
             OpenFileDialog dialog = new OpenFileDialog();
             dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
+            string schedule_opened = ini12.INIRead(GlobalData.MainSettingPath, "Schedule1", "Exist", "");
 
             dialog.Filter = "csv files (*.*) |*.csv";
-            dialog.Title = "Select Souce File";
-            dialog.InitialDirectory = "D:\\";
+            dialog.Title = "Select One Schedule File";
+            if (schedule_opened == "" || schedule_opened == "0")
+                dialog.InitialDirectory = "D:\\";
+            else if (schedule_opened == "1")
+                dialog.InitialDirectory = ini12.INIRead(GlobalData.MainSettingPath, "Schedule1", "Path", "");
+
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 TargetFilePath = dialog.FileName;
+                string safeFileName = dialog.SafeFileName;
                 Console.WriteLine(TargetFilePath);
                 //Task task = new Task();
                 //task.Start();
                 UpdateDataGrid();
-                
+
+                ini12.INIWrite(GlobalData.MainSettingPath, "Schedule1", "Exist", "1");
+                ini12.INIWrite(GlobalData.MainSettingPath, "Schedule1", "Path", TargetFilePath);
+
                 Invoke(UpdateUIBtn, 4, 0);  //button_Camera.Enabled = false;
                 Invoke(UpdateUIBtn, 5, 0);  //button_Snapshot.Enabled = false;
                 Invoke(UpdateUIBtn, 6, 1);  //button_Schedule.Enabled = true;
@@ -1864,7 +1874,7 @@ namespace Cheese
 
                     if (cameraSelectMode < 0 && i == 0)
                     {
-                        deviceName = i.ToString() + "_" + videoDevices[i].Name.ToString();
+                        deviceName = (i + 1).ToString() + "_" + videoDevices[i].Name.ToString();
                         videoSource1 = videoSourcePlayer1.VideoSource;
                         Bitmap bmp = videoSourcePlayer1.GetCurrentVideoFrame();
                         string saveName = image_currentPath + "\\" + deviceName + "\\" + deviceName + "_" + fileName;
@@ -1872,7 +1882,7 @@ namespace Cheese
                     }
                     else if (cameraSelectMode < 0 && i == 1)
                     {
-                        deviceName = i.ToString() + "_" + videoDevices[i].Name.ToString();
+                        deviceName = (i + 1).ToString() + "_" + videoDevices[i].Name.ToString();
                         videoSource2 = videoSourcePlayer1.VideoSource;
                         Bitmap bmp = videoSourcePlayer2.GetCurrentVideoFrame();
                         string saveName = image_currentPath + "\\" + deviceName + "\\" + deviceName + "_" + fileName;
