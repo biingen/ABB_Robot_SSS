@@ -36,6 +36,7 @@ namespace Cheese
             Add_ons.CreateConfig();	//Create Config.ini if it is not present in root directory
             Add_ons.USB_Read(); //read Pid and Vid of USB device
             Add_ons.ScheduleCSV_InitialFlag();
+            //Add_ons.CreateExcelFile();
         }
     }
 
@@ -89,5 +90,11 @@ namespace Cheese
         public static int IO_Arduino8_1_COUNT = 0;
         public static int IO_Arduino9_0_COUNT = 0;
         public static int IO_Arduino9_1_COUNT = 0;
+
+        public static int Loop_Number = 0;
+        public static string RS232_receivedText = "";
+        public static string RS232_sentText = "";
+        public static string Measure_Backlight = "";
+        public static string Measure_Thermal = "";
     }
 }

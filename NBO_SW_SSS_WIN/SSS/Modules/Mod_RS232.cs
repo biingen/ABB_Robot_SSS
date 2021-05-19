@@ -4,127 +4,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using System.IO.Ports;
+using Microsoft.Win32.SafeHandles;           //support SafeFileHandle
+using System.Runtime.InteropServices;      //support DIIImport
+using System.Reflection;                                //support BindingFlags
+using jini;
 using Cheese;
 
 namespace ModuleLayer
 {
     public class Mod_RS232
     {
+        //private int iPortNmuber = 0;
         private SerialPort _SerialPortHandle = new SerialPort();
-        public Queue ReceiveQueue = new Queue();
-
-        //=== main Write function ===//
-        public int WriteDataOut(byte[] InBuf, int DataLength)
+        private Stream _internalSerialStream;
+        public Queue<byte> ReceiveQueue = new Queue<byte>();
+        public List<byte> ReceiveList = new List<byte>();
+        public Queue<List<byte>> ReceiveQueueList = new Queue<List<byte>>();
+        
+        //=== main Read function ===//
+		public int ReadTerm(Byte[] ResultDataBuf, ref int Count, char TermByte)
         {
-            if (_SerialPortHandle.IsOpen == true)
+            int DataLen = _SerialPortHandle.BytesToRead;
+            Count = 0;
+
+            if (DataLen >= 1)
             {
-                try
+                for (int i = 0; i <= (DataLen - 1); i++)
                 {
-                    ReceiveQueue.Clear();   //clear input buffer
-                    _SerialPortHandle.DiscardInBuffer();
-                    _SerialPortHandle.DiscardOutBuffer();
-                    _SerialPortHandle.Write(InBuf, 0, DataLength);
+                    
+                    ResultDataBuf[i] = (Byte)_SerialPortHandle.ReadByte();
+                    Count++;
+
+                    if (ResultDataBuf[i] == TermByte)
+                    {
+                        Array.Resize(ref ResultDataBuf, (i+1));
+                        return 1;
+                    }
                 }
-                catch (System.ArgumentException)
-                {
-                    return -1;
-                }
-            }
-            else
-            {
+
                 return -1;
             }
             return -1;
-        }
-        public int WriteDataOut(string InBuf, int DataLength)
-        {
-            if (_SerialPortHandle.IsOpen == true)
-            {
-                try
-                {
-                    ReceiveQueue.Clear();   //clear input buffer
-                    //_SerialPortHandle.Write(InBuf);
-                    _SerialPortHandle.WriteLine(InBuf);     //for IO cmd doing /r/n
-                }
-                catch (System.ArgumentException)
-                {
-                    return -1;
-                }
-            }
-            else
-            {
-                return -1;
-            }
-            return -1;
-        }
-        public int WriteDataOut(char[] InBuf, int DataLength)
-        {
 
-            if (_SerialPortHandle.IsOpen == true)
-            {
-                try
-                {
-                    ReceiveQueue.Clear();   //clear input buffer
-                    _SerialPortHandle.Write(InBuf, 0, DataLength);
-                }
-                catch (System.ArgumentException)
-                {
-                    return -1;
-                }
-            }
-            else
-            {
-                return -1;
-            }
-            return -1;
         }
-
-        public int SpecificDequeue(int Len, ref byte[] retBuf)
-        {
-            int i, j;
-            if ((ReceiveQueue.Count <= 0) || (retBuf.Length < Len))
-            {
-                return -1;
-            }
-            else
-            {
-                try
-                {
-                    if (Len > ReceiveQueue.Count)
-                    {
-                        j = ReceiveQueue.Count;
-                    }
-                    else
-                    {
-                        j = Len;
-                    }
-                    Console.Write("\nInBuf:");
-
-                    for (i = 0; i <= (j - 1); i++)
-                    {
-                        retBuf[i] = (byte)ReceiveQueue.Dequeue();
-                        Console.Write("{0,2:X},", retBuf[i]);
-                    }
-                    Console.Write("\n");
-                }
-                catch (Exception)
-                {
-                    return 1;
-                }
-
-            }
-            return 1;
-        }
-        public byte GeneralDequeue()
-        {
-            return ((byte)ReceiveQueue.Dequeue());
-        }
-        public int ReceivedBufferLength()
-        {
-            return (ReceiveQueue.Count);
-        }
-
+		
         public int ReadDataIn(Byte[] inBuf, int Length)
         {
             try
@@ -219,7 +144,167 @@ namespace ModuleLayer
                 Console.WriteLine(ex.Message, "DataReceivedEvent error!");
             }
         }
+		
+		//=== main Write function ===//
+        public int WriteDataOut(string InBuf, int DataLength)
+        {
+            if (_SerialPortHandle.IsOpen == true)
+            {
+                try
+                {
+                    ReceiveQueue.Clear();   //clear input buffer
+                    //_SerialPortHandle.Write(InBuf);
+                    _SerialPortHandle.WriteLine(InBuf);     //for IO cmd doing \r\n
+                }
+                catch (System.ArgumentException)
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                return -1;
+            }
+            return -1;
+        }
+        public int WriteDataOut(char[] InBuf, int DataLength)
+        {
 
+            if (_SerialPortHandle.IsOpen == true)
+            {
+                try
+                {
+                    ReceiveQueue.Clear();   //clear input buffer
+					_SerialPortHandle.DiscardInBuffer();
+					_SerialPortHandle.DiscardOutBuffer();
+                    _SerialPortHandle.Write(InBuf, 0, DataLength);
+                }
+                catch (System.ArgumentException)
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                return -1;
+            }
+            return -1;
+        }
+		
+		public int WriteDataOut(byte[] InBuf, int DataLength)
+        {
+            if (_SerialPortHandle.IsOpen == true)
+            {
+                try
+                {
+                    _SerialPortHandle.DiscardInBuffer();
+                    _SerialPortHandle.DiscardOutBuffer();
+                    _SerialPortHandle.Write(InBuf, 0, DataLength);
+                }
+                catch (System.ArgumentException)
+                {
+                    return -1;
+                }
+            }
+            else
+                return -1;
+            
+            return -1;
+        }
+		
+		public int GetDataFromQueue(int Len, ref byte[] retBuf)
+        {
+            int i, j;
+            if ((ReceiveQueue.Count <= 0) || (retBuf.Length < Len))
+            {
+                return -1;
+            }
+            else
+            {
+                try
+                {
+                    if (Len > ReceiveQueue.Count)
+                    {
+                        j = ReceiveQueue.Count;
+                    }
+                    else
+                    {
+                        j = Len;
+                    }
+                    Console.Write("\nInBuf:");
+
+                    for (i = 0; i <= (j - 1); i++)
+                    {
+                        retBuf[i] = (byte)ReceiveQueue.Dequeue();
+                        Console.Write("{0,2:X},", retBuf[i]);
+                    }
+                    Console.Write("\n");
+                }
+                catch (Exception)
+                {
+                    return 1;
+                }
+
+            }
+            return 1;
+        }
+
+        public void PacketDequeuedToList(ref List<byte> byteList)
+        {
+            while (ReceiveQueue.Count > 0)                   // Queue有資料就收取
+            {
+                //  Queue一個byte一個byte取出來被丟入List
+                byte serial_byte = (byte)ReceiveQueue.Dequeue();
+                ReceiveList.Add(serial_byte);
+                //byteList = ReceiveList;                 // Queue debug list content
+            }
+        }
+
+        public int SpecificDequeue(int Len, ref byte[] retBuf)
+        {
+            int i, j;
+            if ((ReceiveQueue.Count <= 0) || (retBuf.Length < Len))
+            {
+                return -1;
+            }
+            else
+            {
+                try
+                {
+                    if (Len > ReceiveQueue.Count)
+                    {
+                        j = ReceiveQueue.Count;
+                    }
+                    else
+                    {
+                        j = Len;
+                    }
+                    Console.Write("\nInBuf:");
+
+                    for (i = 0; i <= (j - 1); i++)
+                    {
+                        retBuf[i] = (byte)ReceiveQueue.Dequeue();
+                        Console.Write("{0,2:X},", retBuf[i]);
+                    }
+                    Console.Write("\n");
+                }
+                catch (Exception)
+                {
+                    return 1;
+                }
+
+            }
+            return 1;
+        }
+        public byte GeneralDequeue()
+        {
+            return ((byte)ReceiveQueue.Dequeue());
+        }
+        public int ReceivedBufferLength()
+        {
+            return (ReceiveQueue.Count);
+        }
+		
         public int OpenSerialPort(string port_Name, string port_BR)
         {
             try
@@ -367,5 +452,30 @@ namespace ModuleLayer
                 return false;
             }
         }
+		
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        static extern IntPtr CreateFile(string lpFileName, uint dwDesiredAccess, uint dwShareMode, IntPtr lpSecurityAttributes,
+                                                            uint dwCreationDisposition, uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+        private SafeFileHandle handle_Com = null;
+        //private static object stream = typeof(SerialPort).GetField("internalSerialStream", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(_ComPort);
+        //private static SafeFileHandle handle_Com = (SafeFileHandle)stream.GetType().GetField("_handle", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(stream);
+
+        public SafeFileHandle Handle
+        {
+            get
+            {
+                object stream = typeof(SerialPort).GetField("internalSerialStream", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(_SerialPortHandle);
+                // If the handle is valid, return it.
+                if (!handle_Com.IsInvalid)
+                {
+                   
+                    handle_Com = (SafeFileHandle)stream.GetType().GetField("_handle", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(stream);
+                    return handle_Com;
+                }
+                else
+                    return null;
+            }
+        }
+
     }
 }

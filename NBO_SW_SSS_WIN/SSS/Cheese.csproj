@@ -70,9 +70,12 @@
     <Reference Include="jini">
       <HintPath>DLL\jini.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -82,17 +85,34 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="add_ons.cs" />
+    <Compile Include="DataAnalyses\Log_Dump.cs" />
+    <Compile Include="DataAnalyses\Packet_Extraction.cs" />
+    <Compile Include="Simulator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Simulator.Designer.cs">
+      <DependentUpon>Simulator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="Modules\Api\DdcMonitorItem.cs" />
+    <Compile Include="Modules\Api\IMonitor.cs" />
+    <Compile Include="Modules\Api\MonitorConfig.cs" />
+    <Compile Include="Modules\Api\MonitorItem.cs" />
+    <Compile Include="Modules\Capabilities.cs" />
+    <Compile Include="Modules\Controls_Feature.cs" />
     <Compile Include="Modules\Data_Conversion.cs" />
     <Compile Include="Modules\Mod_RS232.cs" />
+    <Compile Include="Modules\WinNativeMethods.cs" />
+    <Compile Include="MonitorControl.cs" />
     <Compile Include="Setting.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,6 +146,9 @@
     <EmbeddedResource Include="ImageResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ImageResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Simulator.resx">
+      <DependentUpon>Simulator.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -172,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Image\save-file.png" />
+    <Content Include="Image\sim.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

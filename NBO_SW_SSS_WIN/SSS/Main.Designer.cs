@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -73,6 +74,7 @@
             this.picBox_preview = new System.Windows.Forms.PictureBox();
             this.videoSourcePlayer1 = new AForge.Controls.VideoSourcePlayer();
             this.button_Snapshot = new System.Windows.Forms.Button();
+		    this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.label_cam1 = new System.Windows.Forms.Label();
             this.label_cam2 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
@@ -91,7 +93,8 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripButton2,
-            this.toolStripButton3});
+            this.toolStripButton3,
+            this.toolStripButton4});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1194, 27);
@@ -364,11 +367,11 @@
             // 
             this.label7.AutoSize = true;
             this.label7.BackColor = System.Drawing.Color.Black;
-            this.label7.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(786, 39);
+            this.label7.Location = new System.Drawing.Point(808, 40);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(155, 22);
+            this.label7.Size = new System.Drawing.Size(133, 23);
             this.label7.TabIndex = 27;
             this.label7.Text = "Camera Device:";
             // 
@@ -480,12 +483,14 @@
             // 
             // videoSourcePlayer1
             // 
+            this.videoSourcePlayer1.BackColor = System.Drawing.SystemColors.Control;
             this.videoSourcePlayer1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.videoSourcePlayer1.ForeColor = System.Drawing.Color.Black;
             this.videoSourcePlayer1.Location = new System.Drawing.Point(3, 3);
             this.videoSourcePlayer1.Name = "videoSourcePlayer1";
             this.videoSourcePlayer1.Size = new System.Drawing.Size(560, 315);
             this.videoSourcePlayer1.TabIndex = 0;
-            this.videoSourcePlayer1.Text = "videoSourcePlayer1";
+            this.videoSourcePlayer1.Text = "Camera1";
             this.videoSourcePlayer1.VideoSource = null;
             // 
             // button_Snapshot
@@ -524,6 +529,15 @@
             this.label_cam2.TabIndex = 4;
             this.label_cam2.Text = "Camera 2";
             // 
+            // toolStripButton4
+            // 
+            this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
+            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton4.Name = "toolStripButton4";
+            this.toolStripButton4.Size = new System.Drawing.Size(85, 24);
+            this.toolStripButton4.Text = "Simulator";
+            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
+			// 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -620,6 +634,7 @@
         private AForge.Controls.VideoSourcePlayer videoSourcePlayer1;
         private System.Windows.Forms.Button button_Snapshot;
         private AForge.Controls.VideoSourcePlayer videoSourcePlayer2;
+        private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.Label label_cam2;
         private System.Windows.Forms.Label label_cam1;
     }

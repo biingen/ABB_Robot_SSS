@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -59,6 +60,11 @@ namespace Cheese
         public delegate void dUpdateUI(int status);
         public delegate void dUpdateUIBtn(int Btn, int Status);
 
+        //SafePhysicalMonitorHandle phyMonitorHandle = new SafePhysicalMonitorHandle(IntPtr.Zero);
+        public static List<IntPtr> monitorsList = new List<IntPtr>();
+        //public MonitorControl mccs = new MonitorControl();
+        //Dictionary<ModuleLayer.VideoInput.HDMI2, 30 >
+        Dictionary<FeatureRange, uint> brVal = new Dictionary<FeatureRange, uint>();
         // ----------------------------------------------------------------------------------------------- //
         private void UpdateUiData(int x, int y, string data)
         {
@@ -145,7 +151,7 @@ namespace Cheese
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 007.002";
+            this.VerLabel.Text = "Version: 007.003";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -404,7 +410,7 @@ namespace Cheese
             ushort arduino_input_status;
             int delayTime, loopIndex = 0;
             int i, j, RowCount, ExeIndex = 0;
-
+            //MonitorControl mccs;
             
             RowCount = this.dataGridView1.Rows.Count;
             if (RowCount <= 1) 
@@ -462,7 +468,7 @@ namespace Cheese
                         string columns_switch = dataGridView1.Rows[ExeIndex].Cells[7].Value.ToString().Trim();
                         string columns_wait = dataGridView1.Rows[ExeIndex].Cells[8].Value.ToString().Trim();
                         string columns_remark = dataGridView1.Rows[ExeIndex].Cells[9].Value.ToString().Trim();
-
+                        
                         if (ExeIndex >= 3)
                         {
                             Invoke(updateDataGrid, (ExeIndex - 2), -4, "");
@@ -1411,7 +1417,25 @@ namespace Cheese
                             }
                         }
                         #endregion
+                        #region -- Schedule for VCP Command --
+                        else if ((columns_command == "_vcp"))
+                        {
+                            if ((columns_function == "Brightness") && (columns_subFunction != ""))
+                            {
+                                FeatureRange fea_vi = new FeatureRange("Brightness", 0x10, 0, 100);
+                                brVal.Add(fea_vi, uint.Parse(columns_subFunction));
+                            }
+                            else if ((columns_function == "Contrast") && (columns_subFunction != ""))
+                            {
+                                FeatureRange fea_Contrast = new FeatureRange("Contrast", 0x12, 0, 100);
+                                brVal.Add(fea_Contrast, uint.Parse(columns_subFunction));
+                            }
 
+                            foreach (var monitor in MonitorControl.GetMonitors())
+                                SetMonitorFeatures(monitor.Handle, brVal);
+                            Thread.Sleep(Convert.ToInt32(this.dataGridView1.Rows[ExeIndex].Cells[8].Value));
+                        }
+                        #endregion
                         if (FlagPause == 1)
                         {
                             Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
@@ -1830,7 +1854,16 @@ namespace Cheese
                 }
             }
         }
-        
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            Simulator Form_Sim = new Simulator();
+            if (GlobalData.m_SerialPort.IsOpen())
+                Form_Sim.ShowDialog(this);
+            else
+                MessageBox.Show("SerialPort is not opened yet!");
+        }
+
         private void GetSerialData(Mod_RS232 SpHandler)
         {
             while (SpHandler.IsOpen())
@@ -2103,6 +2136,7 @@ namespace Cheese
                 ArduinoLED.Invoke(0);
 
             this.Closing += new CancelEventHandler(Main_FormClosing);
+            uint currval = 0;
         }
 
         private void Main_FormClosing(object sender, CancelEventArgs e)
@@ -2424,5 +2458,35 @@ namespace Cheese
             return status;
         }
 
+        private static void SetMonitorFeatures(SafePhysicalMonitorHandle spmHandle, Dictionary<FeatureRange, uint> settings)
+        {
+            foreach (var setting in settings)
+            {
+                var feature = setting.Key;
+                uint currentValue = 0, maxValue;
+                uint newValue = setting.Value;
+                NativeMethods.MC_VCP_CODE_TYPE pvct;
+
+                try
+                {
+                    if (!NativeMethods.GetVCPFeatureAndVCPFeatureReply(spmHandle, feature.Code, out pvct, out currentValue, out maxValue))
+                        throw new InvalidOperationException($"{nameof(NativeMethods.GetVCPFeatureAndVCPFeatureReply)} returned error {Marshal.GetLastWin32Error()}");
+
+                    if (newValue == currentValue)
+                        continue;
+                }
+                catch
+                {
+                    Console.WriteLine($"GetVCPFeature fault for {feature.Name}");
+                }
+
+                Console.WriteLine($"Update {feature.Name} {feature.ValueName(currentValue)}->{feature.ValueName(newValue)} (0x{feature.Code:X2} {currentValue}->{newValue})");
+
+                if (!NativeMethods.SetVCPFeature(spmHandle, feature.Code, newValue))
+                    //throw new InvalidOperationException($"{nameof(NativeMethods.SetVCPFeature)} returned error {Marshal.GetLastWin32Error()}");
+
+                Task.Delay(feature.Delay).Wait();
+            }
+        }
     }
 }
