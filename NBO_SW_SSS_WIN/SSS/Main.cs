@@ -66,6 +66,10 @@ namespace Cheese
         //Dictionary<ModuleLayer.VideoInput.HDMI2, 30 >
         Dictionary<FeatureRange, uint> brVal = new Dictionary<FeatureRange, uint>();
         // ----------------------------------------------------------------------------------------------- //
+        ODM_BenQ_RS232 benQ = new ODM_BenQ_RS232();
+        const int NORMAL_PACKET_COUNT = 8;
+        const int ACK_PACKET_COUNT = 6;
+
         private void UpdateUiData(int x, int y, string data)
         {
             int i;
@@ -411,7 +415,7 @@ namespace Cheese
             int delayTime, loopIndex = 0;
             int i, j, RowCount, ExeIndex = 0;
             //MonitorControl mccs;
-            
+
             RowCount = this.dataGridView1.Rows.Count;
             if (RowCount <= 1) 
             {
@@ -545,7 +549,59 @@ namespace Cheese
                                     var tstStr = ProStr.XOR8_BytesWithChksum(columns_cmdLine, cmdBytes, cmdBytes.Length);
                                     GlobalData.m_SerialPort.WriteDataOut(cmdBytes, cmdBytes.Length);
                                 }
-                                else if (columns_function != "XOR8")
+                                if (columns_function == "MOD256")
+                                {
+                                    var outputBytes = ProStr.MOD256_BytesWithChksum(ref columns_cmdLine);
+                                    GlobalData.m_SerialPort.WriteDataOut(outputBytes, outputBytes.Length);
+                                    
+
+                                    while (GlobalData.m_SerialPort.ReceiveQueue.Count > 0)
+                                        GlobalData.m_SerialPort.PacketDequeuedToList(ref GlobalData.m_SerialPort.ReceiveList);
+
+                                    Thread.Sleep(300);
+                                    List<byte> cmdByteList = new List<byte>();
+                                    Queue<List<byte>> packetQueueList = new Queue<List<byte>>();
+                                    if (GlobalData.m_SerialPort.ReceiveList.Count > 0)
+                                    {
+                                        var outputString = benQ.RawData_Output(GlobalData.m_SerialPort.ReceiveList);
+
+                                        byte chksum_calc = ChecksumCalculation.Mod256_Byte(GlobalData.m_SerialPort.ReceiveList);
+                                        int numOfCount = GlobalData.m_SerialPort.ReceiveList.Count;
+                                        //rk2797.QueueAddedToList_DEV_TPE(ref GlobalData.m_SerialPort.ReceiveList, ref packetQueueList);
+                                        benQ.QueueAddedToList_ODM_BenQ(ref GlobalData.m_SerialPort.ReceiveList, ref packetQueueList);
+
+                                        if (packetQueueList.Count > 0 && numOfCount >= ACK_PACKET_COUNT)
+                                        {
+                                            if (numOfCount == ACK_PACKET_COUNT && GlobalData.RS232_receivedText != "")
+                                            {
+                                                outputString = "( " + GlobalData.RS232_receivedText + " )";
+                                                GlobalData.RS232_receivedText = "";
+                                            }
+                                            else if (numOfCount == ACK_PACKET_COUNT && GlobalData.RS232_receivedText != "")
+                                            {
+                                                outputString = "( " + GlobalData.RS232_receivedText + " )";
+                                                GlobalData.RS232_receivedText = "";
+                                            }
+                                            else
+                                                outputString = benQ.RawData_Output(packetQueueList.ElementAt(0));
+                                        }
+                                        else if (packetQueueList.Count > 0 && numOfCount < ACK_PACKET_COUNT)
+                                            outputString = "Packet length is not legal!";
+                                        else if (packetQueueList.Count == 0 && GlobalData.Measure_Backlight != "")
+                                        {
+                                            outputString = "( " + GlobalData.Measure_Backlight + " )";
+                                            GlobalData.Measure_Backlight = "";
+                                        }
+                                        else
+                                            outputString = "Packet data cannot be recognized!";
+
+                                        Invoke(WriteDataGrid, 10, ExeIndex, outputString);
+                                    }
+                                    if (GlobalData.m_SerialPort.ReceiveList != null)
+                                        GlobalData.m_SerialPort.ReceiveList.Clear();
+
+                                }
+                                else if (columns_function == "GENERAL")
                                 {
                                     j = 0;
                                     for (i = 0; i <= (CmdStringArray.Length - 1); i++)
@@ -578,7 +634,7 @@ namespace Cheese
                                             resultLine += ' ';
                                     }
                                 }
-                                else if (columns_function != "XOR8")
+                                else if (columns_function == "GENERAL")
                                 {
                                     for (int index = 0; index < rxLength; index++)
                                     {

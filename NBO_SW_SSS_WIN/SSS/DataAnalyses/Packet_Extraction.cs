@@ -327,5 +327,77 @@ namespace Cheese
             return XOR_calu;
         }
 
+        public static byte Mod256_Byte(List<byte> packetList)
+        {
+            byte toBeSummed = 0, chksumByte_calculation = 0;
+            int sumValue = 0;
+            if (packetList.Count > 4)
+            {
+                List<byte> tempList = packetList.GetRange(2, packetList.Count - 4);
+                foreach (byte partByte in tempList)
+                {
+                    toBeSummed += partByte;
+                }
+                sumValue = (int)toBeSummed;
+                chksumByte_calculation = (byte)(sumValue % 256);
+            }
+            
+
+            return chksumByte_calculation;
+        }
+
+        public static byte Mod256_Byte(byte[] packetBytes)
+        {
+            byte chksumByte_calculation = 0;
+            int sumValue = 0, pktLength = packetBytes.Length;
+            if (pktLength > 4)
+            {
+                for (int i = 2; i <= pktLength - 3; i++)
+                {
+                    sumValue += (int)packetBytes[i];
+                }
+
+                chksumByte_calculation = (byte)(sumValue % 256);
+            }
+
+
+            return chksumByte_calculation;
+        }
+
+        public static bool Mod256(byte packetLen, byte chksumByte_packet, List<byte> partList, ref List<byte> fullList)
+        {
+            bool res = false;
+            byte chksumByte_calculation = 0;
+            int toBeSummed = 0;
+            foreach (byte partByte in partList)
+            {
+                toBeSummed += partByte;
+            }
+            //sumValue = (int)toBeSummed;
+            chksumByte_calculation = (byte)(toBeSummed % 256);
+
+            if (chksumByte_calculation == chksumByte_packet)
+            {
+                res = true;
+                /*
+                fullList.Add(0x42);
+                fullList.Add(packetLen);
+                fullList.AddRange(partList);
+                fullList.Add(chksumByte_calculation);
+                fullList.Add(0x51);
+                */
+            }
+            else
+                res = false;
+
+            fullList.Add(0x42);
+            fullList.Add(packetLen);
+            fullList.AddRange(partList);
+            fullList.Add(chksumByte_calculation);
+            fullList.Add(0x51);
+
+            return res;
+        }
+
     }
 }

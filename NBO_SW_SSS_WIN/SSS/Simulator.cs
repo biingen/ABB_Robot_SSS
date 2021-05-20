@@ -12,7 +12,10 @@ namespace Cheese
 {
     public partial class Simulator : Form
     {
+        const int NORMAL_PACKET_COUNT = 8;
+        const int ACK_PACKET_COUNT = 6;
         DEV_TPE_RK2797 rk2797 = new DEV_TPE_RK2797();
+        ODM_BenQ_RS232 benQ = new ODM_BenQ_RS232();
         string updateStr = "";
         enum TxtBoxItem { receiving = 0, sending }
 
@@ -171,7 +174,8 @@ namespace Cheese
 
             string outputString = "";
             //rk2797.PacketAddedToQueue(GlobalData.m_SerialPort);
-            GlobalData.m_SerialPort.PacketDequeuedToList(ref GlobalData.m_SerialPort.ReceiveList);
+            while (GlobalData.m_SerialPort.ReceiveQueue.Count > 0)
+                GlobalData.m_SerialPort.PacketDequeuedToList(ref GlobalData.m_SerialPort.ReceiveList);
 
             outputString = RawData_Output(GlobalData.m_SerialPort.ReceiveList);
 
@@ -180,11 +184,35 @@ namespace Cheese
             int item_send = (int)TxtBoxItem.sending;
             updateTbText(item_recv, outputString);
 
-            rk2797.QueueAddedToList_DEV_TPE(ref GlobalData.m_SerialPort.ReceiveList, ref packetQueueList);
-            if (packetQueueList.Count > 0)
-                outputString = RawData_Output(packetQueueList.ElementAt(0));
+            byte chksum_calc = ChecksumCalculation.Mod256_Byte(GlobalData.m_SerialPort.ReceiveList);
+            int numOfCount = GlobalData.m_SerialPort.ReceiveList.Count;
+            //rk2797.QueueAddedToList_DEV_TPE(ref GlobalData.m_SerialPort.ReceiveList, ref packetQueueList);
+            benQ.QueueAddedToList_ODM_BenQ(ref GlobalData.m_SerialPort.ReceiveList, ref packetQueueList);
+
+            if (packetQueueList.Count > 0 && numOfCount >= ACK_PACKET_COUNT)
+            {
+                if (numOfCount == ACK_PACKET_COUNT && GlobalData.RS232_receivedText != "")
+                {
+                    outputString = RawData_Output(packetQueueList.ElementAt(0)) + "( " + GlobalData.RS232_receivedText + " )";
+                    GlobalData.RS232_receivedText = "";
+                }
+                else if (numOfCount == ACK_PACKET_COUNT && GlobalData.RS232_receivedText != "")
+                {
+                    outputString = RawData_Output(packetQueueList.ElementAt(0)) + "( " + GlobalData.RS232_receivedText + " )";
+                    GlobalData.RS232_receivedText = "";
+                }
+                else
+                    outputString = RawData_Output(packetQueueList.ElementAt(0));                    
+            }
+            else if (packetQueueList.Count > 0 && numOfCount < ACK_PACKET_COUNT)
+                outputString = "Packet length is not legal!";
+            else if (packetQueueList.Count == 0 && GlobalData.Measure_Backlight != "")
+            {
+                outputString += " ( " + GlobalData.Measure_Backlight + " )";
+                GlobalData.Measure_Backlight = "";
+            }
             else
-                outputString = "No correct packet data!";
+                outputString = "Packet data cannot be recognized!";
 
             updateTbText(item_send, outputString);
         }
@@ -206,4 +234,155 @@ namespace Cheese
             }
         }
     }
+
+    public class ODM_BenQ_RS232
+    {
+        public bool dequeueResult = false;
+        public void QueueAddedToList_ODM_BenQ(ref List<byte> packetList, ref Queue<List<byte>> packetQueueList)
+        {   //test packet_Stop byte incoorect_: 40 42 07 08 01 00 00 02 03 50; _Checksum incorrect_: 40 42 07 08 01 00 00 02 FF 51
+            const int NORMAL_PACKET_COUNT = 8;
+            const int ACK_PACKET_COUNT = 6;
+            if (packetList.Count >= NORMAL_PACKET_COUNT)
+            {
+                byte stx = packetList.ElementAt(0);
+                if (stx == 0x42)
+                {
+                    byte packetLength = packetList.ElementAt(1);
+                    if (packetLength == packetList.Count)
+                    {
+                        byte etx = packetList.ElementAt(packetLength - 1);
+                        if (etx == 0x51)
+                        {
+                            List<byte> tempList = packetList.GetRange(2, packetLength - 4);
+                            List<byte> fullList = new List<byte>();
+                            byte chksumByte_packet = packetList.ElementAt(packetLength - 2);
+                            bool chkResult = ChecksumCalculation.Mod256(packetLength, chksumByte_packet, tempList, ref fullList);
+                            
+                            if (chkResult)
+                            {
+                                packetQueueList.Enqueue(fullList);
+                                if (fullList.Count > NORMAL_PACKET_COUNT)
+                                    dequeueResult = ListDequeuedToParse_ODM_BenQ(ref packetQueueList, 6, packetLength - NORMAL_PACKET_COUNT);
+                            }
+                            else
+                            {
+                                packetQueueList.Enqueue(fullList);
+                                MessageBox.Show("Checksum values are inconsistent!", "Reminding");
+                            }
+                            packetList.RemoveRange(0, packetLength);
+                        }
+                        else
+                            //  (etx != 0x51)
+                            //packetList.RemoveAt(packetLength - 1);
+                            MessageBox.Show("Stop byte is not correct!", "Reminding");
+                    }
+                    else
+                    //  (packetLength != packetList.Count)
+                        packetList.RemoveAt(1);
+                }
+                else
+                    //  (stx != 0x42)
+                    packetList.RemoveAt(0);
+            }
+            //else if (packetList.Count >= 8)
+
+            if (packetList.Count >= ACK_PACKET_COUNT && packetList.Count < NORMAL_PACKET_COUNT)
+            {
+                byte stx = packetList.ElementAt(0);
+                if (stx == 0x42)
+                {
+                    byte packetLength = packetList.ElementAt(1);
+                    if (packetLength == packetList.Count)
+                    {
+                        byte etx = packetList.ElementAt(packetLength - 1);
+                        byte ack = packetList.ElementAt(packetLength - 3);
+                        if (etx == 0x51)
+                        {
+                            List<byte> tempList = packetList.GetRange(2, packetLength - 4);
+                            List<byte> fullList = new List<byte>();
+                            byte chksumByte_packet = packetList.ElementAt(packetLength - 2);
+                            bool chkResult = ChecksumCalculation.Mod256(packetLength, chksumByte_packet, tempList, ref fullList);
+                            if (chkResult && ack == 0x55)
+                            {
+                                packetQueueList.Enqueue(fullList);
+                                lock (this)
+                                {
+                                    GlobalData.RS232_receivedText = "Ack";
+                                }
+                                //packetList.RemoveRange(0, packetLength);
+                            }
+                            else if (chkResult && ack == 0xAA)
+                            {
+                                packetQueueList.Enqueue(fullList);
+                                lock (this)
+                                {
+                                    GlobalData.RS232_receivedText = "Nack";
+                                }
+                                //packetList.RemoveRange(0, packetLength);
+                            }
+                            else
+                            {
+                                packetQueueList.Enqueue(fullList);
+                                MessageBox.Show("Checksum values are inconsistent!", "Reminding");
+                            }
+                            /*
+                            packetList.RemoveRange(0, packetLength);
+                            if (fullList != null)
+                                fullList = null;
+
+                            if (packetQueueList != null)
+                                packetQueueList.Dequeue();*/
+                        }
+                        else
+                            //  (etx != 0x51)
+                            //packetList.RemoveAt(packetLength - 1);
+                            MessageBox.Show("Stop byte is not correct!", "Reminding");
+                    }
+                    else
+                        //  (packetLength != packetList.Count)
+                        packetList.RemoveAt(1);
+                }
+                else
+                    //  (stx != 0x42)
+                    packetList.RemoveAt(0);
+            }
+            //else if (packetList.Count >= 8)
+        }
+
+        public bool ListDequeuedToParse_ODM_BenQ(ref Queue<List<byte>> pktQueueList, int dataStartByte, int dataCount)
+        {
+            bool result = false;
+            List<byte> tempList = new List<byte>();
+
+            tempList = pktQueueList.Dequeue();
+            tempList = tempList.GetRange(dataStartByte, dataCount);
+            lock (this)
+            {
+                GlobalData.Measure_Backlight = RawData_Output(tempList);
+            }
+
+            return result;
+        }
+
+        public string RawData_Output(List<byte> data)
+        {
+            string HexString = "";
+            int i = 0;
+            if (data != null)
+            {
+                foreach (byte sum in data)
+                {
+                    HexString += (sum.ToString("X2"));
+                    if (i < data.Count - 1)
+                        HexString += " ";
+
+                    i++;
+                }
+            }
+
+            return HexString;
+        }
+
+    }   //public class ODM_BenQ_RS232
+
 }

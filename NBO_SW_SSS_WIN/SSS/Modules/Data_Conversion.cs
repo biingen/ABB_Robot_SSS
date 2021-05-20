@@ -231,6 +231,51 @@ namespace ModuleLayer
             else
                 return original_data_chksum;
         }
+
+        public byte[] MOD256_BytesWithChksum(ref string original_data)
+        {
+            string[] hexValuesSplit = original_data.Split(' ');
+            string StringWithChksum = "";
+            int bytesLength = hexValuesSplit.Length;
+            byte[] cmdBytes = new byte[bytesLength];
+            byte[] tmpBytes = new byte[bytesLength];
+
+            try
+            {
+                for (int i = 0; i < bytesLength; i++)
+                {
+                    cmdBytes[i] = Convert.ToByte(Convert.ToInt32(hexValuesSplit[i], 16));
+
+                    if (i > 1 && i < bytesLength - 2)
+                        tmpBytes[i] = cmdBytes[i];
+                    else
+                        tmpBytes[i] = 0x00;
+                }
+
+                var chksumByte = ChecksumCalculation.Mod256_Byte(tmpBytes);
+                cmdBytes[bytesLength - 2] = chksumByte;
+                for (int i = 0; i < bytesLength; i++)
+                {
+                    if (i < bytesLength - 2)
+                        StringWithChksum = StringWithChksum + hexValuesSplit[i] + " ";
+                    else if (i == bytesLength - 2)
+                    {
+                        hexValuesSplit[bytesLength - 2] = chksumByte.ToString("X2");
+                        StringWithChksum = StringWithChksum + hexValuesSplit[bytesLength - 2] + " ";
+                    }
+                    else if (i == bytesLength - 1)
+                        StringWithChksum += hexValuesSplit[i];
+                }
+            }
+            catch (OverflowException)
+            {
+                MessageBox.Show("Please check HEX command format.", "Format error");
+            }
+
+            //return StringWithChksum;
+            return cmdBytes;
+        }
+
     }
  
 }

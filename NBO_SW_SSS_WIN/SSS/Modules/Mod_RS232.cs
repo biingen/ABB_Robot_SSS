@@ -251,7 +251,7 @@ namespace ModuleLayer
 
         public void PacketDequeuedToList(ref List<byte> byteList)
         {
-            while (ReceiveQueue.Count > 0)                   // Queue有資料就收取
+            //while (ReceiveQueue.Count > 0)                   // Queue有資料就收取
             {
                 //  Queue一個byte一個byte取出來被丟入List
                 byte serial_byte = (byte)ReceiveQueue.Dequeue();
