@@ -249,17 +249,6 @@ namespace ModuleLayer
             return 1;
         }
 
-        public void PacketDequeuedToList(ref List<byte> byteList)
-        {
-            //while (ReceiveQueue.Count > 0)                   // Queue有資料就收取
-            {
-                //  Queue一個byte一個byte取出來被丟入List
-                byte serial_byte = (byte)ReceiveQueue.Dequeue();
-                ReceiveList.Add(serial_byte);
-                //byteList = ReceiveList;                 // Queue debug list content
-            }
-        }
-
         public int SpecificDequeue(int Len, ref byte[] retBuf)
         {
             int i, j;
@@ -296,11 +285,13 @@ namespace ModuleLayer
             }
             return 1;
         }
+
         public byte GeneralDequeue()
         {
             return ((byte)ReceiveQueue.Dequeue());
         }
-        public int ReceivedBufferLength()
+
+        public int QueueLength()
         {
             return (ReceiveQueue.Count);
         }

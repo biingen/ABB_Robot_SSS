@@ -33,7 +33,6 @@ namespace Cheese
         public double timeout;
         public static double tmout = 0.0;
         public TimeoutTimer timeOutTimer;
-        Thread SerialPort_Receive_Thread;
 
         // ----------------------------------------------------------------------------------------------- //
         private FilterInfoCollection videoDevices = null;
@@ -52,7 +51,7 @@ namespace Cheese
         DataTypeConversion ProcessStr = new DataTypeConversion();
         //Mod_RS232 SerialPortHandle = new Mod_RS232();
         static Mod_TCPIP_Client NetworkHandle = new Mod_TCPIP_Client();
-        Thread ExecuteCmdThreadHandle;
+        Thread ExecuteCmdThreadHandle, SerialPort_Receive_Thread = null;
         // ----------------------------------------------------------------------------------------------- //
         public DataGridView tempDataGrid;
         private delegate void dUpdateDataGrid(int x, int y, string data);
@@ -67,6 +66,9 @@ namespace Cheese
         Dictionary<FeatureRange, uint> brVal = new Dictionary<FeatureRange, uint>();
         // ----------------------------------------------------------------------------------------------- //
         ODM_BenQ_RS232 benQ = new ODM_BenQ_RS232();
+        List<byte> cmdByteList = new List<byte>();
+        Queue<List<byte>> packetQueueList = new Queue<List<byte>>();
+        string outputString = "";
         const int NORMAL_PACKET_COUNT = 8;
         const int ACK_PACKET_COUNT = 6;
 
@@ -351,7 +353,7 @@ namespace Cheese
 
                                     updateDataGrid.Invoke(13, y, tstStr);    //Auto fill CRC Field column after opening schedule file
                                 }
-                                else if (tempStr[4] != "XOR8" && cmdStr.Length >= 2)
+                                else if (tempStr[4] == "GENERAL" && cmdStr.Length >= 2)
                                 {
                                     j = 0;
                                     for (i = 0; i <= (cmdStr.Length - 1); i++)
@@ -541,7 +543,6 @@ namespace Cheese
                             // ----------------------- Process data string from csv file ----------------------- //
                             if (columns_command == "_HEX")
                             {
-                                //caluate CRC field
                                 if (columns_function == "XOR8")
                                 {
                                     CmdStringArray = columns_cmdLine.Split(' ');
@@ -553,53 +554,37 @@ namespace Cheese
                                 {
                                     var outputBytes = ProStr.MOD256_BytesWithChksum(ref columns_cmdLine);
                                     GlobalData.m_SerialPort.WriteDataOut(outputBytes, outputBytes.Length);
-                                    
 
-                                    while (GlobalData.m_SerialPort.ReceiveQueue.Count > 0)
-                                        GlobalData.m_SerialPort.PacketDequeuedToList(ref GlobalData.m_SerialPort.ReceiveList);
+                                    //Thread.Sleep(100);
 
-                                    Thread.Sleep(300);
-                                    List<byte> cmdByteList = new List<byte>();
-                                    Queue<List<byte>> packetQueueList = new Queue<List<byte>>();
-                                    if (GlobalData.m_SerialPort.ReceiveList.Count > 0)
+                                    if (packetQueueList.Count > 0)
                                     {
-                                        var outputString = benQ.RawData_Output(GlobalData.m_SerialPort.ReceiveList);
-
-                                        byte chksum_calc = ChecksumCalculation.Mod256_Byte(GlobalData.m_SerialPort.ReceiveList);
-                                        int numOfCount = GlobalData.m_SerialPort.ReceiveList.Count;
-                                        //rk2797.QueueAddedToList_DEV_TPE(ref GlobalData.m_SerialPort.ReceiveList, ref packetQueueList);
-                                        benQ.QueueAddedToList_ODM_BenQ(ref GlobalData.m_SerialPort.ReceiveList, ref packetQueueList);
-
-                                        if (packetQueueList.Count > 0 && numOfCount >= ACK_PACKET_COUNT)
+                                        if (GlobalData.RS232_receivedText != "")
                                         {
-                                            if (numOfCount == ACK_PACKET_COUNT && GlobalData.RS232_receivedText != "")
-                                            {
-                                                outputString = "( " + GlobalData.RS232_receivedText + " )";
-                                                GlobalData.RS232_receivedText = "";
-                                            }
-                                            else if (numOfCount == ACK_PACKET_COUNT && GlobalData.RS232_receivedText != "")
-                                            {
-                                                outputString = "( " + GlobalData.RS232_receivedText + " )";
-                                                GlobalData.RS232_receivedText = "";
-                                            }
-                                            else
-                                                outputString = benQ.RawData_Output(packetQueueList.ElementAt(0));
-                                        }
-                                        else if (packetQueueList.Count > 0 && numOfCount < ACK_PACKET_COUNT)
-                                            outputString = "Packet length is not legal!";
-                                        else if (packetQueueList.Count == 0 && GlobalData.Measure_Backlight != "")
-                                        {
-                                            outputString = "( " + GlobalData.Measure_Backlight + " )";
-                                            GlobalData.Measure_Backlight = "";
+                                            //outputString = RawData_Output(packetQueueList.ElementAt(0)) + "( " + GlobalData.RS232_receivedText + " )";
+                                            outputString = "(" + GlobalData.RS232_receivedText + ")";
+                                            GlobalData.RS232_receivedText = "";
                                         }
                                         else
-                                            outputString = "Packet data cannot be recognized!";
+                                            outputString = RawData_Output(packetQueueList.ElementAt(0));
 
-                                        Invoke(WriteDataGrid, 10, ExeIndex, outputString);
+                                        packetQueueList.Dequeue();
+                                        if (cmdByteList.Count > 0)
+                                            cmdByteList.Clear();
                                     }
+                                    else if (packetQueueList.Count == 0 && GlobalData.Measure_Backlight != "")
+                                    {
+                                        outputString += " (" + GlobalData.Measure_Backlight + ")";
+                                        GlobalData.Measure_Backlight = "";
+                                    }
+                                    else
+                                        outputString = "Packet data cannot be recognized!";
+
+                                    Invoke(WriteDataGrid, 10, ExeIndex, outputString);
+                                    outputString = "";
+
                                     if (GlobalData.m_SerialPort.ReceiveList != null)
                                         GlobalData.m_SerialPort.ReceiveList.Clear();
-
                                 }
                                 else if (columns_function == "GENERAL")
                                 {
@@ -622,7 +607,7 @@ namespace Cheese
 
                             if (columns_command == "_HEX_R")
                             {
-                                int rxLength = GlobalData.m_SerialPort.ReceivedBufferLength();
+                                int rxLength = GlobalData.m_SerialPort.QueueLength();
 
                                 if (columns_function == "XOR8")
                                 {
@@ -1544,7 +1529,10 @@ namespace Cheese
             Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
             Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
             Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
+
+
         }
+
 
         public void Arduino_Get_GPIO_Input(ref int GPIO_Read_Data, int delay_time)
         {
@@ -1706,13 +1694,15 @@ namespace Cheese
 
             if (SerialPort_Receive_Thread == null)
             {
-                SerialPort_Receive_Thread = new Thread(new ThreadStart(SerialRxThread));
+                SerialPort_Receive_Thread = new Thread(new ThreadStart(SerialPort_Cmd_Handling));
+                //SerialPort_Receive_Thread = new Thread(new ThreadStart(SerialRxThread));
                 SerialPort_Receive_Thread.Start();
             }
             else if (SerialPort_Receive_Thread.IsAlive == false)
             {
                 SerialPort_Receive_Thread.Abort();
-                SerialPort_Receive_Thread = new Thread(new ThreadStart(SerialRxThread));
+                SerialPort_Receive_Thread = new Thread(new ThreadStart(SerialPort_Cmd_Handling));
+                //SerialPort_Receive_Thread = new Thread(new ThreadStart(SerialRxThread));
                 SerialPort_Receive_Thread.Start();
             }
         }
@@ -1918,24 +1908,6 @@ namespace Cheese
                 Form_Sim.ShowDialog(this);
             else
                 MessageBox.Show("SerialPort is not opened yet!");
-        }
-
-        private void GetSerialData(Mod_RS232 SpHandler)
-        {
-            while (SpHandler.IsOpen())
-            {
-                int data_to_read = SpHandler.GetRxBytes();
-                if (data_to_read > 0)
-                {
-                    byte[] dataset = new byte[data_to_read];
-                    SpHandler.ReadDataIn(dataset, data_to_read);
-                }
-            }
-        }
-
-        public void SerialRxThread()
-        {
-            GetSerialData(GlobalData.m_SerialPort);
         }
 		
         public void Snapshot(int cameraSelectMode, string delayTimeString, string remark)
@@ -2193,17 +2165,26 @@ namespace Cheese
 
             this.Closing += new CancelEventHandler(Main_FormClosing);
             uint currval = 0;
+            
         }
 
         private void Main_FormClosing(object sender, CancelEventArgs e)
         {
+            if (SerialPort_Receive_Thread.IsAlive == true)
+            {
+                SerialPort_Receive_Thread.Abort();
+            }
+
+            if (SerialPort_Receive_Thread.IsAlive == true)
+            {
+                SerialPort_Receive_Thread.Abort();
+            }
             //CloseCamera();
             Environment.Exit(0);
         }
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
         {
-            SerialPort_Receive_Thread.Abort();
             CloseCamera();
             //Environment.Exit(0); //exit the Application process
             Application.Exit();
@@ -2514,6 +2495,7 @@ namespace Cheese
             return status;
         }
 
+
         private static void SetMonitorFeatures(SafePhysicalMonitorHandle spmHandle, Dictionary<FeatureRange, uint> settings)
         {
             foreach (var setting in settings)
@@ -2544,5 +2526,69 @@ namespace Cheese
                 Task.Delay(feature.Delay).Wait();
             }
         }
+
+        private void PacketDequeuedToList(Mod_RS232 spHandle, ref List<byte> ReceiveList)
+        {
+            //while (spHandle.IsOpen())
+            while (spHandle.QueueLength() > 0)
+            {
+                byte serial_byte = spHandle.GeneralDequeue();
+                ReceiveList.Add(serial_byte);
+            }
+        }
+
+        private string RawData_Output(List<byte> data)
+        {
+            string HexString = "";
+            int i = 0;
+            if (data != null)
+            {
+                foreach (byte sum in data)
+                {
+                    HexString += (sum.ToString("X2"));
+                    if (i < data.Count - 1)
+                        HexString += " ";
+
+                    i++;
+                }
+            }
+
+            return HexString;
+        }
+
+        private void SerialPort_Cmd_Handling()
+        {
+            while (GlobalData.m_SerialPort.IsOpen())
+            {
+                //if (GlobalData.m_SerialPort.GetRxBytes() > 0)
+                {
+                    
+                    PacketDequeuedToList(GlobalData.m_SerialPort, ref cmdByteList);
+                    Thread.Sleep(100);
+                    benQ.QueueAddedToList_ODM_BenQ(ref cmdByteList, ref packetQueueList);
+                }
+            }
+
+        }
+
+        // ====== used along with SerialRxThread ====== //
+        private void GetSerialData(Mod_RS232 SpHandler)
+        {
+            while (SpHandler.IsOpen())
+            {
+                int data_to_read = SpHandler.GetRxBytes();
+                if (data_to_read > 0)
+                {
+                    byte[] dataset = new byte[data_to_read];
+                    SpHandler.ReadDataIn(dataset, data_to_read);
+                }
+            }
+        }
+
+        public void SerialRxThread()
+        {
+            GetSerialData(GlobalData.m_SerialPort);
+        }
+
     }
 }
