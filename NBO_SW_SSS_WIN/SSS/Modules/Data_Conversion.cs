@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Cheese;
+using log4net;
 
 namespace ModuleLayer
 {
     public class DataTypeConversion
     {
+        private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);        //log4net
+
         private ushort CalCRC(ushort PreCRC, byte data)
         {
+            log.Debug("CalCRC: " + PreCRC + ", " + data);
             int j;
             ushort to_xor;
 
@@ -34,6 +39,7 @@ namespace ModuleLayer
 
         public ushort CalculateCRC(int dataLen,byte[] inBuf)
         {
+            log.Debug("CalculateCRC: " + dataLen + ", " + inBuf);
             int i;
             ushort CRCResult = 0xFFFF;
 
@@ -46,6 +52,7 @@ namespace ModuleLayer
         }
         public byte BytetoAscii(byte data)
         {
+            log.Debug("BytetoAscii: " + data);
             byte tempByte = 0;
             //data = (byte)(data & 0x0F);
             if ((data >= 0x00) && (data <= 0x09))
@@ -84,6 +91,7 @@ namespace ModuleLayer
         }
         public byte AsciiToByte(byte data)
         {
+            log.Debug("AsciiToByte: " + data);
             byte i;
             if ((data >= 0x30) && (data <= 0x39))
             {
@@ -127,6 +135,7 @@ namespace ModuleLayer
 
         public static byte XOR(byte bHEX1, byte bHEX2)
         {
+            log.Debug("XOR: " + bHEX1 + ", " + bHEX2);
             byte bHEX_OUT = new byte();
             bHEX_OUT = (byte)(bHEX1 ^ bHEX2);
             return bHEX_OUT;
@@ -134,6 +143,7 @@ namespace ModuleLayer
 
         public static byte[] OR(byte[] bHEX1, byte[] bHEX2)
         {
+            log.Debug("OR: " + bHEX1 + ", " + bHEX2);
             byte[] bHEX_OUT = new byte[bHEX1.Length];
             for (int i = 0; i < bHEX1.Length; i++)
             {
@@ -144,6 +154,7 @@ namespace ModuleLayer
 
         public static byte[] AND(byte[] bHEX1, byte[] bHEX2)
         {
+            log.Debug("AND: " + bHEX1 + ", " + bHEX2);
             byte[] bHEX_OUT = new byte[bHEX1.Length];
             for (int i = 0; i < bHEX1.Length; i++)
             {
@@ -154,6 +165,7 @@ namespace ModuleLayer
 
         public static byte XOR_Bytes(byte[] bHEX1, int length)
         {
+            log.Debug("XOR_Bytes: " + bHEX1 + ", " + length);
             byte bHEX_OUT = bHEX1[0];
             for (int i = 1; i < length; i++)
             {
@@ -164,6 +176,7 @@ namespace ModuleLayer
 
         public static byte XOR_List(List<byte> bHEX1, int length)
         {
+            log.Debug("XOR_List: " + bHEX1 + ", " + length);
             byte bHEX_OUT = bHEX1[0];
             for (int i = 1; i < length; i++)
             {
@@ -174,6 +187,7 @@ namespace ModuleLayer
 
         public string Medical_XOR8(string original_data)
         {
+            log.Debug("Medical_XOR8: " + original_data);
             string[] hexValuesSplit = original_data.Split(' ');
             byte[] bytes = new byte[hexValuesSplit.Count()];
             byte XOR_value = new byte();
@@ -202,6 +216,7 @@ namespace ModuleLayer
 
         public string XOR8_BytesWithChksum(string original_data, byte[] BytesToBeWritten, int BytesLength, bool withChksum = false)
         {
+            log.Debug("XOR8_BytesWithChksum: " + original_data + ", " + BytesToBeWritten + ", " + BytesLength + ", " + withChksum);
             string[] hexValuesSplit = original_data.Split(' ');
             byte XOR_value = new byte();
             int hex_number = 0;

@@ -70,6 +70,9 @@
     <Reference Include="jini">
       <HintPath>DLL\jini.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>DLL\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -127,6 +130,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ImageResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="log4net.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -186,4 +190,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(ProjectDir)\log4net.config" "$(ProjectDir)bin\Debug\"
+copy "$(ProjectDir)\log4net.config" "$(ProjectDir)bin\Release\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

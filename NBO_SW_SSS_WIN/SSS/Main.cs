@@ -11,6 +11,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
+using log4net;
 using ModuleLayer;
 using System.Net.Sockets;
 using System.Timers;
@@ -34,6 +36,7 @@ namespace Cheese
         public static double tmout = 0.0;
         public TimeoutTimer timeOutTimer;
         Thread SerialPort_Receive_Thread;
+        private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);        //log4net
 
         // ----------------------------------------------------------------------------------------------- //
         private FilterInfoCollection videoDevices = null;
@@ -63,6 +66,7 @@ namespace Cheese
         // ----------------------------------------------------------------------------------------------- //
         private void UpdateUiData(int x, int y, string data)
         {
+            log.Debug("UpdateUiData: " + x + ", " + y + ", " + data);
             int i;
             if (y == -1)
             {
@@ -105,6 +109,7 @@ namespace Cheese
         
         public void Form1UpdateArduinoLedStatus(int status)
         {
+            log.Debug("Form1UpdateArduinoLedStatus: " + status);
             if (status == 1)
             {
                 this.PIC_Arduino.Image = ImageResource.GleenLed;
@@ -116,6 +121,7 @@ namespace Cheese
         }
         public void Form1UpdateComportLedStatus(int status)
         {
+            log.Debug("Form1UpdateComportLedStatus: " + status);
             if (status == 1)
             {
                 this.PIC_ComPortStatus.Image = ImageResource.GleenLed;
@@ -127,6 +133,7 @@ namespace Cheese
         }
         public void Form1UpdateNetworkLedStatus(int status)
         {
+            log.Debug("Form1UpdateNetworkLedStatus: " + status);
             if (status == 1)
             {
                 this.PIC_NetworkStatus.Image = ImageResource.GleenLed;
@@ -143,6 +150,7 @@ namespace Cheese
         // ----------------------------------------------------------------------------------------------- //
         public Main()
         {
+            log.Debug("Main");
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
@@ -152,6 +160,7 @@ namespace Cheese
         }
         private void UpdateUIBtnFun(int Btn, int Status)
         {
+            log.Debug("UpdateUIBtnFun: " + Btn + ", " + Status);
             switch (Btn)
             {
                 case 0:     //Start BTN
@@ -268,6 +277,7 @@ namespace Cheese
         }
         private void UpdateLoopTxt(int Cmd,ref int result)
         {
+            log.Debug("UpdateLoopTxt: " + Cmd + ", " + result);
             if (Cmd == 0)
             {
                 this.Txt_LoopTimes.Enabled = false;
@@ -295,6 +305,7 @@ namespace Cheese
         }
         private void UpdateUiString(int camIdx, string dataString)  //used to display current camera resolution
         {
+            log.Debug("UpdateUiString: " + camIdx + ", " + dataString);
             if (camIdx == 1)
                 textBox_cam1Res.Text = dataString;
             else if (camIdx == 2)
@@ -1469,6 +1480,7 @@ namespace Cheese
 
         public void Arduino_Get_GPIO_Input(ref int GPIO_Read_Data, int delay_time)
         {
+            log.Debug("Arduino_Get_GPIO_Input: " + GPIO_Read_Data + ", " + delay_time);
             int retry_cnt = 5;
             //GPIO_Read_Data = 0xFFFF;
 
@@ -1529,6 +1541,7 @@ namespace Cheese
 
         public void Arduino_Set_GPIO_Output(byte outputbyte, int delay_time)
         {
+            log.Debug("Arduino_Set_GPIO_Output: " + outputbyte + ", " + delay_time);
             int retry_cnt = 5;
 
             if (GlobalData.sp_Arduino.IsOpen())
@@ -1569,6 +1582,7 @@ namespace Cheese
         #region -- IO CMD 指令集 --
         private void IO_CMD(string cmdLine, int cameraIdx, string columns_wait, string columns_remark)
         {
+            log.Debug("IO_CMD: " + cmdLine + ", " + cameraIdx + ", " + columns_wait + ", " + columns_remark);
             if (cmdLine == "_shot")
             {
                 /*
@@ -1852,6 +1866,7 @@ namespace Cheese
 		
         public void Snapshot(int cameraSelectMode, string delayTimeString, string remark)
         {
+            log.Debug("Snapshot: " + cameraSelectMode + ", " + delayTimeString + ", " + remark);
             string image_currentPath = System.Environment.CurrentDirectory;
             string deviceName = "";
             int camera_counter = 0, camera_startNum = 0;
@@ -2018,6 +2033,7 @@ namespace Cheese
 
         public static void sendMail(string mailTo)
         {
+            log.Debug("sendMail: " + mailTo);
             string To = mailTo + ",";
             int z = 0;
             string[] to = To.Split(new char[] { ',' });
@@ -2043,6 +2059,7 @@ namespace Cheese
 
         public static void SendMail(List<string> MailList, string Subject, string Body)
         {
+            log.Debug("SendMail: " + Subject + ", " + Subject + ", " + Body);
             MailMessage msg = new MailMessage();
 
             msg.To.Add(string.Join(",", MailList.ToArray()));       //收件者，以逗號分隔不同收件者
@@ -2293,6 +2310,7 @@ namespace Cheese
 
         public void DrawOnBitmap(ref Bitmap bmp, string remarkStr, string delayTimeStr, string deviceName, string saveName)
         {
+            log.Debug("DrawOnBitmap: " + remarkStr + ", " + delayTimeStr + ", " + deviceName + ", " + saveName);
             //Rectangle rect = new Rectangle(70, 90, 90, 50);
             Graphics gph = Graphics.FromImage(bmp);
             // 1. Draw time
@@ -2330,6 +2348,7 @@ namespace Cheese
 
         public void VideoPlayerInitializing(int camIndex)
         {
+            log.Debug("VideoPlayerInitializing: " + camIndex);
             dUpdateUiString updateString = new dUpdateUiString(UpdateUiString);
             if (videoSourcePlayer1.IsRunning)
             {
@@ -2391,6 +2410,7 @@ namespace Cheese
 
         public void CloseCamera()
         {
+            log.Debug("CloseCamera");
             //if (videoSource1 != null)
             if (videoSourcePlayer1.IsRunning)
             {
@@ -2423,6 +2443,7 @@ namespace Cheese
 
         private bool CreateSavingfolder(string deviceName)
         {
+            log.Debug("CreateSavingfolder: " + deviceName);
             bool status = false;
             string picFolder = System.Environment.CurrentDirectory + "\\" + deviceName;
 
