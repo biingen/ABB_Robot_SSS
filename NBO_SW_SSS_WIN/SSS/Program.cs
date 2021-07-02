@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using ModuleLayer;
+using log4net.Config;
 
 namespace Cheese
 {
@@ -15,6 +16,7 @@ namespace Cheese
         [STAThread]
         static void Main()
         {
+            XmlConfigurator.Configure(new System.IO.FileInfo("./log4net.config"));      //log4net configure file
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

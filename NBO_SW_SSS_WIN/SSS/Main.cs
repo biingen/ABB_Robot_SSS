@@ -11,6 +11,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
+using log4net;
 using ModuleLayer;
 using System.Net.Sockets;
 using System.Timers;
@@ -27,19 +29,22 @@ namespace Cheese
     {
         string TargetFilePath;
         public int FlagComPortStauts;
-        int FlagPause, FlagStop, loopTimes = 0, loopCounter = 0;
+        int FlagPause, FlagStop;
+        bool FlagLoopTimes = false;
+        int loopTimes = 0, loopCounter = 0;
         static string Cmdsend, Cmdreceive;
         int Device, Resolution;
         public double timeout;
         public static double tmout = 0.0;
         public TimeoutTimer timeOutTimer;
         Thread SerialPort_Receive_Thread;
+        private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);        //log4net
 
         // ----------------------------------------------------------------------------------------------- //
         private FilterInfoCollection videoDevices = null;
         private VideoCaptureDevice videoSource = null;
         private VideoCapabilities[] videoCapabilities;
-        static IVideoSource iVideoSource1, iVideoSource2; //VideoCaptureDevice object only is enough for snapshot purpose
+        //static IVideoSource iVideoSource1, iVideoSource2; //VideoCaptureDevice object only is enough for snapshot purpose
         static VideoCaptureDevice videoSource1, videoSource2;
         private static Bitmap bitmap = null;
         static Graphics g = null;
@@ -56,13 +61,67 @@ namespace Cheese
         // ----------------------------------------------------------------------------------------------- //
         public DataGridView tempDataGrid;
         private delegate void dUpdateDataGrid(int x, int y, string data);
-        private delegate void ProcessLoopText(int Cmd, ref int result);
+        //private delegate void ProcessLoopText(int Cmd, ref int result);
+        private delegate void ProcessLoopText(int Cmd, int result);
         public delegate void dUpdateUI(int status);
         public delegate void dUpdateUIBtn(int Btn, int Status);
         public delegate void dUpdateUiString(int camIdx, string data);
+        // ---------------------------------- Arduino parameter ---------------------------------- //
+        string Read_Arduino_Data = "";
+        bool serial_receive = false;
+        int GPIO_Read_Data = 0xAA00;
         // ----------------------------------------------------------------------------------------------- //
+        public Main()
+        {
+            log.Debug("Main");
+            InitializeComponent();
+            tempDataGrid = this.dataGridView1;
+            FlagComPortStauts = 0;
+            this.VerLabel.Text = "Version: 007.002.004";
+            FlagPause = 0;
+            FlagStop = 0;
+        }
+        // ----------------------------------------------------------------------------------------------- //
+        public void Form1UpdateArduinoLedStatus(int status)
+        {
+            log.Debug("Form1UpdateArduinoLedStatus: " + status);
+            if (status == 1)
+            {
+                this.PIC_Arduino.Image = ImageResource.GleenLed;
+            }
+            else
+            {
+                this.PIC_Arduino.Image = ImageResource.BlackLED;
+            }
+        }
+        public void Form1UpdateComportLedStatus(int status)
+        {
+            log.Debug("Form1UpdateComportLedStatus: " + status);
+            if (status == 1)
+            {
+                this.PIC_ComPortStatus.Image = ImageResource.GleenLed;
+            }
+            else
+            {
+                this.PIC_ComPortStatus.Image = ImageResource.BlackLED;
+            }
+        }
+        public void Form1UpdateNetworkLedStatus(int status)
+        {
+            log.Debug("Form1UpdateNetworkLedStatus: " + status);
+            if (status == 1)
+            {
+                this.PIC_NetworkStatus.Image = ImageResource.GleenLed;
+            }
+            else
+            {
+                this.PIC_NetworkStatus.Image = ImageResource.BlackLED;
+            }
+        }
+
         private void UpdateUiData(int x, int y, string data)
         {
+            log.Debug("UpdateUiData: " + x + ", " + y + ", " + data);
             int i;
             if (y == -1)
             {
@@ -102,56 +161,9 @@ namespace Cheese
             }
             
         }
-        
-        public void Form1UpdateArduinoLedStatus(int status)
-        {
-            if (status == 1)
-            {
-                this.PIC_Arduino.Image = ImageResource.GleenLed;
-            }
-            else
-            {
-                this.PIC_Arduino.Image = ImageResource.BlackLED;
-            }
-        }
-        public void Form1UpdateComportLedStatus(int status)
-        {
-            if (status == 1)
-            {
-                this.PIC_ComPortStatus.Image = ImageResource.GleenLed;
-            }
-            else
-            {
-                this.PIC_ComPortStatus.Image = ImageResource.BlackLED;
-            }
-        }
-        public void Form1UpdateNetworkLedStatus(int status)
-        {
-            if (status == 1)
-            {
-                this.PIC_NetworkStatus.Image = ImageResource.GleenLed;
-            }
-            else
-            {
-                this.PIC_NetworkStatus.Image = ImageResource.BlackLED;
-            }
-        }
-        // ---------------------------------- Arduino parameter ---------------------------------- //
-        string Read_Arduino_Data = "";
-        bool serial_receive = false;
-        int GPIO_Read_Data = 0xAA00;
-        // ----------------------------------------------------------------------------------------------- //
-        public Main()
-        {
-            InitializeComponent();
-            tempDataGrid = this.dataGridView1;
-            FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 007.002.003";
-            FlagPause = 0;
-            FlagStop = 0;
-        }
         private void UpdateUIBtnFun(int Btn, int Status)
         {
+            log.Debug("UpdateUIBtnFun: " + Btn + ", " + Status);
             switch (Btn)
             {
                 case 0:     //Start BTN
@@ -266,35 +278,44 @@ namespace Cheese
             }
             //this.Refresh();
         }
-        private void UpdateLoopTxt(int Cmd,ref int result)
+        //private void UpdateLoopTxt(int Cmd, ref int result)
+        private void UpdateLoopTxt(int Cmd, int valueOfLoop)
         {
+            log.Debug("UpdateLoopTxt: " + Cmd + ", " + valueOfLoop);
             if (Cmd == 0)
             {
                 this.Txt_LoopTimes.Enabled = false;
-                this.Txt_LoopCounter.Visible = false;
+                this.Txt_LoopCounter.Enabled = false;
             }
             else if (Cmd == 1)
             {
+                this.Txt_LoopTimes.Enabled = true;
                 this.Txt_LoopCounter.Enabled = true;
             }
-            else if (Cmd == 2)
+            else if (Cmd == 2)  //read loopCounter value from textBox
             {
-                result = Convert.ToInt32(this.Txt_LoopTimes.Text);
+                //result = Convert.ToInt32(this.Txt_LoopTimes.Text);
+                loopTimes = Convert.ToInt32(this.Txt_LoopTimes.Text);
+                loopCounter = loopTimes;
             }
-            else if (Cmd == 3)
+            else if (Cmd == 3)  //write loopCounter value to textBox
+            {
+                this.Txt_LoopCounter.Text = valueOfLoop.ToString();
+            }
+            else if (Cmd == 4)  //uncheck the chk_loopTimes checkBox
             {
                 //this.Txt_LoopCounter.Visible = false;
+                loopCounter = valueOfLoop;
             }
-            else if (Cmd == 4)
-            {
-                //this.Txt_LoopCounter.Visible = false;
-                this.Txt_LoopCounter.Text = result.ToString();
-                //this.Txt_LoopCounter.Visible = true;
-            }
-            
+            else if (Cmd == 5)
+                this.chkBox_LoopTimes.Enabled = false;
+            else if (Cmd == 6)
+                this.chkBox_LoopTimes.Enabled = true;
+
         }
         private void UpdateUiString(int camIdx, string dataString)  //used to display current camera resolution
         {
+            log.Debug("UpdateUiString: " + camIdx + ", " + dataString);
             if (camIdx == 1)
                 textBox_cam1Res.Text = dataString;
             else if (camIdx == 2)
@@ -331,7 +352,8 @@ namespace Cheese
                         updateDataGrid.Invoke(colIndex, y, tempStr[colIndex]);
                         if (tempStr.Length >= 1)
                         {
-                            if (colIndex == 6 && tempStr[colIndex] != null || tempStr[colIndex] != "")
+                            //if (colIndex == 6 && tempStr[colIndex] != null || tempStr[colIndex] != "")
+                            if (colIndex == 6 && tempStr[colIndex] != "")
                             {
                                 //1.W/R field
                                 //updateDataGrid.Invoke(1, y, tempStr[colIndex++]);
@@ -350,7 +372,7 @@ namespace Cheese
 
                                     updateDataGrid.Invoke(13, y, tstStr);    //Auto fill CRC Field column after opening schedule file
                                 }
-                                else if (tempStr[4] != "XOR8" && cmdStr.Length >= 2)
+                                else if (tempStr[4] == "GENERAL" && cmdStr.Length >= 2)
                                 {
                                     j = 0;
                                     for (i = 0; i <= (cmdStr.Length - 1); i++)
@@ -412,14 +434,12 @@ namespace Cheese
             byte[] retBuf = new byte[100];
             byte[] finBuf = new byte[100];
             ushort arduino_input_status;
-            int delayTime, loopIndex = 0;
-            int i, j, RowCount, ExeIndex = 0;
-
+            int delayTime, loopIndex = 0, RowCount, ExeIndex = 0;
             
             RowCount = this.dataGridView1.Rows.Count;
             if (RowCount <= 1) 
             {
-                MessageBox.Show("Finish");
+                MessageBox.Show("No Row Data");
                 //UpdateLoopTxt(1, ref loopCounter);//Enable Loop Text
                 //Invoke(LoopText, 1, loopCounter);
                 //Invoke(LoopText, 3, loopCounter);
@@ -432,20 +452,20 @@ namespace Cheese
             {
                 //Invoke(LoopText, 0, loopCounter);
                 //UpdateLoopTxt(0, ref loopCounter);  //disable Loop Test
-                UpdateLoopTxt(2, ref loopCounter);  //get Loop counter
+                //UpdateLoopTxt(2, ref loopCounter);  //get Loop counter
                 //Invoke(LoopText, 2, loopCounter);
+                Invoke(LoopText, 0, 0);
+                Invoke(LoopText, 2, 0);
+                Invoke(LoopText, 5, 0);
                 if (loopCounter < 0)
-                {
                     loopCounter = 0;
-                }
 
                 while (loopCounter > 0 && FlagStop == 0)
                 {
                     if (this.chkBox_LoopTimes.Checked == true)
                     {
                         loopIndex++;
-                        //Invoke(LoopText, 4, loopIndex);
-                        Invoke(LoopText, 4, loopCounter);
+                        //Invoke(LoopText, 3, loopCounter);
                     }
 
                     Invoke(UpdateUIBtn, 3, 1);  //display testing
@@ -1447,17 +1467,20 @@ namespace Cheese
                     wFile.Close();*/
 
                     loopCounter--;
-					Invoke(LoopText, 4, loopCounter);
+					Invoke(LoopText, 3, loopCounter);
                 }
                 //----------------------------------------------------//
                 MessageBox.Show("All schedules finished");
                 //CloseCamera();
                 //UpdateUIBtn(3, 3);        //display finish
-                Invoke(UpdateUIBtn, 3, 3);   //display finish
+                Invoke(UpdateUIBtn, 3, 3);  //display finish
                 Invoke(UpdateUIBtn, 4, 1);  //button_Camera.Enabled = true;
                 Invoke(UpdateUIBtn, 5, 0);  //button_Snapshot.Enabled = false;
                 Invoke(UpdateUIBtn, 6, 0);  //button_Schedule.Enabled = false;
                 Invoke(UpdateUIBtn, 9, 1);  //cboxCameraList.Enabled = true;
+                Invoke(LoopText, 6, 0);
+                if (FlagLoopTimes)
+                    Invoke(LoopText, 1, 0);
             }
 
             Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
@@ -1469,6 +1492,7 @@ namespace Cheese
 
         public void Arduino_Get_GPIO_Input(ref int GPIO_Read_Data, int delay_time)
         {
+            log.Debug("Arduino_Get_GPIO_Input: " + GPIO_Read_Data + ", " + delay_time);
             int retry_cnt = 5;
             //GPIO_Read_Data = 0xFFFF;
 
@@ -1529,6 +1553,7 @@ namespace Cheese
 
         public void Arduino_Set_GPIO_Output(byte outputbyte, int delay_time)
         {
+            log.Debug("Arduino_Set_GPIO_Output: " + outputbyte + ", " + delay_time);
             int retry_cnt = 5;
 
             if (GlobalData.sp_Arduino.IsOpen())
@@ -1569,6 +1594,7 @@ namespace Cheese
         #region -- IO CMD 指令集 --
         private void IO_CMD(string cmdLine, int cameraIdx, string columns_wait, string columns_remark)
         {
+            log.Debug("IO_CMD: " + cmdLine + ", " + cameraIdx + ", " + columns_wait + ", " + columns_remark);
             if (cmdLine == "_shot")
             {
                 /*
@@ -1606,10 +1632,12 @@ namespace Cheese
         {
             dataGridView1.Visible = true;
             dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
+            //ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
             Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
             Invoke(UpdateUIBtn, 1, 1);  //this.BTN_Pause.Enabled = true;
             Invoke(UpdateUIBtn, 2, 1);  //this.BTN_Stop.Enabled = true;
             Invoke(UpdateUIBtn, 9, 0);  //cboxCameraList.Enabled = false;
+            //Invoke(LoopText, 0, 0);
             FlagPause = 0;
             FlagStop = 0;
 
@@ -1650,8 +1678,11 @@ namespace Cheese
         private void BTN_Stop_Click(object sender, EventArgs e)
         {
             dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
+            ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
             Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
             Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            Invoke(LoopText, 1, 0);
+
             if (timeOutTimer != null && timeOutTimer.TimerOnIndicator())
             {
                 timeOutTimer.StopTimeoutTimer(-9.9);
@@ -1852,6 +1883,7 @@ namespace Cheese
 		
         public void Snapshot(int cameraSelectMode, string delayTimeString, string remark)
         {
+            log.Debug("Snapshot: " + cameraSelectMode + ", " + delayTimeString + ", " + remark);
             string image_currentPath = System.Environment.CurrentDirectory;
             string deviceName = "";
             int camera_counter = 0, camera_startNum = 0;
@@ -1876,7 +1908,7 @@ namespace Cheese
                     if (cameraSelectMode < 0 && i == 0)
                     {
                         deviceName = (i + 1).ToString() + "_" + videoDevices[i].Name.ToString();
-                        iVideoSource1 = videoSourcePlayer1.VideoSource;
+                        //iVideoSource1 = videoSourcePlayer1.VideoSource;
                         Bitmap bmp = videoSourcePlayer1.GetCurrentVideoFrame();
                         string saveName = image_currentPath + "\\" + deviceName + "\\" + deviceName + "_" + fileName;
                         DrawOnBitmap(ref bmp, remark, delayTimeString, deviceName, saveName);
@@ -1884,7 +1916,7 @@ namespace Cheese
                     else if (cameraSelectMode < 0 && i == 1)
                     {
                         deviceName = (i + 1).ToString() + "_" + videoDevices[i].Name.ToString();
-                        iVideoSource2 = videoSourcePlayer2.VideoSource;
+                        //iVideoSource2 = videoSourcePlayer2.VideoSource;
                         Bitmap bmp = videoSourcePlayer2.GetCurrentVideoFrame();
                         string saveName = image_currentPath + "\\" + deviceName + "\\" + deviceName + "_" + fileName;
                         DrawOnBitmap(ref bmp, remark, delayTimeString, deviceName, saveName);
@@ -1895,12 +1927,12 @@ namespace Cheese
                         Bitmap bmp = null;
                         if (0 == i)
                         {
-                            iVideoSource1 = videoSourcePlayer1.VideoSource;
+                            //iVideoSource1 = videoSourcePlayer1.VideoSource;
                             bmp = videoSourcePlayer1.GetCurrentVideoFrame();
                         }
                         if (1 == i)
                         {
-                            iVideoSource2 = videoSourcePlayer2.VideoSource;
+                            //iVideoSource2 = videoSourcePlayer2.VideoSource;
                             bmp = videoSourcePlayer2.GetCurrentVideoFrame();
                         }
 
@@ -2018,6 +2050,7 @@ namespace Cheese
 
         public static void sendMail(string mailTo)
         {
+            log.Debug("sendMail: " + mailTo);
             string To = mailTo + ",";
             int z = 0;
             string[] to = To.Split(new char[] { ',' });
@@ -2043,6 +2076,7 @@ namespace Cheese
 
         public static void SendMail(List<string> MailList, string Subject, string Body)
         {
+            log.Debug("SendMail: " + Subject + ", " + Subject + ", " + Body);
             MailMessage msg = new MailMessage();
 
             msg.To.Add(string.Join(",", MailList.ToArray()));       //收件者，以逗號分隔不同收件者
@@ -2123,33 +2157,29 @@ namespace Cheese
             //Application.Exit();
         }
 
-        private void checkBox_LoopTimes_CheckedChanged(object sender, EventArgs e)
+        private void chkBox_LoopTimes_CheckedChanged(object sender, EventArgs e)
         {
+            ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
             if (this.chkBox_LoopTimes.Checked == true)
             {
-                this.Txt_LoopCounter.Enabled = true;
+                //this.Txt_LoopTimes.Enabled = true;
+                //this.Txt_LoopCounter.Enabled = true;
+                Invoke(LoopText, 1, 0);
+                //loopTimes = Convert.ToInt32(Txt_LoopTimes.Text);
+                //loopCounter = Convert.ToInt32(Txt_LoopCounter.Text);
+                Invoke(LoopText, 2, 0);
+                Invoke(LoopText, 3, loopCounter);
+                FlagLoopTimes = true;
             }
             else
             {
-                this.Txt_LoopCounter.Enabled = false;
-            }
-        }
-
-        private void chkBox_Loop_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.chkBox_LoopTimes.Checked == true)
-            {
-                this.Txt_LoopTimes.Enabled = true;
-                this.Txt_LoopCounter.Enabled = true;
-                loopTimes = Convert.ToInt32(Txt_LoopTimes.Text);
-                loopCounter = Convert.ToInt32(Txt_LoopCounter.Text);
-            }
-            else
-            {
-                this.Txt_LoopTimes.Enabled = false;
-                this.Txt_LoopCounter.Enabled = false;
-                loopTimes = 0;
-                loopCounter = 0;
+                //this.Txt_LoopTimes.Enabled = false;
+                //this.Txt_LoopCounter.Enabled = false;
+                Invoke(LoopText, 0, 0);
+                //Invoke(LoopText, 4, 1);
+                //loopTimes = 1;
+                //loopCounter = 1;
+                FlagLoopTimes = false;
             }
         }
 
@@ -2161,6 +2191,8 @@ namespace Cheese
                 Txt_LoopCounter.Text = txtBox.Text;
                 //loopCounter = Convert.ToInt32(Txt_LoopCounter.Text);
             }
+            //else
+            //{ No need since Txt_LoopCounter is disabled. }
         }
 
         private void button_Camera_Click(object sender, EventArgs e)
@@ -2206,9 +2238,9 @@ namespace Cheese
             {
                 case 0:
                     bitmap = videoSourcePlayer1.GetCurrentVideoFrame();
-                    iVideoSource1 = videoSourcePlayer1.VideoSource;
-                    iVideoSource1.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
-                    //videoSource1.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
+                    //iVideoSource1 = videoSourcePlayer1.VideoSource;
+                    //iVideoSource1.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
+                    videoSource1.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
                     Thread.Sleep(100);
                     picBox_preview.Image = bitmap;
                     picBox_preview.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -2216,9 +2248,7 @@ namespace Cheese
                     break;
                 case 1:
                     bitmap = videoSourcePlayer2.GetCurrentVideoFrame();
-                    iVideoSource2 = videoSourcePlayer1.VideoSource;
-                    iVideoSource2.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
-                    //videoSource2.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
+                    videoSource2.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
                     Thread.Sleep(100);
                     picBox_preview.Image = bitmap;
                     picBox_preview.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -2293,6 +2323,7 @@ namespace Cheese
 
         public void DrawOnBitmap(ref Bitmap bmp, string remarkStr, string delayTimeStr, string deviceName, string saveName)
         {
+            log.Debug("DrawOnBitmap: " + remarkStr + ", " + delayTimeStr + ", " + deviceName + ", " + saveName);
             //Rectangle rect = new Rectangle(70, 90, 90, 50);
             Graphics gph = Graphics.FromImage(bmp);
             // 1. Draw time
@@ -2330,6 +2361,7 @@ namespace Cheese
 
         public void VideoPlayerInitializing(int camIndex)
         {
+            log.Debug("VideoPlayerInitializing: " + camIndex);
             dUpdateUiString updateString = new dUpdateUiString(UpdateUiString);
             if (videoSourcePlayer1.IsRunning)
             {
@@ -2391,6 +2423,7 @@ namespace Cheese
 
         public void CloseCamera()
         {
+            log.Debug("CloseCamera");
             //if (videoSource1 != null)
             if (videoSourcePlayer1.IsRunning)
             {
@@ -2423,6 +2456,7 @@ namespace Cheese
 
         private bool CreateSavingfolder(string deviceName)
         {
+            log.Debug("CreateSavingfolder: " + deviceName);
             bool status = false;
             string picFolder = System.Environment.CurrentDirectory + "\\" + deviceName;
 

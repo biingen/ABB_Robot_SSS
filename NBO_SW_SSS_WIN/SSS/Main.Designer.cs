@@ -69,14 +69,14 @@
             this.button_AcOff = new System.Windows.Forms.Button();
             this.Txt_LoopCounter = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.textBox_cam2Res = new System.Windows.Forms.TextBox();
+            this.textBox_cam1Res = new System.Windows.Forms.TextBox();
             this.label_cam2 = new System.Windows.Forms.Label();
             this.label_cam1 = new System.Windows.Forms.Label();
             this.videoSourcePlayer2 = new AForge.Controls.VideoSourcePlayer();
             this.picBox_preview = new System.Windows.Forms.PictureBox();
             this.videoSourcePlayer1 = new AForge.Controls.VideoSourcePlayer();
             this.button_Snapshot = new System.Windows.Forms.Button();
-            this.textBox_cam1Res = new System.Windows.Forms.TextBox();
-            this.textBox_cam2Res = new System.Windows.Forms.TextBox();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStatus)).BeginInit();
@@ -258,7 +258,7 @@
             this.chkBox_LoopTimes.TabIndex = 9;
             this.chkBox_LoopTimes.Text = "Loop Times";
             this.chkBox_LoopTimes.UseVisualStyleBackColor = true;
-            this.chkBox_LoopTimes.CheckedChanged += new System.EventHandler(this.chkBox_Loop_CheckedChanged);
+            this.chkBox_LoopTimes.CheckedChanged += new System.EventHandler(this.chkBox_LoopTimes_CheckedChanged);
             // 
             // Txt_LoopTimes
             // 
@@ -465,6 +465,25 @@
             this.panel1.Size = new System.Drawing.Size(1180, 480);
             this.panel1.TabIndex = 37;
             // 
+            // textBox_cam2Res
+            // 
+            this.textBox_cam2Res.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_cam2Res.Location = new System.Drawing.Point(1035, 105);
+            this.textBox_cam2Res.Name = "textBox_cam2Res";
+            this.textBox_cam2Res.Size = new System.Drawing.Size(128, 29);
+            this.textBox_cam2Res.TabIndex = 41;
+            this.textBox_cam2Res.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBox_cam2Res.WordWrap = false;
+            // 
+            // textBox_cam1Res
+            // 
+            this.textBox_cam1Res.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_cam1Res.Location = new System.Drawing.Point(3, 346);
+            this.textBox_cam1Res.Name = "textBox_cam1Res";
+            this.textBox_cam1Res.Size = new System.Drawing.Size(128, 29);
+            this.textBox_cam1Res.TabIndex = 40;
+            this.textBox_cam1Res.WordWrap = false;
+            // 
             // label_cam2
             // 
             this.label_cam2.AutoSize = true;
@@ -527,25 +546,6 @@
             this.button_Snapshot.Text = "Snapshot";
             this.button_Snapshot.UseVisualStyleBackColor = true;
             this.button_Snapshot.Click += new System.EventHandler(this.button_Snapshot_Click);
-            // 
-            // textBox_cam1Res
-            // 
-            this.textBox_cam1Res.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_cam1Res.Location = new System.Drawing.Point(3, 346);
-            this.textBox_cam1Res.Name = "textBox_cam1Res";
-            this.textBox_cam1Res.Size = new System.Drawing.Size(128, 29);
-            this.textBox_cam1Res.TabIndex = 40;
-            this.textBox_cam1Res.WordWrap = false;
-            // 
-            // textBox_cam2Res
-            // 
-            this.textBox_cam2Res.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_cam2Res.Location = new System.Drawing.Point(1035, 105);
-            this.textBox_cam2Res.Name = "textBox_cam2Res";
-            this.textBox_cam2Res.Size = new System.Drawing.Size(128, 29);
-            this.textBox_cam2Res.TabIndex = 41;
-            this.textBox_cam2Res.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.textBox_cam2Res.WordWrap = false;
             // 
             // Main
             // 
