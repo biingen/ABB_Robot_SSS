@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -38,8 +39,8 @@ namespace Cheese
         private FilterInfoCollection videoDevices = null;
         private VideoCaptureDevice videoSource = null;
         private VideoCapabilities[] videoCapabilities;
-        static IVideoSource videoSource1, videoSource2;
-        static VideoCaptureDevice videoSource_1, videoSource_2;
+        static IVideoSource iVideoSource1, iVideoSource2; //VideoCaptureDevice object only is enough for snapshot purpose
+        static VideoCaptureDevice videoSource1, videoSource2;
         private static Bitmap bitmap = null;
         static Graphics g = null;
         //public delegate void dPassBitmapOn(ref Bitmap bmp, string remarkString);
@@ -58,7 +59,7 @@ namespace Cheese
         private delegate void ProcessLoopText(int Cmd, ref int result);
         public delegate void dUpdateUI(int status);
         public delegate void dUpdateUIBtn(int Btn, int Status);
-
+        public delegate void dUpdateUiString(int camIdx, string data);
         // ----------------------------------------------------------------------------------------------- //
         private void UpdateUiData(int x, int y, string data)
         {
@@ -145,7 +146,7 @@ namespace Cheese
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 007.002";
+            this.VerLabel.Text = "Version: 007.002.003";
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -284,7 +285,7 @@ namespace Cheese
             {
                 //this.Txt_LoopCounter.Visible = false;
             }
-            else if (Cmd ==4)
+            else if (Cmd == 4)
             {
                 //this.Txt_LoopCounter.Visible = false;
                 this.Txt_LoopCounter.Text = result.ToString();
@@ -292,6 +293,14 @@ namespace Cheese
             }
             
         }
+        private void UpdateUiString(int camIdx, string dataString)  //used to display current camera resolution
+        {
+            if (camIdx == 1)
+                textBox_cam1Res.Text = dataString;
+            else if (camIdx == 2)
+                textBox_cam2Res.Text = dataString;
+        }
+
         private void UpdateDataGrid()
         {
             string contentLine; //headerLine
@@ -396,6 +405,7 @@ namespace Cheese
             DataTypeConversion ProStr = new DataTypeConversion();
             Setting form2 = new Setting();
             string resultLine = "";
+            string cmdString = "";
             string[] CmdStringArray = new string[100];
             string[] tempStr = new string[100];
             byte[] Cmdbuf = new byte[100];
@@ -534,27 +544,16 @@ namespace Cheese
                                 //caluate CRC field
                                 if (columns_function == "XOR8")
                                 {
-                                    CmdStringArray = columns_cmdLine.Split(' ');
+                                    cmdString = columns_cmdLine;
                                     byte[] cmdBytes = new byte[CmdStringArray.Count() + 1];     //Plus 1 is reserved for checksum Byte
                                     var tstStr = ProStr.XOR8_BytesWithChksum(columns_cmdLine, cmdBytes, cmdBytes.Length);
                                     GlobalData.m_SerialPort.WriteDataOut(cmdBytes, cmdBytes.Length);
-                                }
-                                else if (columns_function != "XOR8")
-                                {
-                                    j = 0;
-                                    for (i = 0; i <= (CmdStringArray.Length - 1); i++)
-                                    {
-                                        Cmdbuf[i] = (byte)((ProStr.AsciiToByte((byte)(CmdStringArray[i][0])) * 16) + (ProStr.AsciiToByte((byte)(CmdStringArray[i][1]))));
-                                        j++;
-                                    }
 
-                                    CmdStringArray = columns_cmdLine.Split(' ');
-                                    Cmdbuf[j++] = (byte)((ProStr.AsciiToByte((byte)(CmdStringArray[0][0])) * 16) + (ProStr.AsciiToByte((byte)(CmdStringArray[0][1]))));
-                                    Cmdbuf[j++] = (byte)((ProStr.AsciiToByte((byte)(CmdStringArray[1][0])) * 16) + (ProStr.AsciiToByte((byte)(CmdStringArray[1][1]))));
-                                    GlobalData.m_SerialPort.WriteDataOut(Cmdbuf, Cmdbuf.Length);
-                                    // --- Clear local Cmdbuf after writing Serial Data --- //
-                                    for (i = 0; i < CmdStringArray.Length; i++)
-                                        Cmdbuf[i] = 0x00;
+                                    
+                                }
+                                else if (columns_function == "GENERAL")
+                                {
+                                    
                                 }
                             }
 
@@ -572,7 +571,7 @@ namespace Cheese
                                             resultLine += ' ';
                                     }
                                 }
-                                else if (columns_function != "XOR8")
+                                else if (columns_function == "GENERAL")
                                 {
                                     for (int index = 0; index < rxLength; index++)
                                     {
@@ -1464,6 +1463,8 @@ namespace Cheese
             Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
             Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
             Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
+
+            DisposeRam();
         }
 
         public void Arduino_Get_GPIO_Input(ref int GPIO_Read_Data, int delay_time)
@@ -1875,7 +1876,7 @@ namespace Cheese
                     if (cameraSelectMode < 0 && i == 0)
                     {
                         deviceName = (i + 1).ToString() + "_" + videoDevices[i].Name.ToString();
-                        videoSource1 = videoSourcePlayer1.VideoSource;
+                        iVideoSource1 = videoSourcePlayer1.VideoSource;
                         Bitmap bmp = videoSourcePlayer1.GetCurrentVideoFrame();
                         string saveName = image_currentPath + "\\" + deviceName + "\\" + deviceName + "_" + fileName;
                         DrawOnBitmap(ref bmp, remark, delayTimeString, deviceName, saveName);
@@ -1883,7 +1884,7 @@ namespace Cheese
                     else if (cameraSelectMode < 0 && i == 1)
                     {
                         deviceName = (i + 1).ToString() + "_" + videoDevices[i].Name.ToString();
-                        videoSource2 = videoSourcePlayer1.VideoSource;
+                        iVideoSource2 = videoSourcePlayer2.VideoSource;
                         Bitmap bmp = videoSourcePlayer2.GetCurrentVideoFrame();
                         string saveName = image_currentPath + "\\" + deviceName + "\\" + deviceName + "_" + fileName;
                         DrawOnBitmap(ref bmp, remark, delayTimeString, deviceName, saveName);
@@ -1894,12 +1895,12 @@ namespace Cheese
                         Bitmap bmp = null;
                         if (0 == i)
                         {
-                            videoSource1 = videoSourcePlayer1.VideoSource;
+                            iVideoSource1 = videoSourcePlayer1.VideoSource;
                             bmp = videoSourcePlayer1.GetCurrentVideoFrame();
                         }
                         if (1 == i)
                         {
-                            videoSource2 = videoSourcePlayer2.VideoSource;
+                            iVideoSource2 = videoSourcePlayer2.VideoSource;
                             bmp = videoSourcePlayer2.GetCurrentVideoFrame();
                         }
 
@@ -2107,16 +2108,19 @@ namespace Cheese
 
         private void Main_FormClosing(object sender, CancelEventArgs e)
         {
-            //CloseCamera();
-            Environment.Exit(0);
+            CloseCamera();
+            GlobalData.sp_Arduino.ClosePort();
+            //Environment.Exit(0);
         }
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
         {
-            SerialPort_Receive_Thread.Abort();
-            CloseCamera();
-            //Environment.Exit(0); //exit the Application process
-            Application.Exit();
+            if (SerialPort_Receive_Thread != null && SerialPort_Receive_Thread.IsAlive)
+                SerialPort_Receive_Thread.Abort();
+            //CloseCamera();
+            
+            Environment.Exit(0); //exit the Application process
+            //Application.Exit();
         }
 
         private void checkBox_LoopTimes_CheckedChanged(object sender, EventArgs e)
@@ -2202,16 +2206,20 @@ namespace Cheese
             {
                 case 0:
                     bitmap = videoSourcePlayer1.GetCurrentVideoFrame();
-                    videoSource1 = videoSourcePlayer1.VideoSource;
-                    videoSource1.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
+                    iVideoSource1 = videoSourcePlayer1.VideoSource;
+                    iVideoSource1.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
+                    //videoSource1.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
+                    Thread.Sleep(100);
                     picBox_preview.Image = bitmap;
                     picBox_preview.SizeMode = PictureBoxSizeMode.StretchImage;
                     //bitmap.Dispose(); //will cause error of Application.Run(new Main())
                     break;
                 case 1:
                     bitmap = videoSourcePlayer2.GetCurrentVideoFrame();
-                    videoSource2 = videoSourcePlayer2.VideoSource;
-                    videoSource2.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
+                    iVideoSource2 = videoSourcePlayer1.VideoSource;
+                    iVideoSource2.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
+                    //videoSource2.NewFrame += new NewFrameEventHandler(playerControl_Snapshot);
+                    Thread.Sleep(100);
                     picBox_preview.Image = bitmap;
                     picBox_preview.SizeMode = PictureBoxSizeMode.StretchImage;
                     break;
@@ -2280,23 +2288,7 @@ namespace Cheese
                     videoSource1.NewFrame -= new NewFrameEventHandler(playerControl_Snapshot);
                 else if (sender.Equals(videoSource2))
                     videoSource2.NewFrame -= new NewFrameEventHandler(playerControl_Snapshot);
-
-                //CloseCamera();
             }
-        }
-        
-        public void playerControl_NewFrame(object sender, NewFrameEventArgs eventArgs)
-        {
-            //bitmap = videoSourcePlayer1.GetCurrentVideoFrame();
-            Bitmap bmp = (Bitmap)eventArgs.Frame.Clone();
-            //bitmap = bmp;
-
-            if (sender.Equals(videoSource1))
-                videoSource1.NewFrame -= new NewFrameEventHandler(playerControl_NewFrame);
-            else if (sender.Equals(videoSource2))
-                videoSource2.NewFrame -= new NewFrameEventHandler(playerControl_NewFrame);
-
-            bmp.Dispose();
         }
 
         public void DrawOnBitmap(ref Bitmap bmp, string remarkStr, string delayTimeStr, string deviceName, string saveName)
@@ -2338,68 +2330,91 @@ namespace Cheese
 
         public void VideoPlayerInitializing(int camIndex)
         {
+            dUpdateUiString updateString = new dUpdateUiString(UpdateUiString);
             if (videoSourcePlayer1.IsRunning)
             {
                 videoSourcePlayer1.Stop();
-                videoSource_1 = null;
+                videoSource1 = null;
             }
             if (videoSourcePlayer2.IsRunning)
             {
                 videoSourcePlayer2.Stop();
-                videoSource_2 = null;
+                videoSource2 = null;
             }
             
             if (bitmap != null)
                 bitmap.Dispose();
-            int res_Index = 6;
-            if (videoDevices.Count > 0 && videoSource_1 == null && videoSource_2 == null)
+            int res_Index = 0; //8;
+            if (videoDevices.Count > 0 && videoSource1 == null && videoSource2 == null)
             {
-                videoSource_1 = new VideoCaptureDevice(videoDevices[0].MonikerString);
-
-                int resolution_Index_1 = videoSource_1.VideoCapabilities.Count();
+                videoSource1 = new VideoCaptureDevice(videoDevices[0].MonikerString);
+                //videoSource1.DesiredFrameRate = 10;
+                int resolution_Index_1 = 0; //videoSource1.VideoCapabilities.Count();
                 // C310 [13/19]: 960x544; // C310 [15/19]: 1024x576; //C615 [11/15]: 960x720
                 //do not set too high resolution in case of crash issue
                 if (resolution_Index_1 >= res_Index)
-                    videoSource_1.VideoResolution = videoSource_1.VideoCapabilities[resolution_Index_1 - res_Index];
+                {
+                    videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolution_Index_1 - res_Index];
+                    string resString = videoSource1.VideoResolution.FrameSize.Width.ToString() + " x " +
+                                        videoSource1.VideoResolution.FrameSize.Height.ToString();
+
+                    Invoke(updateString, 1, resString);
+                }
                 else
                     MessageBox.Show("Not enough items present in resolution list");
 
-                videoSourcePlayer1.VideoSource = videoSource_1;
+                videoSourcePlayer1.VideoSource = videoSource1;
                 videoSourcePlayer1.Start();
             }
-
-            Thread.Sleep(100);
-            if (videoDevices.Count > 1 && videoSource_1 != null && videoSource_2 == null)
+            
+            if (videoDevices.Count > 1 && videoSource1 != null && videoSource2 == null)
             {
-                videoSource_2 = new VideoCaptureDevice(videoDevices[1].MonikerString);
-
-                int resolution_Index_2 = videoSource_2.VideoCapabilities.Count();
+                Thread.Sleep(300);
+                videoSource2 = new VideoCaptureDevice(videoDevices[1].MonikerString);
+                //videoSource2.DesiredFrameRate = 10;
+                int resolution_Index_2 = 0; //videoSource2.VideoCapabilities.Count();
                 if (resolution_Index_2 >= res_Index)
-                    videoSource_2.VideoResolution = videoSource_2.VideoCapabilities[resolution_Index_2 - res_Index];
+                {
+                    videoSource2.VideoResolution = videoSource2.VideoCapabilities[resolution_Index_2 - res_Index];
+                    string resString = videoSource2.VideoResolution.FrameSize.Width.ToString() + " x " +
+                                        videoSource2.VideoResolution.FrameSize.Height.ToString();
+
+                    Invoke(updateString, 2, resString);
+                }
                 else
                     MessageBox.Show("Not enough items present in resolution list");
 
-                videoSourcePlayer2.VideoSource = videoSource_2;
+                videoSourcePlayer2.VideoSource = videoSource2;
                 videoSourcePlayer2.Start();
             }
         }
 
         public void CloseCamera()
         {
-            if (videoSource1 != null)
+            //if (videoSource1 != null)
+            if (videoSourcePlayer1.IsRunning)
             {
-                videoSource1.SignalToStop();
+                videoSourcePlayer1.SignalToStop();
+                videoSourcePlayer1.WaitForStop();
+                
+                //videoSource1.SignalToStop();
                 //videoSource1.WaitForStop();
                 //videoSource1 = null;
-                videoSource_1.SignalToStop();
+                //videoSource_1.SignalToStop();
+                //videoSource_1.Stop();
                 //videoSource_1 = null;
             }
 
-            if (videoSource2 != null)
+            //if (videoSource2 != null)
+            if (videoSourcePlayer2.IsRunning)
             {
-                videoSource2.SignalToStop();
+                videoSourcePlayer2.SignalToStop();
+                videoSourcePlayer2.WaitForStop();
+                //videoSource2.SignalToStop();
+                //videoSource2.Stop();
                 //videoSource2.WaitForStop();
-                videoSource_2.SignalToStop();
+                //videoSource_2.SignalToStop();
+                //videoSource_2.Stop();
             }
 
             if (bitmap != null)
@@ -2424,5 +2439,17 @@ namespace Cheese
             return status;
         }
 
+        //釋放記憶體//
+        [System.Runtime.InteropServices.DllImportAttribute("kernel32.dll", EntryPoint = "SetProcessWorkingSetSize", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Ansi, SetLastError = true)]
+        private static extern int SetProcessWorkingSetSize(IntPtr process, int minimumWorkingSetSize, int maximumWorkingSetSize);
+        private void DisposeRam()
+        {
+            GC.Collect();
+            GC.SuppressFinalize(this);
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                SetProcessWorkingSetSize(Process.GetCurrentProcess().Handle, -1, -1);
+            }
+        }
     }
 }
