@@ -33,20 +33,6 @@
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label1 = new System.Windows.Forms.Label();
             this.VerLabel = new System.Windows.Forms.Label();
             this.chkBox_LoopTimes = new System.Windows.Forms.CheckBox();
@@ -77,6 +63,20 @@
             this.picBox_preview = new System.Windows.Forms.PictureBox();
             this.videoSourcePlayer1 = new AForge.Controls.VideoSourcePlayer();
             this.button_Snapshot = new System.Windows.Forms.Button();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Picbox_CurrentStatus)).BeginInit();
@@ -145,87 +145,12 @@
             this.Column12,
             this.Column13,
             this.Column14});
+            this.dataGridView1.EnableHeadersVisualStyles = false;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
             this.dataGridView1.Size = new System.Drawing.Size(1172, 480);
             this.dataGridView1.TabIndex = 1;
-            // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "CMD";
-            this.Column1.Name = "Column1";
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "Times";
-            this.Column2.Name = "Column2";
-            this.Column2.Width = 50;
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "Interval";
-            this.Column3.Name = "Column3";
-            this.Column3.Width = 50;
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "PIN";
-            this.Column4.Name = "Column4";
-            this.Column4.Width = 50;
-            // 
-            // Column5
-            // 
-            this.Column5.HeaderText = "Function/CRC_mode";
-            this.Column5.Name = "Column5";
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "Sub-function";
-            this.Column6.Name = "Column6";
-            // 
-            // Column7
-            // 
-            this.Column7.HeaderText = "Output String";
-            this.Column7.Name = "Column7";
-            this.Column7.Width = 200;
-            // 
-            // Column8
-            // 
-            this.Column8.HeaderText = "AC/USB_Switch";
-            this.Column8.Name = "Column8";
-            // 
-            // Column9
-            // 
-            this.Column9.HeaderText = "Delay(ms)";
-            this.Column9.Name = "Column9";
-            // 
-            // Column10
-            // 
-            this.Column10.HeaderText = "CMD Description";
-            this.Column10.Name = "Column10";
-            this.Column10.Width = 150;
-            // 
-            // Column11
-            // 
-            this.Column11.HeaderText = "Reply String";
-            this.Column11.Name = "Column11";
-            this.Column11.Width = 200;
-            // 
-            // Column12
-            // 
-            this.Column12.HeaderText = "Result_1";
-            this.Column12.Name = "Column12";
-            // 
-            // Column13
-            // 
-            this.Column13.HeaderText = "Result_2";
-            this.Column13.Name = "Column13";
-            // 
-            // Column14
-            // 
-            this.Column14.HeaderText = "Judge";
-            this.Column14.Name = "Column14";
             // 
             // label1
             // 
@@ -547,6 +472,110 @@
             this.button_Snapshot.UseVisualStyleBackColor = true;
             this.button_Snapshot.Click += new System.EventHandler(this.button_Snapshot_Click);
             // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "CMD";
+            this.Column1.Name = "Column1";
+            this.Column1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "Times";
+            this.Column2.Name = "Column2";
+            this.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column2.Width = 50;
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "Interval";
+            this.Column3.Name = "Column3";
+            this.Column3.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column3.Width = 50;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "PIN";
+            this.Column4.Name = "Column4";
+            this.Column4.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column4.Width = 50;
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "Function/CRC_mode";
+            this.Column5.Name = "Column5";
+            this.Column5.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "Sub-function";
+            this.Column6.Name = "Column6";
+            this.Column6.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column7
+            // 
+            this.Column7.HeaderText = "Output String";
+            this.Column7.Name = "Column7";
+            this.Column7.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column7.Width = 200;
+            // 
+            // Column8
+            // 
+            this.Column8.HeaderText = "AC/USB_Switch";
+            this.Column8.Name = "Column8";
+            this.Column8.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column9
+            // 
+            this.Column9.HeaderText = "Delay(ms)";
+            this.Column9.Name = "Column9";
+            this.Column9.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column10
+            // 
+            this.Column10.HeaderText = "CMD Description";
+            this.Column10.Name = "Column10";
+            this.Column10.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column10.Width = 150;
+            // 
+            // Column11
+            // 
+            this.Column11.HeaderText = "Reply String";
+            this.Column11.Name = "Column11";
+            this.Column11.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column11.Width = 200;
+            // 
+            // Column12
+            // 
+            this.Column12.HeaderText = "Result_1";
+            this.Column12.Name = "Column12";
+            this.Column12.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column13
+            // 
+            this.Column13.HeaderText = "Result_2";
+            this.Column13.Name = "Column13";
+            this.Column13.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column13.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column14
+            // 
+            this.Column14.HeaderText = "Judge";
+            this.Column14.Name = "Column14";
+            this.Column14.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column14.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -617,20 +646,6 @@
         private System.Windows.Forms.PictureBox PIC_NetworkStatus;
         private System.Windows.Forms.ComboBox cboxCameraList;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column14;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.PictureBox PIC_Arduino;
         private System.Windows.Forms.Button button_Schedule;
@@ -647,6 +662,20 @@
         private System.Windows.Forms.Label label_cam1;
         private System.Windows.Forms.TextBox textBox_cam2Res;
         private System.Windows.Forms.TextBox textBox_cam1Res;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column14;
     }
 }
 

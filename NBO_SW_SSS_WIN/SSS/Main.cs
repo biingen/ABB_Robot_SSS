@@ -30,14 +30,14 @@ namespace Cheese
         string TargetFilePath;
         public int FlagComPortStauts;
         int FlagPause, FlagStop;
-        bool FlagLoopTimes = false;
+        bool playState, pauseState, flagLoopTimes;
         int loopTimes = 0, loopCounter = 0;
         static string Cmdsend, Cmdreceive;
         int Device, Resolution;
         public double timeout;
         public static double tmout = 0.0;
         public TimeoutTimer timeOutTimer;
-        Thread SerialPort_Receive_Thread;
+        //Thread SerialPort_Receive_Thread;
         private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);        //log4net
 
         // ----------------------------------------------------------------------------------------------- //
@@ -54,10 +54,10 @@ namespace Cheese
         private bool DeviceExist = false;
         static int CamaraExist = 0, cameraIndex = -1;
         // ----------------------------------------------------------------------------------------------- //
-        DataTypeConversion ProcessStr = new DataTypeConversion();
+        DataTypeConversion dataConv = new DataTypeConversion();
         //Mod_RS232 SerialPortHandle = new Mod_RS232();
         static Mod_TCPIP_Client NetworkHandle = new Mod_TCPIP_Client();
-        Thread ExecuteCmdThreadHandle;
+        Thread ExecuteCmd_Thread, SerialPort_Receive_Thread, SerialPort_CmdHandling_Thread;
         // ----------------------------------------------------------------------------------------------- //
         public DataGridView tempDataGrid;
         private delegate void dUpdateDataGrid(int x, int y, string data);
@@ -77,7 +77,10 @@ namespace Cheese
             InitializeComponent();
             tempDataGrid = this.dataGridView1;
             FlagComPortStauts = 0;
-            this.VerLabel.Text = "Version: 007.002.004";
+            this.VerLabel.Text = "Version: 007.002.005";
+            playState = false;
+            pauseState = false;
+            flagLoopTimes = false;
             FlagPause = 0;
             FlagStop = 0;
         }
@@ -275,6 +278,16 @@ namespace Cheese
                         cboxCameraList.Enabled = false;
                     }
                     break;
+                case 10:    //PLAY/STOP one-button
+                    if (Status == 0)
+                    {
+                        BTN_StartTest.Image = ImageResource.stop;
+                    }
+                    else if (Status == 1)
+                    {
+                        BTN_StartTest.Image = ImageResource.play_button;
+                    }
+                    break;
             }
             //this.Refresh();
         }
@@ -333,7 +346,7 @@ namespace Cheese
             byte HighHalfByte, LowHalfByte;
             byte[] tempData = new byte[100];
             ushort CRCResult;
-            DataTypeConversion dataConv = new DataTypeConversion();
+            //DataTypeConversion dataConv = new DataTypeConversion();
             dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdateUiData);
             System.IO.StreamReader rFile = new System.IO.StreamReader(@TargetFilePath);
             updateDataGrid.Invoke(0, -2, "");   //Clear datagrid
@@ -369,6 +382,7 @@ namespace Cheese
                                     string[] CmdStringArray = CmdLine.Split(' ');
                                     byte[] CmdBytes = new byte[CmdStringArray.Count() + 1];     //Plus 1 is reserved for checksum Byte
                                     var tstStr = dataConv.XOR8_BytesWithChksum(CmdLine, CmdBytes, CmdBytes.Length);
+                                    tstStr = CmdLine + " " + tstStr;
 
                                     updateDataGrid.Invoke(13, y, tstStr);    //Auto fill CRC Field column after opening schedule file
                                 }
@@ -379,19 +393,19 @@ namespace Cheese
                                     {
                                         HighHalfByte = (byte)cmdStr[i][0];
                                         LowHalfByte = (byte)cmdStr[i][1];
-                                        tempData[i] = (byte)((ProcessStr.AsciiToByte(HighHalfByte) * 16) + ProcessStr.AsciiToByte(LowHalfByte));
+                                        tempData[i] = (byte)((dataConv.AsciiToByte(HighHalfByte) * 16) + dataConv.AsciiToByte(LowHalfByte));
                                         //Console.Write("{0,2:X}", tempData[i]);
                                         j++;
                                     }
                                     //Console.Write("\n");
-                                    CRCResult = ProcessStr.CalculateCRC(j, tempData);
+                                    CRCResult = dataConv.CalculateCRC(j, tempData);
                                     //Console.Write("{0,4:X}\n", CRCResult);
 
-                                    CRCStr[0] = (char)ProcessStr.BytetoAscii((byte)((CRCResult & 0x00F0) >> 4));
-                                    CRCStr[1] = (char)ProcessStr.BytetoAscii((byte)(CRCResult & 0x000F));
+                                    CRCStr[0] = (char)dataConv.BytetoAscii((byte)((CRCResult & 0x00F0) >> 4));
+                                    CRCStr[1] = (char)dataConv.BytetoAscii((byte)(CRCResult & 0x000F));
                                     CRCStr[2] = (char)0x20;
-                                    CRCStr[3] = (char)ProcessStr.BytetoAscii((byte)((CRCResult & 0xF000) >> 12));
-                                    CRCStr[4] = (char)ProcessStr.BytetoAscii((byte)((CRCResult & 0x0F00) >> 8));
+                                    CRCStr[3] = (char)dataConv.BytetoAscii((byte)((CRCResult & 0xF000) >> 12));
+                                    CRCStr[4] = (char)dataConv.BytetoAscii((byte)((CRCResult & 0x0F00) >> 8));
 
                                     updateDataGrid.Invoke(13, y, new string(CRCStr));    //Auto fill CRC Field column after opening schedule file
                                     /*  previous SerialPortTest judgement
@@ -424,7 +438,7 @@ namespace Cheese
             dUpdateDataGrid WriteDataGrid = new dUpdateDataGrid(UpdateUiData);
             dUpdateDataGrid updateDataGrid = new dUpdateDataGrid(UpdateUiData);
             ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
-            DataTypeConversion ProStr = new DataTypeConversion();
+            //DataTypeConversion ProStr = new DataTypeConversion();
             Setting form2 = new Setting();
             string resultLine = "";
             string cmdString = "";
@@ -434,12 +448,13 @@ namespace Cheese
             byte[] retBuf = new byte[100];
             byte[] finBuf = new byte[100];
             ushort arduino_input_status;
-            int delayTime, loopIndex = 0, RowCount, ExeIndex = 0;
+            int delayTime, RowCount, ExeIndex = 0;
             
             RowCount = this.dataGridView1.Rows.Count;
             if (RowCount <= 1) 
             {
                 MessageBox.Show("No Row Data");
+                //Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
                 //UpdateLoopTxt(1, ref loopCounter);//Enable Loop Text
                 //Invoke(LoopText, 1, loopCounter);
                 //Invoke(LoopText, 3, loopCounter);
@@ -460,14 +475,8 @@ namespace Cheese
                 if (loopCounter < 0)
                     loopCounter = 0;
 
-                while (loopCounter > 0 && FlagStop == 0)
+                while (loopCounter > 0 && playState)    //(loopCounter > 0 && FlagStop == 0)
                 {
-                    if (this.chkBox_LoopTimes.Checked == true)
-                    {
-                        loopIndex++;
-                        //Invoke(LoopText, 3, loopCounter);
-                    }
-
                     Invoke(UpdateUIBtn, 3, 1);  //display testing
                     // ============= Clear old data ============= //
                     for (ExeIndex = 0; ExeIndex < (RowCount-1); ExeIndex++)
@@ -492,7 +501,7 @@ namespace Cheese
                         string columns_switch = dataGridView1.Rows[ExeIndex].Cells[7].Value.ToString().Trim();
                         string columns_wait = dataGridView1.Rows[ExeIndex].Cells[8].Value.ToString().Trim();
                         string columns_remark = dataGridView1.Rows[ExeIndex].Cells[9].Value.ToString().Trim();
-
+                        
                         if (ExeIndex >= 3)
                         {
                             Invoke(updateDataGrid, (ExeIndex - 2), -4, "");
@@ -566,7 +575,7 @@ namespace Cheese
                                 {
                                     cmdString = columns_cmdLine;
                                     byte[] cmdBytes = new byte[CmdStringArray.Count() + 1];     //Plus 1 is reserved for checksum Byte
-                                    var tstStr = ProStr.XOR8_BytesWithChksum(columns_cmdLine, cmdBytes, cmdBytes.Length);
+                                    var tstStr = dataConv.XOR8_BytesWithChksum(columns_cmdLine, cmdBytes, cmdBytes.Length);
                                     GlobalData.m_SerialPort.WriteDataOut(cmdBytes, cmdBytes.Length);
 
                                     
@@ -595,8 +604,8 @@ namespace Cheese
                                 {
                                     for (int index = 0; index < rxLength; index++)
                                     {
-                                        resultLine += (char)ProStr.BytetoAscii((byte)((GlobalData.returnBytes[index] >> 4) & 0x0F));
-                                        resultLine += (char)ProStr.BytetoAscii((byte)(GlobalData.returnBytes[index] & 0x0F));
+                                        resultLine += (char)dataConv.BytetoAscii((byte)((GlobalData.returnBytes[index] >> 4) & 0x0F));
+                                        resultLine += (char)dataConv.BytetoAscii((byte)(GlobalData.returnBytes[index] & 0x0F));
                                         if (index != (rxLength - 1))
                                             resultLine += ' ';
                                     }
@@ -1431,17 +1440,22 @@ namespace Cheese
                         }
                         #endregion
 
-                        if (FlagPause == 1)
+                        //if (FlagPause == 1)
+                        if (pauseState)
                         {
-                            Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+                            //Invoke(UpdateUIBtn, 10, 1); //this.BTN_StartTest.Image = global::Cheese.ImageResource.play_button;
+                            //playState = false;
+                            //Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
                             Invoke(UpdateUIBtn, 3, 2);  //display pause
-                            while (FlagPause == 1)
+                            //while (FlagPause == 1)
+                            while (pauseState)
                             {
                                 Thread.Sleep(10);
                             }
                             Invoke(UpdateUIBtn, 3, 1);  //display testing
                         }
-                        else if (FlagStop == 1)
+                        //else if (FlagStop == 1)
+                        else if (!playState)
                         {
                             //All other stop actions are going at BTN_Stop
                             break;  //stop for loop
@@ -1479,10 +1493,11 @@ namespace Cheese
                 Invoke(UpdateUIBtn, 6, 0);  //button_Schedule.Enabled = false;
                 Invoke(UpdateUIBtn, 9, 1);  //cboxCameraList.Enabled = true;
                 Invoke(LoopText, 6, 0);
-                if (FlagLoopTimes)
+                if (flagLoopTimes)
                     Invoke(LoopText, 1, 0);
             }
 
+            Invoke(UpdateUIBtn, 10, 1); //this.BTN_StartTest.Image = global::Cheese.ImageResource.play_button;
             Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
             Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
             Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
@@ -1633,46 +1648,150 @@ namespace Cheese
             dataGridView1.Visible = true;
             dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
             //ProcessLoopText LoopText = new ProcessLoopText(UpdateLoopTxt);
-            Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
-            Invoke(UpdateUIBtn, 1, 1);  //this.BTN_Pause.Enabled = true;
-            Invoke(UpdateUIBtn, 2, 1);  //this.BTN_Stop.Enabled = true;
-            Invoke(UpdateUIBtn, 9, 0);  //cboxCameraList.Enabled = false;
-            //Invoke(LoopText, 0, 0);
-            FlagPause = 0;
-            FlagStop = 0;
+            Thread ExecuteCmd_Thread = new Thread(new ThreadStart(ExecuteCmd));
+            Thread SerialPort_Receive_Thread = new Thread(new ThreadStart(SerialRxThread));
+            Thread SerialPort_CmdHandling_Thread = new Thread(new ThreadStart(SerialPort_Cmd_Handling));
 
-            if (ExecuteCmdThreadHandle == null)
+            //if (playBtnPressed == false && GlobalData.m_SerialPort.IsOpen())
+            //if (GlobalData.Arduino_openFlag || GlobalData.m_SerialPort.IsOpen())    //( || TCPIP_socket.IsConnected())
             {
-                ExecuteCmdThreadHandle = new Thread(ExecuteCmd);
-                ExecuteCmdThreadHandle.Start();
+                if (!playState)
+                {   //--- Press PLAY button ---//
+                    dataGridView1.Visible = true;
+                    Invoke(UpdateUIBtn, 1, 1);  //this.BTN_Pause.Enabled = true;
+                    //Invoke(UpdateUIBtn, 2, 1);  //this.BTN_Stop.Enabled = true;
+                    Invoke(UpdateUIBtn, 9, 0);  //cboxCameraList.Enabled = false;
+                                                //Invoke(LoopText, 0, 0);
+                                                //FlagPause = 0;
+                    if (!ExecuteCmd_Thread.IsAlive)
+                        ExecuteCmd_Thread.Start();
+                    Console.WriteLine("Playing");
+                    Console.WriteLine("Thread ID = {0}", ExecuteCmd_Thread.ManagedThreadId.ToString());
+                    //SerialPort_Receive_Thread.IsBackground = true;
+                    if (!SerialPort_Receive_Thread.IsAlive)
+                        SerialPort_Receive_Thread.Start();
+                    Console.WriteLine("Thread ID = {0}", SerialPort_Receive_Thread.ManagedThreadId.ToString());
+                    //SerialPort_CmdHandling_Thread.IsBackground = true;
+                    if (!SerialPort_CmdHandling_Thread.IsAlive)
+                        SerialPort_CmdHandling_Thread.Start();
+                    Console.WriteLine("Thread ID = {0}", SerialPort_CmdHandling_Thread.ManagedThreadId.ToString());
+                    Invoke(UpdateUIBtn, 10, 0); //this.BTN_StartTest.Image = global::Cheese.ImageResource.stop;
+                    //FlagStop = 0;
+                    lock(this)
+                    {
+                        playState = true;
+                        pauseState = false;
+                    }
+                }
+                //else if (playBtnPressed == true && GlobalData.m_SerialPort.IsOpen())
+                //else if (stopBtnPressed && (GlobalData.Arduino_openFlag || GlobalData.m_SerialPort.IsOpen()))
+                else if (playState)
+                {   //--- Press PLAY button again (i.e. press STOP button) ---//
+                    //Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
+                    Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+                    if (timeOutTimer != null && timeOutTimer.TimerOnIndicator())
+                    {
+                        timeOutTimer.StopTimeoutTimer(-9.9);
+                        timeOutTimer.DisposeTimeoutTimer();
+                    }
+
+                    if (pauseState)   //(FlagPause == 1)
+                        pauseState = false;    //FlagPause = 0;
+
+                    //if (ExecuteCmd_Thread.IsAlive)
+                    ExecuteCmd_Thread.Abort();
+                    //if (SerialPort_Receive_Thread.IsAlive)
+                    SerialPort_Receive_Thread.Abort();
+                    //if (SerialPort_CmdHandling_Thread.IsAlive)
+                    SerialPort_CmdHandling_Thread.Abort();
+                    Console.WriteLine("Stopping");
+                    Console.WriteLine("Thread ID = {0}", ExecuteCmd_Thread.ManagedThreadId.ToString());
+                    Console.WriteLine("Thread ID = {0}", SerialPort_Receive_Thread.ManagedThreadId.ToString());
+                    Console.WriteLine("Thread ID = {0}", SerialPort_CmdHandling_Thread.ManagedThreadId.ToString());
+
+                    Invoke(UpdateUIBtn, 10, 1); //this.BTN_StartTest.Image = global::Cheese.ImageResource.play_button;
+                    Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+                    //FlagStop = 1;
+                    lock (this)
+                        playState = false;
+                }
+            }/*
+            else
+            {
+                MessageBox.Show("SerialPort or Socket is not connected!", "Info");
+                Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+            }*/
+
+            //Invoke(UpdateUIBtn, 0, 0);  //*** This must be remarked for condition of PLAY & STOP co-button. ***//
+            /*
+            if (ExecuteCmd_Thread == null)
+            {
+                ExecuteCmd_Thread = new Thread(new ThreadStart(ExecuteCmd));
+                ExecuteCmd_Thread.Start();
             }
-            else if (ExecuteCmdThreadHandle.IsAlive == false)
+            else if (ExecuteCmd_Thread.IsAlive == false)
             {
-                ExecuteCmdThreadHandle.Abort();
-                ExecuteCmdThreadHandle = new Thread(ExecuteCmd);
-                ExecuteCmdThreadHandle.Start();
+                ExecuteCmd_Thread.Abort();
+                ExecuteCmd_Thread = new Thread(new ThreadStart(ExecuteCmd));
+                ExecuteCmd_Thread.Start();
             }
 
             if (SerialPort_Receive_Thread == null)
             {
                 SerialPort_Receive_Thread = new Thread(new ThreadStart(SerialRxThread));
+                SerialPort_Receive_Thread.IsBackground = true;
                 SerialPort_Receive_Thread.Start();
             }
             else if (SerialPort_Receive_Thread.IsAlive == false)
             {
                 SerialPort_Receive_Thread.Abort();
                 SerialPort_Receive_Thread = new Thread(new ThreadStart(SerialRxThread));
+                SerialPort_Receive_Thread.IsBackground = true;
                 SerialPort_Receive_Thread.Start();
             }
+
+            if (SerialPort_CmdHandling_Thread == null)
+            {
+                SerialPort_CmdHandling_Thread = new Thread(new ThreadStart(SerialPort_Cmd_Handling));
+                SerialPort_CmdHandling_Thread.IsBackground = true;
+                SerialPort_CmdHandling_Thread.Start();
+            }
+            else if (SerialPort_CmdHandling_Thread.IsAlive == false)
+            {
+                SerialPort_CmdHandling_Thread.Abort();
+                SerialPort_CmdHandling_Thread = new Thread(new ThreadStart(SerialPort_Cmd_Handling));
+                SerialPort_CmdHandling_Thread.IsBackground = true;
+                SerialPort_CmdHandling_Thread.Start();
+            }
+            */
         }
 
         private void BTN_Pause_Click(object sender, EventArgs e)
         {
             dUpdateUIBtn UpdateUIBtn = new dUpdateUIBtn(UpdateUIBtnFun);
-            Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
+            if (!pauseState)
+            {
+                Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
+                pauseState = true;    //FlagPause = 1;
+            }
+            else
+            {
+                Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+                pauseState = false;
+            }
+            /*
+            //Invoke(UpdateUIBtn, 1, 0);  //this.BTN_Pause.Enabled = false;
             Invoke(UpdateUIBtn, 2, 0);  //this.BTN_Stop.Enabled = false;
             Invoke(UpdateUIBtn, 0, 0);  //this.BTN_StartTest.Enabled = false;
-            FlagPause = 1;
+
+            //Invoke(UpdateUIBtn, 10, 1); //this.BTN_StartTest.Image = global::Cheese.ImageResource.play_button;
+
+            //Invoke(UpdateUIBtn, 0, 1);  //this.BTN_StartTest.Enabled = true;
+            lock(this)
+            {
+                pauseBtnPressed = true;    //FlagPause = 1;
+                playState = false;
+            }*/
         }
 
         private void BTN_Stop_Click(object sender, EventArgs e)
@@ -1689,11 +1808,13 @@ namespace Cheese
                 timeOutTimer.DisposeTimeoutTimer();
             }
 
-            if (FlagPause == 1)
-                FlagPause = 0;
-            FlagStop = 1;
+            if (pauseState)   //(FlagPause == 1)
+                pauseState = false;    //FlagPause = 0;
+
+            playState = false;
+            //FlagStop = 1;
         }
-		
+
         private void toolStripButton1_Click(object sender, EventArgs e)
         {   // == Open File BTN == //
             OpenFileDialog dialog = new OpenFileDialog();
@@ -2169,7 +2290,7 @@ namespace Cheese
                 //loopCounter = Convert.ToInt32(Txt_LoopCounter.Text);
                 Invoke(LoopText, 2, 0);
                 Invoke(LoopText, 3, loopCounter);
-                FlagLoopTimes = true;
+                flagLoopTimes = true;
             }
             else
             {
@@ -2179,7 +2300,7 @@ namespace Cheese
                 //Invoke(LoopText, 4, 1);
                 //loopTimes = 1;
                 //loopCounter = 1;
-                FlagLoopTimes = false;
+                flagLoopTimes = false;
             }
         }
 
@@ -2473,7 +2594,58 @@ namespace Cheese
             return status;
         }
 
-        //釋放記憶體//
+        private void SerialPort_Cmd_Handling()
+        {
+            while (GlobalData.m_SerialPort.IsOpen())
+            {
+                //benQ.PacketDequeuedToList(GlobalData.m_SerialPort, ref cmdByteList);
+                //===benQ.PacketDequeuedToList(GlobalData.m_SerialPort);
+                //Thread.Sleep(500);
+                //benQ.QueueAddedToList_ODM_BenQ(ref cmdByteList, ref packetQueueList);
+                //===benQ.QueueAddedToList_ODM_BenQ(GlobalData.m_SerialPort);
+            }
+        }
+
+        private string RawData_Output(List<byte> data)
+        {
+            string HexString = "";
+            int i = 0;
+            if (data != null)
+            {
+                foreach (byte sum in data)
+                {
+                    HexString += (sum.ToString("X2"));
+                    if (i < data.Count - 1)
+                        HexString += " ";
+
+                    i++;
+                }
+            }
+
+            return HexString;
+        }
+
+        // ====== used along with SerialRxThread ====== //
+        /*
+        private void GetSerialData(Mod_RS232 SpHandler)
+        {
+            while (SpHandler.IsOpen())
+            {
+                int data_to_read = SpHandler.GetRxBytes();
+                if (data_to_read > 0)
+                {
+                    byte[] dataset = new byte[data_to_read];
+                    SpHandler.ReadDataIn(dataset, data_to_read);
+                }
+            }
+        }
+
+        public void SerialRxThread()
+        {
+            GetSerialData(GlobalData.m_SerialPort);
+        }*/
+		
+		//釋放記憶體//
         [System.Runtime.InteropServices.DllImportAttribute("kernel32.dll", EntryPoint = "SetProcessWorkingSetSize", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Ansi, SetLastError = true)]
         private static extern int SetProcessWorkingSetSize(IntPtr process, int minimumWorkingSetSize, int maximumWorkingSetSize);
         private void DisposeRam()
