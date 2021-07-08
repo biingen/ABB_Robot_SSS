@@ -63,6 +63,7 @@ namespace Cheese
         public static bool Arduino_relay_status = false;
         public static bool Arduino_openFlag;
         public static bool Arduino_recFlag;
+        public static bool GPIO = false;
         public static int IO_PA10_0_COUNT = 0;
         public static int IO_PA10_1_COUNT = 0;
         public static int IO_PA11_0_COUNT = 0;

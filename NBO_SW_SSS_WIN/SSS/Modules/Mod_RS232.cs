@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO.Ports;
 using Cheese;
+using log4net;
+using System.Reflection;
 
 namespace ModuleLayer
 {
@@ -13,6 +15,7 @@ namespace ModuleLayer
     {
         private SerialPort _SerialPortHandle = new SerialPort();
         public Queue ReceiveQueue = new Queue();
+        private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);        //log4net
 
         //=== main Write function ===//
         public int WriteDataOut(byte[] InBuf, int DataLength)
@@ -200,6 +203,7 @@ namespace ModuleLayer
                     string dataValue = sp.ReadLine(); 
                     if (dataValue.Contains("io i"))
                         GlobalData.Arduino_Read_String = dataValue;
+                    log.Debug("[" + sp + "] DataReceived: " + dataValue);
 
                     int recByteCount = byteRead.Count();
                     if (recByteCount > 0)

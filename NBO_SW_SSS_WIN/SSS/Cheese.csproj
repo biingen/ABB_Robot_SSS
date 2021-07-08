@@ -88,6 +88,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="add_ons.cs" />
+    <Compile Include="GPIO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GPIO.designer.cs">
+      <DependentUpon>GPIO.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,6 +116,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ImageResource.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="GPIO.resx">
+      <DependentUpon>GPIO.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>

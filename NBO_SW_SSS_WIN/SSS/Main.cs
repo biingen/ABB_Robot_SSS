@@ -2405,6 +2405,16 @@ namespace Cheese
             }
         }
 
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            GPIO GPIO = new GPIO();
+            GPIO.Owner = this;
+            if (GlobalData.GPIO == false)
+            {
+                GPIO.Show();
+            }
+        }
+
         private void cboxCameraList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cboxCameraList.SelectedIndex < 0)
